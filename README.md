@@ -9,12 +9,12 @@ Core SDK for Forge asset management with multi-resolver architecture.
 ## Features
 
 - 🔌 **Plugin-Based Resolvers**: Extensible architecture for multiple VCS providers
-- 🌐 **Multi-VCS Support**: GitHub, GitLab, Bitbucket, self-hosted Git
+- 🌐 **Multi-VCS Support**: GitHub, Catalog, Local/Embedded assets
 - 📦 **Asset Management**: Bundles and starters with ownership rules
 - 💾 **Smart Caching**: Intelligent caching with configurable TTL
 - 🔧 **Configuration**: Flexible multi-resolver configuration
 - 📝 **TypeScript**: Full TypeScript support with comprehensive types
-- ✅ **Well-Tested**: 80%+ test coverage
+- 🎯 **CommonJS**: CJS support (ESM coming in v1.1.0)
 
 ## Installation
 
@@ -45,10 +45,10 @@ console.log(`${asset.files.size} files`);
 
 ## Documentation
 
-- [API Reference](./docs/api.md)
-- [Resolver Development Guide](./docs/resolvers.md)
-- [Configuration](./docs/configuration.md)
-- [Examples](./docs/examples.md)
+📖 Full documentation coming soon! For now, see:
+- [Specification](./docs/specs/SPEC-000001-forge-sdk-extraction.md) - Complete implementation spec
+- TypeScript definitions in `dist/` for API reference
+- Examples below for common usage
 
 ## Architecture
 
@@ -67,9 +67,10 @@ console.log(`${asset.files.size} files`);
 
 ## Supported Resolvers
 
-- **GitHub**: Fetch assets from GitHub repositories
-- **Catalog**: Static JSON catalog for asset discovery
-- **Local**: Local filesystem support for development
+- **GitHub**: Fetch assets from GitHub repositories via API
+- **Catalog**: Static JSON catalog for asset discovery and search
+- **Local**: Local filesystem and embedded asset support
+- **Custom**: Implement `IResolver` interface for custom sources
 
 ## Asset Identifier Formats
 
