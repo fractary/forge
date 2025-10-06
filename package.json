@@ -3,33 +3,31 @@
   "version": "1.0.0",
   "description": "Core SDK for Forge asset management with multi-resolver architecture",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
     "./resolvers": {
-      "import": "./dist/resolvers/index.mjs",
       "require": "./dist/resolvers/index.js",
       "types": "./dist/resolvers/index.d.ts"
     },
     "./types": {
-      "import": "./dist/types/index.mjs",
       "require": "./dist/types/index.js",
       "types": "./dist/types/index.d.ts"
     },
     "./config": {
-      "import": "./dist/config/index.mjs",
       "require": "./dist/config/index.js",
       "types": "./dist/config/index.d.ts"
     },
     "./cache": {
-      "import": "./dist/cache/index.mjs",
       "require": "./dist/cache/index.js",
       "types": "./dist/cache/index.d.ts"
+    },
+    "./errors": {
+      "require": "./dist/errors/index.js",
+      "types": "./dist/errors/index.d.ts"
     }
   },
   "files": [
@@ -38,7 +36,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc && tsc -p tsconfig.esm.json",
+    "build": "tsc",
     "dev": "tsc --watch",
     "test": "jest",
     "test:watch": "jest --watch",

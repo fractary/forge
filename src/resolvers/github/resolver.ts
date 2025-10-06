@@ -73,12 +73,13 @@ export class GitHubResolver {
     const parsed = this.parseIdentifier(identifier);
 
     const owner = parsed.owner || this.defaultOrg;
-    const ref = parsed.ref || (await this.getDefaultBranch(owner, parsed.repo));
+    const repo = parsed.repo || '';
+    const ref = parsed.ref || (await this.getDefaultBranch(owner, repo));
 
     return {
       protocol: 'github',
       owner,
-      repo: parsed.repo,
+      repo,
       ref,
       path: undefined,
     };
