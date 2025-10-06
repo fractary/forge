@@ -25,7 +25,7 @@ export type {
   AssetIdentifier,
   AssetLocation,
   AssetPackage,
-  ResolverOptions,
+  ResolverOptions as AssetResolverOptions,
   // Configuration
   GitHubResolverConfig,
   GitLabResolverConfig,
@@ -39,3 +39,37 @@ export type {
   CacheStats,
   CacheOptions,
 } from './types';
+
+// Resolver exports
+export {
+  ResolverManager,
+  createResolverManager,
+  GitHubResolver,
+  CatalogResolver,
+  LocalResolver,
+} from './resolvers';
+
+export type {
+  ResolverOptions,
+  IResolver,
+  GitHubResolverOptions,
+  Catalog,
+  CatalogEntry,
+  LocalResolverOptions,
+} from './resolvers';
+
+// Configuration exports
+export { ConfigManager, configManager, loadConfig, getDefaultGlobalConfig } from './config';
+
+// Cache exports
+export { CacheManager } from './cache';
+
+// Error exports
+export { ErrorCode, ForgeError, getUserFriendlyMessage, isForgeError, assertDefined } from './errors';
+
+// Logger exports
+export { Logger, logger } from './logger';
+export type { LogLevel } from './logger';
+
+// File system utilities exports
+export * as fs from './fs';
