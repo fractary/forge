@@ -49,8 +49,7 @@
     "postversion": "git push && git push --tags"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
-    "access": "restricted"
+    "access": "public"
   },
   "repository": {
     "type": "git",
