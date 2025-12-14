@@ -6,7 +6,7 @@ import { ErrorCode } from './codes';
 
 export class ForgeError extends Error {
   constructor(
-    public code: ErrorCode,
+    public code: ErrorCode | string,
     message: string,
     public details?: unknown
   ) {

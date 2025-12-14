@@ -73,3 +73,35 @@ export type { LogLevel } from './logger';
 
 // File system utilities exports
 export * as fs from './fs';
+
+// Definition system exports
+export {
+  AgentAPI,
+  ToolAPI,
+  DefinitionResolver,
+  AgentFactory,
+  ToolExecutor,
+  YAMLLoader,
+  DefinitionValidator,
+  PromptCacheManager,
+  DefinitionErrorCode,
+} from './definitions';
+
+export type {
+  AgentDefinition,
+  ToolDefinition,
+  LLMConfig,
+  LLMProvider,
+  CachingConfig,
+  CachingSource,
+  ExecutableAgent,
+  ExecutableAgentInterface,
+  AgentResult,
+  AgentInfo,
+  ToolResult,
+  ToolInfo,
+  HealthCheckResult,
+  ResolvedAgent,
+  ResolvedTool,
+  RegistryConfig,
+} from './definitions';
