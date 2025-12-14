@@ -1,7 +1,10 @@
 ---
 title: API Reference
 description: Complete API reference for @fractary/forge SDK
-visibility: public
+codex_sync_include: []
+codex_sync_exclude: []
+codex_sync_custom: [developers.fractary.com:src/content/docs/forge/]
+
 ---
 
 # API Reference

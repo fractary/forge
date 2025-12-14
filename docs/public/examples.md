@@ -1,7 +1,9 @@
 ---
 title: Code Examples
 description: Common patterns and recipes for using @fractary/forge SDK
-visibility: public
+codex_sync_include: []
+codex_sync_exclude: []
+codex_sync_custom: [developers.fractary.com:src/content/docs/forge/]
 ---
 
 # Code Examples

@@ -1,7 +1,9 @@
 ---
 title: CLI Integration
 description: Using @fractary/forge SDK with Forge CLI
-visibility: public
+codex_sync_include: []
+codex_sync_exclude: []
+codex_sync_custom: [developers.fractary.com:src/content/docs/forge/]
 ---
 
 # CLI Integration

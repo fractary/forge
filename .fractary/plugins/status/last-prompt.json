@@ -1,0 +1,5 @@
+{
+  "timestamp": "2025-12-14T20:04:06Z",
+  "prompt": "{\"session_id\":\"fe8ec6e5-5d9b-4762-b145-4e1c2af2bd7b\",\"transcript_path\":\"/home/jmcwilliam/.claude/projects/-mnt-c-GitHub-fractary-forge/fe8ec6e5-5d9b-4762-b145-4e1c2af2bd7b.jsonl\",\"cwd\":\"/mnt/c/GitHub/fractary/forge\",\"permission_mode\":\"bypassPermissions\",\"hook_event_name\":\"UserPromptSubmit\",\"prompt\":\"git commit and push\"} ",
+  "prompt_short": "{\"session_id\":\"fe8ec6e5-5d9b-4762-b14..."
+}

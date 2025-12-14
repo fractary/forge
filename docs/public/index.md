@@ -2,6 +2,7 @@
 title: Forge SDK
 description: Core SDK for Forge asset management with multi-resolver architecture
 visibility: public
+codex_sync_custom: [developers.fractary.com:src/content/docs/forge/]
 ---
 
 # Forge SDK

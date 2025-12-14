@@ -1,0 +1,33 @@
+{
+  "version": "2.0",
+  "project": {
+    "issue_system": "github",
+    "repository": "fractary/forge"
+  },
+  "handlers": {
+    "work-tracker": {
+      "active": "github",
+      "github": {
+        "owner": "fractary",
+        "repo": "forge",
+        "api_url": "https://api.github.com",
+        "classification": {
+          "type_labels": {
+            "feature": "type: feature",
+            "bug": "type: bug",
+            "chore": "type: chore"
+          }
+        },
+        "states": {
+          "open": "open",
+          "in_progress": "in_progress",
+          "closed": "closed"
+        }
+      }
+    }
+  },
+  "defaults": {
+    "auto_assign": true,
+    "template_issue_type": "feature"
+  }
+}

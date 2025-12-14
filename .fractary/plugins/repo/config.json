@@ -1,0 +1,20 @@
+{
+  "handlers": {
+    "source_control": {
+      "active": "github",
+      "github": {
+        "token": "$GITHUB_TOKEN"
+      }
+    }
+  },
+  "defaults": {
+    "default_branch": "main",
+    "protected_branches": [
+      "main",
+      "master"
+    ],
+    "merge_strategy": "no-ff",
+    "push_sync_strategy": "auto-merge",
+    "pull_sync_strategy": "auto-merge-prefer-remote"
+  }
+}
