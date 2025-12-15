@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-15T16:21:55Z",
-  "prompt": "{\"session_id\":\"5ee46366-757d-449b-9120-431e2ffe3b83\",\"transcript_path\":\"/home/jmcwilliam/.claude/projects/-mnt-c-GitHub-fractary-forge/5ee46366-757d-449b-9120-431e2ffe3b83.jsonl\",\"cwd\":\"/mnt/c/GitHub/fractary/forge\",\"permission_mode\":\"bypassPermissions\",\"hook_event_name\":\"UserPromptSubmit\",\"prompt\":\"just to clarify, the register manifest should then reference the plugins that are available, right? Also, the stockyard production url will be stockyard.fractary.com (not ???.stockyard.com)\"} ",
+  "timestamp": "2025-12-15T18:20:18Z",
+  "prompt": "{\"session_id\":\"5ee46366-757d-449b-9120-431e2ffe3b83\",\"transcript_path\":\"/home/jmcwilliam/.claude/projects/-mnt-c-GitHub-fractary-forge/5ee46366-757d-449b-9120-431e2ffe3b83.jsonl\",\"cwd\":\"/mnt/c/GitHub/fractary/forge\",\"permission_mode\":\"bypassPermissions\",\"hook_event_name\":\"UserPromptSubmit\",\"prompt\":\"yes\"} ",
   "prompt_short": "{\"session_id\":\"5ee46366-757d-449b-912..."
 }
