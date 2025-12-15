@@ -9,7 +9,7 @@
 | **Project** | `@fractary/forge` |
 | **Issue** | [#6 - Implement FABER-Forge Phase 3 Integration](https://github.com/fractary/forge/issues/6) |
 | **Branch** | `feat/6-implement-faber-forge-phase-3-integration` |
-| **Related Specs** | FORGE-PHASE-3B-faber-agent-definitions.md, SPEC-FORGE-001, SPEC-FORGE-002 |
+| **Related Specs** | FORGE-PHASE-3B-faber-agent-definitions.md, SPEC-FORGE-001, SPEC-FORGE-002, SPEC-FORGE-005 |
 | **Depends On** | Phase 3A (Completed in @fractary/faber v1.1.1) |
 | **Refined** | 2025-12-15 (Round 1) |
 
@@ -20,6 +20,7 @@
 | Date | Round | Changes |
 |------|-------|---------|
 | 2025-12-15 | 1 | Added tool status section, clarified distribution via CLI/Stockyard, updated agent path to `.fractary/agents/`, verified LLMConfigSchema compatibility |
+| 2025-12-15 | 2 | Created SPEC-FORGE-005 for registry manifest system, updated distribution strategy to use manifest-based registries as interim solution before Stockyard |
 
 ---
 
@@ -140,16 +141,21 @@ LLMConfigSchema = z.object({
 
 ### 2.5 Distribution Strategy
 
-**Decision:** FABER agents will be distributed via **Stockyard CLI command**.
+**Decision:** FABER agents will be distributed via **registry-based CLI commands**.
 
 | Aspect | Implementation |
 |--------|---------------|
-| **Installation** | `forge install faber-agents` |
+| **Installation** | `forge install @fractary/faber-agents` |
 | **Storage Location** | User's `~/.fractary/agents/` (global) or `.fractary/agents/` (project-local) |
-| **Package Registry** | Stockyard (Phase 3C dependency) |
-| **Fallback** | Manual copy from GitHub until Stockyard is available |
+| **Package Registry** | Manifest-based registry (Phase 3B) → Stockyard API (Phase 3C) |
+| **Registry Spec** | See [SPEC-FORGE-005: Registry Manifest System](./SPEC-FORGE-005-REGISTRY-MANIFEST-SYSTEM.md) |
 
-**Pre-Stockyard Workaround:** Until Phase 3C (Stockyard) is complete, agents can be manually copied to `.fractary/agents/` or referenced via `FORGE_AGENTS_PATH` environment variable.
+**Implementation Approach:**
+- **Phase 3B (Current):** Manifest-based registries using Git-hosted JSON manifests
+  - `forge registry add fractary-core --type manifest --url https://raw.githubusercontent.com/fractary/forge-registry/main/manifest.json`
+  - `forge install @fractary/faber-agents`
+- **Phase 3C (Future):** Migration to full Stockyard API with authentication and versioning
+- Both registry types will coexist during transition period
 
 ---
 
