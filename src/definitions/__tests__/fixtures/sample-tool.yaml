@@ -21,7 +21,7 @@ parameters:
 implementation:
   type: bash
   bash:
-    command: echo "Input: ${input}, Count: ${count}"
+    command: 'echo "Input: ${input}, Count: ${count}"'
     sandbox:
       enabled: true
       allowlisted_commands:

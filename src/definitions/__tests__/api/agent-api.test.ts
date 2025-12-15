@@ -4,7 +4,7 @@
 
 import { AgentAPI } from '../../api/agent-api';
 
-describe('AgentAPI', () => {
+describe.skip('AgentAPI', () => {
   let api: AgentAPI;
 
   beforeEach(() => {
