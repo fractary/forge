@@ -27,7 +27,17 @@ export const DefinitionErrorCode = {
   // Registry errors
   DEFINITION_NOT_FOUND: 'DEFINITION_NOT_FOUND' as const,
   VERSION_NOT_FOUND: 'VERSION_NOT_FOUND' as const,
+
+  // Lockfile errors
   LOCKFILE_INVALID: 'LOCKFILE_INVALID' as const,
+  LOCKFILE_NOT_FOUND: 'LOCKFILE_NOT_FOUND' as const,
+  LOCKFILE_PARSE_ERROR: 'LOCKFILE_PARSE_ERROR' as const,
+  LOCKFILE_VALIDATION_FAILED: 'LOCKFILE_VALIDATION_FAILED' as const,
+  CACHE_MISS: 'CACHE_MISS' as const,
+  INTEGRITY_MISMATCH: 'INTEGRITY_MISMATCH' as const,
+
+  // Dependency errors
+  CIRCULAR_DEPENDENCY: 'CIRCULAR_DEPENDENCY' as const,
 
   // Validation errors
   YAML_PARSE_ERROR: 'YAML_PARSE_ERROR' as const,
