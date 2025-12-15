@@ -7,6 +7,9 @@ module.exports = {
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
+  transformIgnorePatterns: [
+    'node_modules/(?!(chalk|ora|cli-spinners|cli-cursor|restore-cursor|onetime|mimic-fn|is-interactive|is-unicode-supported|string-width|strip-ansi|ansi-regex|emoji-regex|log-symbols|figures)/)',
+  ],
   collectCoverageFrom: [
     'src/**/*.ts',
     '!src/**/*.d.ts',
@@ -25,6 +28,8 @@ module.exports = {
   },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^chalk$': '<rootDir>/node_modules/chalk/source/index.js',
+    '^ora$': '<rootDir>/node_modules/ora/index.js',
   },
   clearMocks: true,
   restoreMocks: true,

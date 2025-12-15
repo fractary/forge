@@ -1,0 +1,54 @@
+name: test-agent
+type: agent
+description: A test agent for unit testing
+version: 1.0.0
+author: Test Author
+tags:
+  - testing
+  - demo
+
+llm:
+  provider: anthropic
+  model: claude-3-5-sonnet-20241022
+  temperature: 0.7
+  max_tokens: 4096
+
+system_prompt: |
+  You are a helpful test assistant.
+  Always respond concisely and accurately.
+
+tools:
+  - test-bash-tool
+  - another-tool
+
+custom_tools:
+  - name: inline-tool
+    type: tool
+    description: An inline tool definition
+    version: 1.0.0
+    tags:
+      - inline
+    parameters:
+      message:
+        type: string
+        description: Message to echo
+        required: true
+    implementation:
+      type: bash
+      bash:
+        command: echo "${message}"
+
+caching:
+  enabled: true
+  cache_sources:
+    - type: inline
+      label: system-context
+      content: "This is inline cached content"
+    - type: file
+      label: api-docs
+      path: ./docs/api.md
+      ttl: 3600
+
+config:
+  max_retries: 3
+  timeout: 30000

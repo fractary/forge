@@ -1,0 +1,17 @@
+name: base-tool
+type: tool
+description: A base tool for inheritance testing
+version: 1.0.0
+tags:
+  - base
+
+parameters:
+  input:
+    type: string
+    description: Base input parameter
+    required: true
+
+implementation:
+  type: bash
+  bash:
+    command: echo "Base: ${input}"

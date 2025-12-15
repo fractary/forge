@@ -1,0 +1,32 @@
+name: test-bash-tool
+type: tool
+description: A test bash tool for unit testing
+version: 1.0.0
+author: Test Author
+tags:
+  - testing
+  - bash
+
+parameters:
+  input:
+    type: string
+    description: Input parameter
+    required: true
+  count:
+    type: integer
+    description: Count parameter
+    required: false
+    default: 1
+
+implementation:
+  type: bash
+  bash:
+    command: echo "Input: ${input}, Count: ${count}"
+    sandbox:
+      enabled: true
+      allowlisted_commands:
+        - echo
+      network_access: false
+      max_execution_time: 5000
+      env_vars:
+        - PATH

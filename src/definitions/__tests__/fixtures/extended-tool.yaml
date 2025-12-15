@@ -1,0 +1,19 @@
+name: extended-tool
+type: tool
+description: An extended tool that inherits from base-tool
+version: 1.1.0
+extends: base-tool
+tags:
+  - extended
+
+parameters:
+  extra:
+    type: string
+    description: Extra parameter added by child
+    required: false
+    default: default-value
+
+implementation:
+  type: bash
+  bash:
+    command: echo "Extended: ${input}, Extra: ${extra}"
