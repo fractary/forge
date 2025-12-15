@@ -15,8 +15,9 @@ This document provides a cross-project implementation roadmap for the Forge/FABE
 |---------|-----------|---------|---------------|
 | **forge** | `fractary/forge` | Distribution layer (registry, installation, export) | Active development |
 | **faber** | `fractary/faber` | Orchestration layer (workflow execution, LangGraph) | Exists, needs updates |
-| **plugins** | `fractary/plugins` | Plugin repository (converted from claude-plugins) | **To be created** |
-| **forge-registry** | `fractary/forge-registry` | Manifest-based registry (Phase 3B) | **To be created** |
+| **plugins** | `fractary/plugins` | Plugin repository with registry manifest (similar to claude-plugins) | **To be created** |
+
+**Note:** Following the Claude Code pattern, the registry manifest (`registry.json`) lives in the `fractary/plugins` repository alongside the plugin code, similar to how `.claude-plugin/marketplace.json` works in Claude Code.
 
 ### 1.2 Architecture Recap
 
@@ -41,12 +42,31 @@ This document provides a cross-project implementation roadmap for the Forge/FABE
                          ↓
 ┌─────────────────────────────────────────────────────────┐
 │  PLUGINS (fractary/plugins)                              │
+│  - registry.json (registry-level manifest)               │
 │  - FABER plugin (agents, tools, workflows, templates)    │
 │  - Work plugin (GitHub, Jira, Linear integration)        │
 │  - Repo plugin (Git operations, PRs, branches)           │
 │  - Spec plugin (specification management)                │
 │  - All in Fractary YAML format                           │
 └─────────────────────────────────────────────────────────┘
+```
+
+**Repository Structure (following Claude Code pattern):**
+```
+fractary/plugins/
+├── registry.json                    # Registry-level manifest
+├── faber-plugin/
+│   ├── plugin.json                  # Plugin-level manifest
+│   ├── agents/
+│   ├── tools/
+│   ├── workflows/
+│   └── ...
+├── work-plugin/
+│   ├── plugin.json
+│   └── ...
+└── repo-plugin/
+    ├── plugin.json
+    └── ...
 ```
 
 ## 2. Project-Specific Breakdown
@@ -98,8 +118,8 @@ This document provides a cross-project implementation roadmap for the Forge/FABE
 - [ ] Export tests for each format
 
 **Dependencies:**
-- Requires `fractary/forge-registry` to exist (can start with mock/fixture data)
-- Requires `fractary/plugins` for testing installation
+- Requires `fractary/plugins/registry.json` to exist (can start with mock/fixture data)
+- Requires at least one plugin in `fractary/plugins` for testing installation
 
 **Deliverables:**
 - Working `forge install` command
@@ -123,8 +143,9 @@ This document provides a cross-project implementation roadmap for the Forge/FABE
 - [ ] Create `fractary/plugins` repository on GitHub
 - [ ] Initialize with README.md explaining plugin structure
 - [ ] Add LICENSE (MIT)
+- [ ] Create `registry.json` (registry-level manifest) at repository root
 - [ ] Create `.github/workflows/` for CI/CD
-- [ ] Set up automated manifest validation
+- [ ] Set up automated manifest validation (registry.json and all plugin.json files)
 
 #### Phase 2: FABER Plugin Conversion (Week 1)
 **Source:** `fractary/claude-plugins/fractary-faber/`
@@ -151,6 +172,7 @@ This document provides a cross-project implementation roadmap for the Forge/FABE
 - [ ] Create templates (new):
   - [ ] `templates/work-spec-template.yaml`
 - [ ] Create `plugins/faber-plugin/README.md`
+- [ ] **Update `registry.json`** to reference faber-plugin with checksum and URL
 
 #### Phase 3: Work Plugin Conversion (Week 2)
 **Source:** `fractary/claude-plugins/fractary-work/`
@@ -159,6 +181,7 @@ This document provides a cross-project implementation roadmap for the Forge/FABE
 - [ ] Create `plugins/work-plugin/plugin.json` manifest
 - [ ] Convert all agents, tools, hooks, commands to Fractary YAML
 - [ ] Create README
+- [ ] **Update `registry.json`** to reference work-plugin with checksum and URL
 
 #### Phase 4: Repo Plugin Conversion (Week 2)
 **Source:** `fractary/claude-plugins/fractary-repo/`
@@ -167,6 +190,7 @@ This document provides a cross-project implementation roadmap for the Forge/FABE
 - [ ] Create `plugins/repo-plugin/plugin.json` manifest
 - [ ] Convert all agents, tools, hooks, commands to Fractary YAML
 - [ ] Create README
+- [ ] **Update `registry.json`** to reference repo-plugin with checksum and URL
 
 #### Phase 5: Spec Plugin Conversion (Week 3)
 **Source:** `fractary/claude-plugins/fractary-spec/`
@@ -175,6 +199,7 @@ This document provides a cross-project implementation roadmap for the Forge/FABE
 - [ ] Create `plugins/spec-plugin/plugin.json` manifest
 - [ ] Convert all agents, tools, hooks, commands to Fractary YAML
 - [ ] Create README
+- [ ] **Update `registry.json`** to reference spec-plugin with checksum and URL
 
 **Dependencies:**
 - Reference SPEC-FORGE-007 for conversion patterns
@@ -183,47 +208,11 @@ This document provides a cross-project implementation roadmap for the Forge/FABE
 **Deliverables:**
 - 4 fully converted plugins in Fractary YAML format
 - Each plugin with valid `plugin.json` manifest
+- `registry.json` at repository root with all 4 plugin references
 - All manifests pass validation (CI/CD)
+- All checksums and URLs valid
 
----
-
-### 2.3 PROJECT: fractary/forge-registry (New Repository)
-
-**Purpose:** Manifest-based registry for Phase 3B
-
-**Specs:**
-- SPEC-FORGE-005: Section 3.1 (Registry Manifest Schema)
-
-**Work Items:**
-
-#### Phase 1: Registry Setup (Day 1)
-- [ ] Create `fractary/forge-registry` repository on GitHub
-- [ ] Create `manifest.json` (registry manifest)
-- [ ] Add schema validation in CI/CD
-- [ ] Create README with registry documentation
-
-#### Phase 2: Plugin References (Week 1)
-- [ ] Add reference to `@fractary/faber-plugin`
-- [ ] Add reference to `@fractary/work-plugin`
-- [ ] Add reference to `@fractary/repo-plugin`
-- [ ] Add reference to `@fractary/spec-plugin`
-
-#### Phase 3: Checksums and URLs (Week 1)
-- [ ] Generate SHA-256 checksums for all plugin manifests
-- [ ] Set up raw.githubusercontent.com URLs for each plugin manifest
-- [ ] Validate all URLs are accessible
-- [ ] Update `manifest.json` with checksums and URLs
-
-**Dependencies:**
-- Requires `fractary/plugins` to exist with plugin.json files
-
-**Deliverables:**
-- Working `manifest.json` with 4 plugin references
-- All checksums valid
-- All URLs accessible
-- Passes schema validation
-
-**Example manifest.json:**
+**Example registry.json:**
 ```json
 {
   "$schema": "https://fractary.com/schemas/registry-manifest-v1.json",
@@ -236,12 +225,23 @@ This document provides a cross-project implementation roadmap for the Forge/FABE
       "name": "@fractary/faber-plugin",
       "version": "2.0.0",
       "description": "FABER workflow methodology",
-      "manifest_url": "https://raw.githubusercontent.com/fractary/plugins/main/plugins/faber-plugin/plugin.json",
-      "homepage": "https://github.com/fractary/plugins/tree/main/plugins/faber-plugin",
+      "manifest_url": "https://raw.githubusercontent.com/fractary/plugins/main/faber-plugin/plugin.json",
+      "homepage": "https://github.com/fractary/plugins/tree/main/faber-plugin",
       "repository": "https://github.com/fractary/plugins",
       "license": "MIT",
       "tags": ["faber", "workflow", "official"],
       "checksum": "sha256:abc123..."
+    },
+    {
+      "name": "@fractary/work-plugin",
+      "version": "2.0.0",
+      "description": "Work tracking integration",
+      "manifest_url": "https://raw.githubusercontent.com/fractary/plugins/main/work-plugin/plugin.json",
+      "homepage": "https://github.com/fractary/plugins/tree/main/work-plugin",
+      "repository": "https://github.com/fractary/plugins",
+      "license": "MIT",
+      "tags": ["work", "tracking", "official"],
+      "checksum": "sha256:def456..."
     }
   ]
 }
@@ -249,7 +249,7 @@ This document provides a cross-project implementation roadmap for the Forge/FABE
 
 ---
 
-### 2.4 PROJECT: fractary/faber (Existing Repository)
+### 2.3 PROJECT: fractary/faber (Existing Repository)
 
 **Purpose:** Orchestration layer - read Fractary YAML, execute workflows
 
@@ -296,18 +296,18 @@ This document provides a cross-project implementation roadmap for the Forge/FABE
 ```
 PHASE 1: Foundation (Week 1)
 ├─→ [forge] Start registry infrastructure (schemas, resolvers)
-├─→ [plugins] Create repository and start FABER plugin conversion
-└─→ [forge-registry] Create repository (can start with placeholder)
+├─→ [plugins] Create repository with registry.json and start FABER plugin conversion
+└─→ [plugins] Create initial registry.json structure
 
 PHASE 2: Core Distribution (Week 1-2)
 ├─→ [plugins] Complete FABER plugin conversion (agents, tools, workflows)
-├─→ [forge-registry] Add FABER plugin reference with checksums
+├─→ [plugins] Update registry.json with FABER plugin reference and checksums
 ├─→ [forge] Complete registry CLI commands (add, list, install)
 └─→ [forge] Test install from registry
 
 PHASE 3: Expand Plugins (Week 2)
 ├─→ [plugins] Convert Work, Repo, Spec plugins
-├─→ [forge-registry] Add all plugin references
+├─→ [plugins] Update registry.json with all plugin references
 └─→ [forge] Complete export functionality
 
 PHASE 4: Orchestration (Week 2-3)
@@ -324,16 +324,15 @@ PHASE 5: End-to-End (Week 3)
 ### 3.2 Critical Path
 
 **Day 1-2:**
-1. Create `fractary/plugins` repository
-2. Create `fractary/forge-registry` repository
-3. Start FABER plugin conversion (at least 1 agent + 1 tool)
-4. Implement basic registry schemas in `forge`
+1. Create `fractary/plugins` repository with initial `registry.json`
+2. Start FABER plugin conversion (at least 1 agent + 1 tool)
+3. Implement basic registry schemas in `forge`
 
 **Week 1:**
 1. Complete FABER plugin conversion
 2. Complete registry infrastructure in `forge`
 3. Implement `forge install` command
-4. Create `forge-registry/manifest.json` with FABER plugin
+4. Update `plugins/registry.json` with FABER plugin reference and checksums
 
 **Week 2:**
 1. Convert Work, Repo, Spec plugins
@@ -393,7 +392,7 @@ These can be done in parallel by different team members:
 **Test 1: Install and Execute**
 ```bash
 # From forge project
-forge registry add fractary-core --url https://raw.githubusercontent.com/fractary/forge-registry/main/manifest.json
+forge registry add fractary-core --url https://raw.githubusercontent.com/fractary/plugins/main/registry.json
 forge install @fractary/faber-plugin
 forge faber run 123
 # Should execute Frame → Release workflow
@@ -431,14 +430,10 @@ forge uninstall @fractary/faber-plugin
   - [ ] repo-plugin (all components)
   - [ ] spec-plugin (all components)
 - [ ] Each plugin with valid `plugin.json` manifest
-- [ ] CI/CD with automated validation
-- [ ] README documentation for each plugin
-
-### forge-registry (fractary/forge-registry)
-- [ ] `manifest.json` with 4 plugin references
+- [ ] `registry.json` at repository root with 4 plugin references
 - [ ] All checksums and URLs valid
-- [ ] CI/CD with schema validation
-- [ ] Documentation for adding new plugins
+- [ ] CI/CD with automated validation (registry.json and all plugin.json files)
+- [ ] README documentation for repository and each plugin
 
 ### faber (fractary/faber)
 - [ ] Fractary YAML parser (agents, tools, workflows, templates)
@@ -515,14 +510,14 @@ forge uninstall @fractary/faber-plugin
 ## 9. Next Steps
 
 ### Immediate (This Week)
-1. **Create new repositories**: `fractary/plugins` and `fractary/forge-registry`
+1. **Create new repository**: `fractary/plugins` with initial `registry.json`
 2. **Start FABER plugin conversion**: Convert at least frame-agent and fetch_issue tool
 3. **Implement registry schemas**: Complete schemas in `fractary/forge`
 
 ### Week 2
 1. **Complete FABER plugin**: All agents, tools, workflows, templates
 2. **Implement CLI commands**: `forge registry`, `forge install`
-3. **Create registry manifest**: Add FABER plugin to forge-registry
+3. **Update registry manifest**: Add FABER plugin reference to `plugins/registry.json`
 
 ### Week 3
 1. **Convert remaining plugins**: Work, Repo, Spec

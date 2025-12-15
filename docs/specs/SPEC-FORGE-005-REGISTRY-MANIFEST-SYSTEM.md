@@ -180,7 +180,9 @@ Global user:
 
 ### 3.1 Registry Manifest Schema
 
-**File:** `manifest.json` (registry-level)
+**File:** `registry.json` (registry-level)
+
+**Location:** The registry manifest lives in the same repository as the plugin code (e.g., `fractary/plugins/registry.json`), following the Claude Code pattern where `.claude-plugin/marketplace.json` lives with plugin code.
 
 The registry manifest lists available plugins with pointers to their individual manifests.
 
@@ -494,7 +496,7 @@ export type PluginManifest = z.infer<typeof PluginManifestSchema>;
     {
       "name": "fractary-core",
       "type": "manifest",
-      "url": "https://raw.githubusercontent.com/fractary/forge-registry/main/manifest.json",
+      "url": "https://raw.githubusercontent.com/fractary/plugins/main/registry.json",
       "enabled": true,
       "priority": 1,
       "cache_ttl": 3600
@@ -562,10 +564,10 @@ export const ForgeConfigSchema = z.object({
 Add a new registry to configuration.
 
 ```bash
-# Add manifest-based registry
+# Add manifest-based registry (registry manifest lives in plugins repo)
 forge registry add fractary-core \
   --type manifest \
-  --url https://raw.githubusercontent.com/fractary/forge-registry/main/manifest.json \
+  --url https://raw.githubusercontent.com/fractary/plugins/main/registry.json \
   --priority 1
 
 # Add Stockyard API registry (future)
