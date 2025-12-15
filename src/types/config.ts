@@ -96,6 +96,43 @@ export interface ForgeConfig {
     cache?: string;
     templates?: string;
   };
+
+  // Definition system configuration
+  definitions?: {
+    registry?: {
+      local?: {
+        enabled: boolean;
+        paths: string[];
+      };
+      global?: {
+        enabled: boolean;
+        path: string;
+      };
+      stockyard?: {
+        enabled: boolean;
+        url?: string;
+        apiKey?: string;
+      };
+    };
+    caching?: {
+      enabled: boolean;
+      defaultTtl: number; // Default TTL in seconds
+      sourceTtls?: {
+        // Per-source TTL overrides
+        file?: number;
+        glob?: number;
+        codex?: number;
+        inline?: number;
+      };
+    };
+    validation?: {
+      strict: boolean;
+      warnOnMissingTools: boolean;
+    };
+    execution?: {
+      defaultTimeout: number; // Default tool execution timeout in ms
+    };
+  };
 }
 
 /**
