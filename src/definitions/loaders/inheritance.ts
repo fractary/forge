@@ -119,13 +119,13 @@ export class InheritanceResolver {
       ...base,
       ...child,
       // Merge tools arrays (child additions + base tools)
-      tools: [...new Set([...(base.tools || []), ...(child.tools || [])])],
+      tools: Array.from(new Set([...(base.tools || []), ...(child.tools || [])])),
       // Merge custom_tools (child can override by name)
       custom_tools: this.mergeCustomTools(base.custom_tools, child.custom_tools),
       // Merge config objects deeply
       config: { ...(base.config || {}), ...(child.config || {}) },
       // Merge tags
-      tags: [...new Set([...(base.tags || []), ...(child.tags || [])])],
+      tags: Array.from(new Set([...(base.tags || []), ...(child.tags || [])])),
       // Child's extends is removed after resolution
       extends: undefined,
     };
@@ -144,11 +144,11 @@ export class InheritanceResolver {
       // Merge parameters (child can override)
       parameters: { ...(base.parameters || {}), ...(child.parameters || {}) },
       // Merge depends_on arrays
-      depends_on: [
-        ...new Set([...(base.depends_on || []), ...(child.depends_on || [])]),
-      ],
+      depends_on: Array.from(
+        new Set([...(base.depends_on || []), ...(child.depends_on || [])])
+      ),
       // Merge tags
-      tags: [...new Set([...(base.tags || []), ...(child.tags || [])])],
+      tags: Array.from(new Set([...(base.tags || []), ...(child.tags || [])])),
       // Child's extends is removed after resolution
       extends: undefined,
     };
