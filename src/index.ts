@@ -103,5 +103,34 @@ export type {
   HealthCheckResult,
   ResolvedAgent,
   ResolvedTool,
-  RegistryConfig,
+  RegistryConfig as DefinitionRegistryConfig, // Renamed to avoid conflict
 } from './definitions';
+
+// ============================================================================
+// Registry Module - Plugin installation and manifest-based registries
+// ============================================================================
+
+/**
+ * Registry module for plugin installation and management
+ *
+ * This module provides the core infrastructure for:
+ * - Installing plugins from manifest-based registries
+ * - Resolving components (agents, tools, workflows, templates)
+ * - Managing registry configurations
+ * - Caching registry manifests
+ *
+ * Used by the fractary/cli project to implement `fractary forge` commands.
+ */
+export * as Registry from './registry/index.js';
+
+// Also export commonly used registry types at the top level for convenience
+export type {
+  RegistryManifest,
+  PluginManifest,
+  RegistryConfig,
+  ForgeConfig as RegistryForgeConfig,
+  InstallOptions,
+  InstallResult,
+  ResolvedComponent,
+  ComponentType,
+} from './registry/index.js';
