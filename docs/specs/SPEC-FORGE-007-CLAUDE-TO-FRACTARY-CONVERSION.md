@@ -33,6 +33,37 @@ This specification provides a comprehensive guide for converting Claude Code plu
 - Hooks: JavaScript files in `hooks/`
 - Plugin Manifest: `plugin.json`
 
+### 1.3 Architecture Context
+
+**Important**: This conversion produces **Fractary YAML** as the canonical distribution format. Understanding the architecture helps clarify conversion goals:
+
+**Fractary YAML = Canonical Format for Distribution**
+- Conversions produce Fractary YAML stored in Forge registries
+- FABER reads Fractary YAML directly for workflow orchestration
+- Fractary YAML is framework-independent
+
+**Export is Optional (Not Part of Conversion)**
+- This spec converts Claude → Fractary YAML (required for distribution)
+- Users can optionally export Fractary YAML → other frameworks (LangChain, n8n, etc.)
+- Export is handled by `forge export` command (see SPEC-FORGE-005 section 5.3)
+- LangChain is internal to FABER execution (not exposed to users)
+
+**Conversion Flow:**
+```
+Claude Code Plugin (TypeScript/Markdown)
+  ↓
+  [This Conversion Spec]
+  ↓
+Fractary YAML (Canonical format for Forge registry)
+  ↓
+  [FABER reads directly OR user runs forge export]
+  ↓
+  ├─→ FABER Execution (LangGraph internal)
+  ├─→ LangChain Python (via forge export langchain)
+  ├─→ Claude Code (via forge export claude)
+  └─→ n8n Workflow (via forge export n8n)
+```
+
 ## 2. Directory Structure Conversion
 
 ### 2.1 Claude Code Plugin Structure

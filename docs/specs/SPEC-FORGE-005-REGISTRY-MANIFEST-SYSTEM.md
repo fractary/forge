@@ -1,9 +1,11 @@
 # SPEC-FORGE-005: Registry Manifest System
 
+**Version:** 1.2.0
 **Status:** Draft
 **Created:** 2025-12-15
+**Updated:** 2025-12-15
 **Author:** Fractary Team
-**Related Work:** WORK-00006 (Phase 3B), SPEC-FORGE-003 (Stockyard Integration)
+**Related Work:** WORK-00006 (Phase 3B), SPEC-FORGE-003 (Stockyard Integration), SPEC-FORGE-007 (Claude to Fractary Conversion)
 
 ## 1. Overview
 
@@ -32,6 +34,66 @@ This specification defines a **manifest-based registry system** for distributing
 - Agent/tool YAML file format (see SPEC-FORGE-005)
 - Authentication/authorization (deferred to Stockyard phase)
 - Package signing/verification (future enhancement)
+
+### 1.3 Forge Ecosystem Architecture
+
+**Important Clarification**: This spec defines the **distribution layer** (Forge), not the execution layer. Here's how the pieces fit together:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  FORGE Distribution Layer (This Spec)                    │
+│  - Registry stores Fractary YAML (canonical format)      │
+│  - Plugin installation via forge install                 │
+│  - Export to any framework (Claude, LangChain, n8n, etc.)│
+│  - Framework-agnostic                                    │
+└─────────────────────────────────────────────────────────┘
+                         ↓
+                 Fractary YAML Format
+                 (Internal Canonical)
+                         ↓
+┌─────────────────────────────────────────────────────────┐
+│  FABER Orchestration Layer                               │
+│  - Reads Fractary YAML directly                          │
+│  - Orchestrates multi-agent workflows                    │
+│  - Uses LangGraph internally (hidden from users)         │
+│  - Framework-agnostic (can swap orchestration engine)    │
+└─────────────────────────────────────────────────────────┘
+                         ↓
+┌─────────────────────────────────────────────────────────┐
+│  LangGraph/LangChain (Implementation Detail)             │
+│  - Internal execution engine for FABER                   │
+│  - Not exposed to users                                  │
+│  - Could be swapped for better framework in future       │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Key Points:**
+
+1. **Fractary YAML is canonical** for distribution and storage
+   - Registry stores agents/tools in Fractary YAML format
+   - Users work with Fractary YAML in `.fractary/` directories
+   - Framework-independent format
+
+2. **LangChain is NOT required for most use cases**
+   - LangChain is an internal implementation detail of FABER
+   - Users don't interact with LangChain code directly
+   - Could be swapped for better orchestration framework in future
+
+3. **Export enables framework interoperability**
+   - Users can export Fractary YAML to LangChain format for LangChain projects
+   - Users can export Fractary YAML to Claude format for Claude Code projects
+   - Users can export Fractary YAML to n8n format for n8n automation
+   - Export is **optional**, not required for execution
+
+4. **Forge = Distribution layer only**
+   - Handles registry, installation, versioning, interoperability
+   - Does NOT handle agent execution
+   - FABER handles orchestration and execution (using LangGraph internally)
+
+**For end users:**
+- Install agents: `forge install @fractary/faber-agents` → Fractary YAML
+- Run workflows: `forge faber run 123` → FABER orchestrates (LangChain hidden)
+- (Optional) Export: `forge export langchain @fractary/faber-agents` → LangChain Python code
 
 ## 2. Architecture
 
@@ -62,11 +124,13 @@ This specification defines a **manifest-based registry system** for distributing
 Registry Manifest
 └── References Plugins
     └── Plugin Manifest (separate file per plugin)
-        ├── Agents (YAML definitions)
-        ├── Tools (YAML definitions)
-        ├── Hooks
-        ├── Commands
-        └── Configuration
+        ├── Agents (Fractary YAML definitions)
+        ├── Tools (Fractary YAML definitions)
+        ├── Workflows (Fractary YAML definitions)
+        ├── Templates (Fractary YAML definitions)
+        ├── Hooks (Scripts)
+        ├── Commands (Markdown prompts)
+        └── Configuration (JSON)
 ```
 
 **Key Benefits:**
@@ -85,23 +149,29 @@ Project-local:
 │   ├── @fractary/
 │   │   ├── faber-plugin/
 │   │   │   ├── plugin.json
-│   │   │   ├── agents/
-│   │   │   ├── tools/
-│   │   │   ├── hooks/
-│   │   │   └── commands/
+│   │   │   ├── agents/       # Fractary YAML
+│   │   │   ├── tools/        # Fractary YAML
+│   │   │   ├── workflows/    # Fractary YAML
+│   │   │   ├── templates/    # Fractary YAML
+│   │   │   ├── hooks/        # Scripts
+│   │   │   └── commands/     # Markdown prompts
 │   │   └── work-plugin/
 │   └── @acme/
 │       └── custom-plugin/
-├── agents/           # Standalone user-created agents
-├── tools/            # Standalone user-created tools
+├── agents/           # Standalone user-created agents (Fractary YAML)
+├── tools/            # Standalone user-created tools (Fractary YAML)
+├── workflows/        # Standalone user-created workflows (Fractary YAML)
+├── templates/        # Standalone user-created templates (Fractary YAML)
 └── config.json       # Registry configuration
 
 Global user:
 ~/.fractary/
 ├── registry/
 │   ├── plugins/      # Globally installed plugins
-│   ├── agents/       # Globally installed standalone agents
-│   ├── tools/        # Globally installed standalone tools
+│   ├── agents/       # Globally installed standalone agents (Fractary YAML)
+│   ├── tools/        # Globally installed standalone tools (Fractary YAML)
+│   ├── workflows/    # Globally installed standalone workflows (Fractary YAML)
+│   ├── templates/    # Globally installed standalone templates (Fractary YAML)
 │   └── cache/        # Downloaded manifests
 └── config.json       # Global registry configuration
 ```
@@ -248,6 +318,29 @@ Each plugin has its own manifest containing detailed definitions.
     }
   ],
 
+  "workflows": [
+    {
+      "name": "faber-full-cycle",
+      "version": "2.0.0",
+      "description": "Complete FABER workflow from Frame to Release",
+      "source": "https://raw.githubusercontent.com/fractary/faber-plugin/main/workflows/faber-full-cycle@2.0.0.yaml",
+      "checksum": "sha256:yza567...",
+      "size": 8192,
+      "dependencies": ["frame-agent", "architect-agent", "build-agent"]
+    }
+  ],
+
+  "templates": [
+    {
+      "name": "work-spec-template",
+      "version": "2.0.0",
+      "description": "Standard WORK specification template",
+      "source": "https://raw.githubusercontent.com/fractary/faber-plugin/main/templates/work-spec@2.0.0.yaml",
+      "checksum": "sha256:bcd890...",
+      "size": 4096
+    }
+  ],
+
   "config": {
     "default_llm": {
       "provider": "anthropic",
@@ -342,6 +435,25 @@ export const PluginConfigSchema = z.object({
   }).optional(),
 }).optional();
 
+export const PluginWorkflowSchema = z.object({
+  name: z.string(),
+  version: z.string().regex(/^\d+\.\d+\.\d+$/),
+  description: z.string(),
+  source: z.string().url(),
+  checksum: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+  size: z.number().min(1),
+  dependencies: z.array(z.string()).optional(),
+});
+
+export const PluginTemplateSchema = z.object({
+  name: z.string(),
+  version: z.string().regex(/^\d+\.\d+\.\d+$/),
+  description: z.string(),
+  source: z.string().url(),
+  checksum: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+  size: z.number().min(1),
+});
+
 export const PluginManifestSchema = z.object({
   $schema: z.string().url().optional(),
   name: z.string().regex(/^@[a-z0-9-]+\/[a-z0-9-]+$/),
@@ -354,6 +466,8 @@ export const PluginManifestSchema = z.object({
   tags: z.array(z.string()),
   agents: z.array(PluginItemSchema).optional(),
   tools: z.array(PluginItemSchema).optional(),
+  workflows: z.array(PluginWorkflowSchema).optional(),
+  templates: z.array(PluginTemplateSchema).optional(),
   hooks: z.array(PluginHookSchema).optional(),
   commands: z.array(PluginCommandSchema).optional(),
   config: PluginConfigSchema,
@@ -362,6 +476,8 @@ export const PluginManifestSchema = z.object({
 export type PluginItem = z.infer<typeof PluginItemSchema>;
 export type PluginHook = z.infer<typeof PluginHookSchema>;
 export type PluginCommand = z.infer<typeof PluginCommandSchema>;
+export type PluginWorkflow = z.infer<typeof PluginWorkflowSchema>;
+export type PluginTemplate = z.infer<typeof PluginTemplateSchema>;
 export type PluginConfig = z.infer<typeof PluginConfigSchema>;
 export type PluginManifest = z.infer<typeof PluginManifestSchema>;
 ```
@@ -567,15 +683,21 @@ Installing @fractary/faber-plugin@2.0.0...
   ✓ Downloaded plugin manifest (plugin.json)
   ✓ Verified manifest checksum: sha256:abc123...
 
-Installing agents...
+Installing agents (Fractary YAML format)...
   ✓ frame-agent@2.0.0 (4.0 KB)
   ✓ architect-agent@2.0.0 (5.0 KB)
   ✓ build-agent@2.0.0 (6.0 KB)
 
-Installing tools...
+Installing tools (Fractary YAML format)...
   ✓ fetch_issue@2.0.0 (2.0 KB)
   ✓ classify_work_type@2.0.0 (1.5 KB)
   ✓ create_specification@2.0.0 (3.0 KB)
+
+Installing workflows (Fractary YAML format)...
+  ✓ faber-full-cycle@2.0.0 (8.0 KB)
+
+Installing templates (Fractary YAML format)...
+  ✓ work-spec-template@2.0.0 (4.0 KB)
 
 Installing hooks...
   ✓ faber-commit@2.0.0 (3.0 KB)
@@ -583,34 +705,41 @@ Installing hooks...
 Installing commands...
   ✓ faber-run@2.0.0 (2.5 KB)
 
-Successfully installed @fractary/faber-plugin@2.0.0
-  3 agents, 3 tools, 1 hook, 1 command
+Successfully installed @fractary/faber-plugin@2.0.0 (Fractary YAML format)
+  3 agents, 3 tools, 1 workflow, 1 template, 1 hook, 1 command
   Installed to: ~/.fractary/registry/plugins/@fractary/faber-plugin/
+
+  Run with FABER: forge faber run <issue-number>
+  Export to other formats: forge export <langchain|claude|n8n> @fractary/faber-plugin
 ```
 
 #### `forge list`
 
-List installed plugins, agents, tools, hooks, and commands.
+List installed plugins, agents, tools, workflows, templates, hooks, and commands.
 
 ```bash
 forge list
 
 # Output:
-# TYPE    NAME                       VERSION  LOCATION
-# plugin  @fractary/faber-plugin     2.0.0    ~/.fractary/registry/plugins/
-# plugin  @fractary/work-plugin      2.0.0    ~/.fractary/registry/plugins/
-# agent   frame-agent                2.0.0    ~/.fractary/registry/plugins/@fractary/faber-plugin/agents/
-# agent   architect-agent            2.0.0    ~/.fractary/registry/plugins/@fractary/faber-plugin/agents/
-# tool    fetch_issue                2.0.0    ~/.fractary/registry/plugins/@fractary/faber-plugin/tools/
-# hook    faber-commit               2.0.0    ~/.fractary/registry/plugins/@fractary/faber-plugin/hooks/
+# TYPE      NAME                       VERSION  LOCATION
+# plugin    @fractary/faber-plugin     2.0.0    ~/.fractary/registry/plugins/
+# plugin    @fractary/work-plugin      2.0.0    ~/.fractary/registry/plugins/
+# agent     frame-agent                2.0.0    ~/.fractary/registry/plugins/@fractary/faber-plugin/agents/
+# agent     architect-agent            2.0.0    ~/.fractary/registry/plugins/@fractary/faber-plugin/agents/
+# tool      fetch_issue                2.0.0    ~/.fractary/registry/plugins/@fractary/faber-plugin/tools/
+# workflow  faber-full-cycle           2.0.0    ~/.fractary/registry/plugins/@fractary/faber-plugin/workflows/
+# template  work-spec-template         2.0.0    ~/.fractary/registry/plugins/@fractary/faber-plugin/templates/
+# hook      faber-commit               2.0.0    ~/.fractary/registry/plugins/@fractary/faber-plugin/hooks/
+# command   faber-run                  2.0.0    ~/.fractary/registry/plugins/@fractary/faber-plugin/commands/
 ```
 
 **Options:**
-- `--type <plugin|agent|tool|hook|command>`: Filter by type
+- `--type <plugin|agent|tool|workflow|template|hook|command>`: Filter by type
 - `--global`: Show global installations only
 - `--local`: Show local installations only
 - `--all`: Show both global and local [default]
 - `--plugin <name>`: Show only items from specific plugin
+- `--format <fractary|all>`: Show format (default: all)
 
 #### `forge uninstall`
 
@@ -645,6 +774,59 @@ forge search faber
 - `--type <plugin|agent|tool>`: Filter by type
 - `--registry <name>`: Search specific registry only
 - `--tag <tag>`: Filter by tag
+
+### 5.3 Framework Export (Optional Interoperability)
+
+**Important**: Export is **optional** for framework interoperability. FABER reads Fractary YAML directly - you only need export if working with other frameworks.
+
+#### `forge export`
+
+Export Fractary YAML to other framework formats.
+
+```bash
+# Export to LangChain Python format (for LangChain projects)
+forge export langchain @fractary/faber-plugin --output ./langchain/
+
+# Export to Claude Code format (for Claude Code projects)
+forge export claude @fractary/faber-plugin --output ./.claude/
+
+# Export to n8n workflow format
+forge export n8n @fractary/faber-plugin --output ./n8n-workflows/
+
+# Export specific agent
+forge export langchain @fractary/faber-plugin/frame-agent
+```
+
+**Supported Formats:**
+- `langchain`: LangChain Python code
+- `claude`: Claude Code TypeScript/Markdown
+- `n8n`: n8n workflow JSON
+- `crewai`: Crew AI Python code (future)
+
+**Options:**
+- `--output <path>`: Output directory for exported files
+- `--format <format>`: Explicitly specify export format
+- `--overwrite`: Overwrite existing files
+
+**Output Example (LangChain):**
+```
+Exporting @fractary/faber-plugin to LangChain format...
+  ✓ Converted frame-agent → frame_agent.py
+  ✓ Converted architect-agent → architect_agent.py
+  ✓ Converted build-agent → build_agent.py
+  ✓ Converted fetch_issue tool → fetch_issue_tool.py
+  ✓ Generated requirements.txt
+
+Successfully exported to: ./langchain/
+  3 agents, 3 tools
+  Files: 7 Python files, 1 requirements.txt
+```
+
+**When to use export:**
+- Working with LangChain projects → export to LangChain
+- Sharing with Claude Code users → export to Claude format
+- Integrating with n8n automation → export to n8n workflows
+- **NOT needed** for FABER workflows (FABER reads Fractary YAML natively)
 
 ## 6. Resolution Algorithm
 
@@ -841,6 +1023,7 @@ async function fetchManifest(
 7. `src/cli/commands/uninstall.ts`
 8. `src/cli/commands/list.ts`
 9. `src/cli/commands/search.ts`
+10. `src/cli/commands/export.ts` (Framework export for interoperability)
 
 ### 8.3 Phase 3: Resolution & Installation (Week 2)
 
@@ -1066,3 +1249,4 @@ Database Schema Generator
 |------|---------|---------|
 | 2025-12-15 | 1.0.0 | Initial specification created |
 | 2025-12-15 | 1.1.0 | **Major update**: Added two-level plugin architecture inspired by Claude Code marketplace. Registries now reference plugins (not individual agents). Each plugin has its own manifest with agents/tools/hooks/commands. Updated all CLI commands, schemas, and examples. Added Stockyard translation service vision (section 9.4). Fixed Stockyard URL to stockyard.fractary.com |
+| 2025-12-15 | 1.2.0 | **Architecture clarification**: Added section 1.3 defining Forge ecosystem layers (Distribution → Orchestration → Execution). Clarified Fractary YAML as canonical format for distribution. Expanded plugin scope to include workflows and templates. Added `forge export` command for optional framework interoperability (LangChain, Claude, n8n). Updated all schemas, directory structures, and CLI outputs to reflect workflows/templates. Emphasized that FABER reads Fractary YAML directly and LangChain is internal implementation detail. |
