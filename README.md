@@ -17,8 +17,10 @@
 - [Quick Start](#quick-start)
   - [Definition System](#definition-system-quick-start)
   - [Registry System](#registry-system-quick-start)
+  - [Exporters](#exporters-quick-start)
 - [Core Concepts](#core-concepts)
 - [Registry Module](#registry-module)
+- [Exporters Module](#exporters-module)
 - [Documentation](#documentation)
 - [Architecture](#architecture)
 - [Use Cases](#use-cases)
@@ -46,6 +48,13 @@
 - **Multi-Component Support**: Agents, tools, workflows, templates, hooks, commands
 - **Scope Management**: Global and local installation with proper isolation
 - **Configuration System**: Project and global configuration with priority merging
+
+### Exporters (Framework Integration)
+- **LangChain Export**: Convert to Python code with LangChain/LangGraph
+- **Claude Code Export**: Convert to markdown for .claude/ directory
+- **n8n Export**: Convert to n8n workflow JSON
+- **Flexible Options**: Format-specific export configuration
+- **Batch Export**: Export entire plugins or individual components
 
 ### Developer Experience
 - **TypeScript-First**: Full TypeScript support with comprehensive type definitions
@@ -247,6 +256,74 @@ await Registry.manifestCache.cleanup();
 ```
 
 For complete SDK documentation, see [src/registry/README.md](./src/registry/README.md).
+
+### Exporters Quick Start
+
+The Exporters module converts Fractary YAML to various framework-specific formats.
+
+#### 1. Export to LangChain (Python)
+
+```typescript
+import { Exporters } from '@fractary/forge';
+
+// Export agents/tools to Python LangChain code
+const result = await Exporters.exporter.export(
+  {
+    agents: [myAgent],
+    tools: [myTool],
+  },
+  {
+    format: 'langchain',
+    outputDir: './langchain-export',
+    formatOptions: {
+      pythonVersion: '3.11',
+      includeTypeHints: true,
+      useAsync: true,
+    },
+  }
+);
+
+console.log(`Exported ${result.summary.totalFiles} files`);
+```
+
+#### 2. Export to Claude Code
+
+```typescript
+import { Exporters } from '@fractary/forge';
+
+// Export to .claude/ directory structure
+const result = await Exporters.exporter.export(
+  { agents: [myAgent], tools: [myTool] },
+  {
+    format: 'claude',
+    outputDir: './claude-export',
+    formatOptions: {
+      includeDirectoryStructure: true,
+      asMCPTools: true,
+    },
+  }
+);
+```
+
+#### 3. Export to n8n Workflows
+
+```typescript
+import { Exporters } from '@fractary/forge';
+
+// Export as n8n workflow JSON
+const result = await Exporters.exporter.export(
+  { agents: [myAgent] },
+  {
+    format: 'n8n',
+    outputDir: './n8n-export',
+    formatOptions: {
+      workflowName: 'My Agent Workflow',
+    },
+  }
+);
+```
+
+For complete SDK documentation, see [src/exporters/README.md](./src/exporters/README.md).
 
 ---
 
@@ -501,6 +578,121 @@ const component = await Registry.resolver.resolve('faber-agent', 'agent', {
   remoteOnly: false, // Check local/global first
 });
 ```
+
+---
+
+## 🔄 Exporters Module
+
+The Exporters module (`src/exporters/`) converts Fractary YAML definitions to framework-specific formats, enabling seamless integration with popular AI frameworks and workflow automation tools.
+
+### Supported Formats
+
+| Format | Output | Use Case |
+|--------|--------|----------|
+| **LangChain** | Python code with LangChain/LangGraph | Deploy agents in Python LangChain applications |
+| **Claude Code** | Markdown files for `.claude/` directory | Use agents in Claude Code projects |
+| **n8n** | JSON workflow definitions | Import as n8n automation workflows |
+
+### Key Features
+
+- **Multi-Format Support**: Export to LangChain, Claude Code, or n8n with a single API
+- **Format-Specific Options**: Customize output for each framework
+- **Batch Export**: Export entire plugins or individual components
+- **Auto-Generation**: Automatically generates supporting files (requirements.txt, README.md, etc.)
+- **Type Safety**: Full TypeScript support with format-specific option types
+
+### Quick Example
+
+```typescript
+import { Exporters } from '@fractary/forge';
+import type { AgentDefinition } from '@fractary/forge';
+
+const agent: AgentDefinition = {
+  name: 'my-agent',
+  type: 'agent',
+  description: 'A helpful AI assistant',
+  llm: {
+    provider: 'anthropic',
+    model: 'claude-3-5-sonnet-20241022',
+    temperature: 0.7,
+    max_tokens: 4096,
+  },
+  system_prompt: 'You are a helpful assistant.',
+  tools: ['web-search', 'file-reader'],
+  version: '1.0.0',
+  tags: ['assistant'],
+};
+
+// Export to all formats
+for (const format of ['langchain', 'claude', 'n8n'] as const) {
+  const result = await Exporters.exporter.export(
+    { agents: [agent] },
+    { format, outputDir: `./output/${format}` }
+  );
+
+  console.log(`${format}: ${result.summary.totalFiles} files`);
+}
+```
+
+### Output Examples
+
+**LangChain Export:**
+```
+langchain-export/
+├── agents/
+│   └── my-agent.py          # Python LangChain agent class
+├── tools/
+│   ├── web-search.py        # LangChain tool implementations
+│   └── file-reader.py
+├── requirements.txt         # Python dependencies
+└── README.md                # Usage instructions
+```
+
+**Claude Code Export:**
+```
+claude-export/
+├── .claude/
+│   ├── agents/
+│   │   └── my-agent.md      # Agent documentation
+│   ├── tools/
+│   │   └── web-search.md
+│   └── mcp/
+│       └── tools/
+│           └── web-search.json  # MCP tool definition
+└── README.md
+```
+
+**n8n Export:**
+```
+n8n-export/
+├── workflows/
+│   └── my-agent.json        # n8n workflow with webhook trigger
+├── nodes/
+│   └── web-search.json      # Custom node templates
+└── README.md
+```
+
+### CLI Integration
+
+The Exporters module is designed for consumption by the `fractary/cli` project:
+
+```bash
+# Export to LangChain
+fractary forge export langchain @fractary/faber-plugin --output ./langchain
+
+# Export to Claude Code
+fractary forge export claude @fractary/faber-plugin --output ./claude
+
+# Export to n8n
+fractary forge export n8n @fractary/faber-plugin --output ./n8n
+```
+
+### Documentation
+
+- **[Exporters SDK Documentation](./src/exporters/README.md)** - Complete usage guide
+- **[LangChain Documentation](https://python.langchain.com/)** - LangChain framework
+- **[Claude Code Documentation](https://docs.anthropic.com/claude-code)** - Claude Code format
+- **[n8n Documentation](https://docs.n8n.io/)** - n8n workflow automation
 
 ---
 
