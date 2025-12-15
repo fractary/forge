@@ -4,6 +4,7 @@
 |-------|-------|
 | **Status** | Draft |
 | **Created** | 2025-12-14 |
+| **Updated** | 2025-12-14 |
 | **Author** | Claude (with human direction) |
 | **Project** | `@fractary/forge` |
 | **Related** | SPEC-FORGE-001, SPEC-FABER-002, SPEC-MIGRATION-001 |
@@ -34,6 +35,7 @@ This document covers:
 5. **Update Safe** - Notify about updates, opt-in to upgrade
 6. **Offline Capable** - Works without network after initial download
 7. **Dependency Tracking** - Resolve transitive dependencies automatically
+8. **Fail Fast** - Clear errors with actionable messages, no silent fallbacks
 
 ## 2. Registry Architecture
 
@@ -129,7 +131,7 @@ export class AgentResolver {
       return {
         definition: local,
         source: 'local',
-        version: local.version,
+        version: local.version,  // Read from YAML content
       };
     }
 
@@ -175,7 +177,14 @@ export class AgentResolver {
     );
 
     if (await fs.pathExists(localPath)) {
-      return await this.loadYaml(localPath);
+      const definition = await this.loadYaml(localPath);
+      // Version is read from the YAML 'version' field
+      if (!definition.version) {
+        throw new ValidationError(
+          `Local agent '${name}' missing required 'version' field in ${localPath}`
+        );
+      }
+      return definition;
     }
 
     return null;
@@ -243,6 +252,22 @@ export class AgentResolver {
 "frame-agent@>=2.0.0"      // Greater than or equal
 "frame-agent@>=2.0.0 <3.0.0"  // Range
 ```
+
+### 3.3 Local Agent Versioning
+
+Local agents MUST declare their version in the YAML definition file:
+
+```yaml
+# .fractary/agents/my-custom-agent.yaml
+name: my-custom-agent
+version: 1.2.0  # REQUIRED for local agents
+description: Custom agent for project-specific workflow
+# ... rest of definition
+```
+
+**Rationale**: Reading version from YAML content provides semantic versioning for local agents and ensures version information is self-contained within the definition file. This is consistent with how versioned packages work in other ecosystems.
+
+**Validation**: The loader validates that local agents have a `version` field and that it follows semver format. Missing or invalid versions result in immediate validation errors.
 
 ## 4. Package Manifests
 
@@ -490,6 +515,81 @@ export class LockfileManager {
 }
 ```
 
+### 5.3 Offline Resolution with Lockfile
+
+When resolving with a lockfile in offline mode, the system follows a strict fail-fast approach:
+
+```typescript
+// forge/src/definitions/registry/lockfile-resolver.ts
+export class LockfileResolver {
+  async resolveFromLockfile(
+    name: string,
+    lockfile: Lockfile
+  ): Promise<ResolvedAgent> {
+    const entry = lockfile.agents[name];
+    if (!entry) {
+      throw new LockfileError(
+        `Agent '${name}' not found in lockfile. Run 'forge lock' to regenerate.`
+      );
+    }
+
+    // Check if version is available in cache
+    switch (entry.resolved) {
+      case 'local':
+        return this.resolveLocal(name, entry);
+      case 'global':
+        return this.resolveGlobal(name, entry);
+      case 'stockyard':
+        // Must be in global cache
+        return this.resolveGlobalCached(name, entry);
+    }
+  }
+
+  private async resolveGlobalCached(
+    name: string,
+    entry: LockfileEntry
+  ): Promise<ResolvedAgent> {
+    const cachedPath = path.join(
+      os.homedir(),
+      '.fractary/registry/agents',
+      `${name}@${entry.version}.yaml`
+    );
+
+    if (!(await fs.pathExists(cachedPath))) {
+      // FAIL FAST: No silent fallbacks
+      throw new CacheMissError(
+        `Agent '${name}@${entry.version}' not found in global cache.\n` +
+        `The lockfile references this version but it is not installed locally.\n\n` +
+        `To fix this, run:\n` +
+        `  forge install\n\n` +
+        `This will download all locked versions to your global cache.`
+      );
+    }
+
+    const definition = await this.loadYaml(cachedPath);
+
+    // Verify integrity
+    const actualIntegrity = await this.calculateIntegrity(definition);
+    if (actualIntegrity !== entry.integrity) {
+      throw new IntegrityError(
+        `Integrity mismatch for '${name}@${entry.version}'.\n` +
+        `Expected: ${entry.integrity}\n` +
+        `Actual: ${actualIntegrity}\n\n` +
+        `The cached file may be corrupted. Run 'forge install --force' to re-download.`
+      );
+    }
+
+    return {
+      definition,
+      source: 'global',
+      version: entry.version,
+    };
+  }
+}
+```
+
+**Rationale**: Fail-fast behavior provides clear, predictable error messages that guide users to the correct action. Silent fallbacks or degraded modes can lead to subtle bugs and inconsistent behavior across environments.
+
 ## 6. Forking & Customization
 
 ### 6.1 Fork Workflow
@@ -569,26 +669,23 @@ export class ForkCommand {
     const upstream = await this.resolver.resolve(forked.fork_of!.name);
 
     // Perform 3-way merge
-    const merged = await this.merger.merge({
+    const mergeResult = await this.merger.merge({
       base: forked.fork_of!,
       local: forked,
       upstream: upstream.definition,
     });
 
-    // Present diff to user
-    await this.showDiff(forked, merged);
-
-    // Confirm merge
-    const confirmed = await this.promptConfirm('Apply merge?');
-
-    if (confirmed) {
-      // Update fork
-      merged.fork_of.version = upstream.version;
-      merged.fork_of.merged_at = new Date().toISOString();
+    // Handle conflicts interactively
+    if (mergeResult.conflicts.length > 0) {
+      await this.resolveConflictsInteractively(mergeResult);
+    } else {
+      // No conflicts, apply directly
+      mergeResult.merged.fork_of.version = upstream.version;
+      mergeResult.merged.fork_of.merged_at = new Date().toISOString();
 
       await this.writeYaml(
         path.join(process.cwd(), '.fractary/agents', `${forkedName}.yaml`),
-        merged
+        mergeResult.merged
       );
 
       this.logger.success('Upstream changes merged successfully');
@@ -596,6 +693,88 @@ export class ForkCommand {
   }
 }
 ```
+
+### 6.2 Interactive Conflict Resolution
+
+When merging upstream changes into a forked agent, conflicts are resolved interactively with a Git-like workflow:
+
+```typescript
+// forge/src/definitions/fork/conflict-resolver.ts
+export class ConflictResolver {
+  async resolveConflictsInteractively(
+    mergeResult: MergeResult
+  ): Promise<AgentDefinition> {
+    const resolved = { ...mergeResult.merged };
+
+    this.logger.info(`\nFound ${mergeResult.conflicts.length} conflict(s):\n`);
+
+    for (const conflict of mergeResult.conflicts) {
+      // Display conflict with diff
+      console.log('─'.repeat(60));
+      console.log(`Conflict in: ${conflict.path}`);
+      console.log('─'.repeat(60));
+      console.log('\n<<<<<<< LOCAL (your changes)');
+      console.log(this.formatValue(conflict.local));
+      console.log('=======');
+      console.log(this.formatValue(conflict.upstream));
+      console.log('>>>>>>> UPSTREAM\n');
+
+      // Prompt for resolution
+      const choice = await this.promptChoice(
+        'How would you like to resolve this conflict?',
+        [
+          { key: 'l', label: 'Keep LOCAL (your changes)' },
+          { key: 'u', label: 'Keep UPSTREAM (new version)' },
+          { key: 'b', label: 'Keep BOTH (merge manually)' },
+          { key: 'e', label: 'Edit manually' },
+        ]
+      );
+
+      switch (choice) {
+        case 'l':
+          this.setPath(resolved, conflict.path, conflict.local);
+          break;
+        case 'u':
+          this.setPath(resolved, conflict.path, conflict.upstream);
+          break;
+        case 'b':
+          // For arrays, concatenate; for objects, deep merge
+          const merged = this.mergeValues(conflict.local, conflict.upstream);
+          this.setPath(resolved, conflict.path, merged);
+          break;
+        case 'e':
+          const edited = await this.openEditor(conflict);
+          this.setPath(resolved, conflict.path, edited);
+          break;
+      }
+    }
+
+    // Show final result
+    console.log('\n' + '─'.repeat(60));
+    console.log('Merge complete. Final definition:');
+    console.log('─'.repeat(60));
+    console.log(yaml.dump(resolved));
+
+    // Confirm
+    const confirmed = await this.promptConfirm('Save merged definition?');
+
+    if (!confirmed) {
+      throw new MergeAbortedError('Merge cancelled by user');
+    }
+
+    return resolved;
+  }
+
+  private formatValue(value: unknown): string {
+    if (typeof value === 'object') {
+      return yaml.dump(value, { indent: 2 });
+    }
+    return String(value);
+  }
+}
+```
+
+**Rationale**: Interactive conflict resolution gives users full control over how their customizations are merged with upstream changes. This follows Git's proven workflow, making it familiar to developers while ensuring no unintended changes are automatically applied.
 
 ## 7. Caching Strategy
 
@@ -743,9 +922,9 @@ export class UpdateCommand {
     // Show updates
     console.log('\nUpdates available:\n');
     for (const update of toApply) {
-      const symbol = update.breaking ? '⚠️ ' : '✓ ';
+      const symbol = update.breaking ? '[!]' : '[+]';
       console.log(
-        `${symbol} ${update.name}: ${update.current} → ${update.latest}`
+        `${symbol} ${update.name}: ${update.current} -> ${update.latest}`
       );
     }
 
@@ -785,27 +964,84 @@ export class DependencyResolver {
       tools: {},
     };
 
+    // Track visited nodes to detect cycles
+    const visited = new Set<string>();
+    const visiting = new Set<string>();
+
+    await this.resolveRecursive(agent, tree, visited, visiting, [agent.name]);
+
+    return tree;
+  }
+
+  private async resolveRecursive(
+    definition: AgentDefinition | ToolDefinition,
+    tree: DependencyTree,
+    visited: Set<string>,
+    visiting: Set<string>,
+    path: string[]
+  ): Promise<void> {
+    const key = `${definition.name}@${definition.version}`;
+
+    // Check for circular dependency
+    if (visiting.has(key)) {
+      const cycle = [...path, definition.name].join(' -> ');
+      throw new CircularDependencyError(
+        `Circular dependency detected!\n\n` +
+        `Dependency chain:\n  ${cycle}\n\n` +
+        `The agent '${definition.name}' depends on itself through this chain.\n` +
+        `Please remove the circular reference to resolve this issue.`
+      );
+    }
+
+    // Already fully resolved
+    if (visited.has(key)) {
+      return;
+    }
+
+    visiting.add(key);
+
     // Resolve tool dependencies
-    for (const toolName of agent.tools || []) {
-      await this.resolveToolDependency(toolName, tree);
+    for (const toolName of definition.tools || []) {
+      await this.resolveToolDependency(
+        toolName,
+        tree,
+        visited,
+        visiting,
+        [...path, toolName]
+      );
+    }
+
+    // Resolve agent dependencies (if agents can depend on other agents)
+    for (const agentName of definition.agents || []) {
+      await this.resolveAgentDependency(
+        agentName,
+        tree,
+        visited,
+        visiting,
+        [...path, agentName]
+      );
     }
 
     // Resolve custom tools (inline, no external deps)
-    for (const customTool of agent.custom_tools || []) {
+    for (const customTool of definition.custom_tools || []) {
       tree.tools[customTool.name] = {
         version: customTool.version,
         source: 'inline',
       };
     }
 
-    return tree;
+    visiting.delete(key);
+    visited.add(key);
   }
 
   private async resolveToolDependency(
     toolName: string,
-    tree: DependencyTree
+    tree: DependencyTree,
+    visited: Set<string>,
+    visiting: Set<string>,
+    path: string[]
   ): Promise<void> {
-    // Avoid circular dependencies
+    // Avoid redundant resolution
     if (tree.tools[toolName]) return;
 
     // Resolve tool
@@ -816,15 +1052,234 @@ export class DependencyResolver {
       source: tool.source,
     };
 
-    // Tools don't have further dependencies (for now)
-    // Future: tools could depend on other tools
+    // Tools could have their own dependencies in the future
+    await this.resolveRecursive(tool.definition, tree, visited, visiting, path);
+  }
+
+  private async resolveAgentDependency(
+    agentName: string,
+    tree: DependencyTree,
+    visited: Set<string>,
+    visiting: Set<string>,
+    path: string[]
+  ): Promise<void> {
+    if (tree.agents[agentName]) return;
+
+    const agent = await this.resolver.resolveAgent(agentName);
+
+    tree.agents[agentName] = {
+      version: agent.version,
+      source: agent.source,
+    };
+
+    await this.resolveRecursive(agent.definition, tree, visited, visiting, path);
   }
 }
 ```
 
-## 10. CLI Commands
+### 9.2 Circular Dependency Error Example
 
-### 10.1 Command Reference
+When a circular dependency is detected, the error provides a clear visualization:
+
+```
+CircularDependencyError: Circular dependency detected!
+
+Dependency chain:
+  architect-agent -> spec-generator -> validator-agent -> architect-agent
+
+The agent 'architect-agent' depends on itself through this chain.
+Please remove the circular reference to resolve this issue.
+```
+
+**Rationale**: Failing fast with a clear error prevents infinite loops and makes debugging straightforward. The dependency chain visualization shows exactly where the cycle occurs, enabling quick resolution.
+
+## 10. Stockyard Authentication
+
+### 10.1 Authentication Model
+
+Stockyard supports two access modes:
+
+1. **Anonymous Access**: Read-only access to public packages
+2. **Authenticated Access**: Full access including private packages, publishing, and rate limit increases
+
+```typescript
+// forge/src/definitions/registry/stockyard/auth.ts
+export interface StockyardAuth {
+  // Token for authenticated requests
+  token?: string;
+  // Token source for debugging
+  tokenSource?: 'env' | 'config' | 'keychain';
+}
+
+export class StockyardAuthManager {
+  /**
+   * Resolve authentication token from multiple sources (in priority order):
+   * 1. Environment variable: STOCKYARD_TOKEN
+   * 2. Config file: ~/.fractary/config/forge.json
+   * 3. System keychain (macOS Keychain, Windows Credential Manager, Linux Secret Service)
+   */
+  async resolveAuth(): Promise<StockyardAuth> {
+    // 1. Check environment variable
+    const envToken = process.env.STOCKYARD_TOKEN;
+    if (envToken) {
+      return { token: envToken, tokenSource: 'env' };
+    }
+
+    // 2. Check config file
+    const configPath = path.join(os.homedir(), '.fractary/config/forge.json');
+    if (await fs.pathExists(configPath)) {
+      try {
+        const config = JSON.parse(await fs.readFile(configPath, 'utf-8'));
+        if (config.stockyard?.token) {
+          return { token: config.stockyard.token, tokenSource: 'config' };
+        }
+      } catch (error) {
+        this.logger.warn(`Failed to read config: ${error.message}`);
+      }
+    }
+
+    // 3. Check system keychain (optional, graceful fallback)
+    try {
+      const keychainToken = await this.getFromKeychain('stockyard-token');
+      if (keychainToken) {
+        return { token: keychainToken, tokenSource: 'keychain' };
+      }
+    } catch {
+      // Keychain not available or token not found
+    }
+
+    // No authentication - anonymous access
+    return {};
+  }
+
+  /**
+   * Store token securely
+   */
+  async storeToken(token: string, method: 'config' | 'keychain' = 'config'): Promise<void> {
+    if (method === 'keychain') {
+      await this.storeInKeychain('stockyard-token', token);
+    } else {
+      const configPath = path.join(os.homedir(), '.fractary/config/forge.json');
+      await fs.ensureDir(path.dirname(configPath));
+
+      let config = {};
+      if (await fs.pathExists(configPath)) {
+        config = JSON.parse(await fs.readFile(configPath, 'utf-8'));
+      }
+
+      config.stockyard = { ...config.stockyard, token };
+      await fs.writeFile(configPath, JSON.stringify(config, null, 2), 'utf-8');
+
+      // Set restrictive permissions
+      await fs.chmod(configPath, 0o600);
+    }
+  }
+
+  /**
+   * Login to Stockyard
+   */
+  async login(): Promise<void> {
+    // Interactive login flow
+    console.log('Login to Stockyard\n');
+    console.log('Visit: https://stockyard.fractary.dev/settings/tokens');
+    console.log('Generate a new token and paste it below.\n');
+
+    const token = await this.promptSecret('Token: ');
+
+    // Validate token
+    const valid = await this.validateToken(token);
+    if (!valid) {
+      throw new AuthenticationError('Invalid token. Please check and try again.');
+    }
+
+    // Store token
+    await this.storeToken(token);
+
+    this.logger.success('Successfully logged in to Stockyard');
+  }
+
+  private async validateToken(token: string): Promise<boolean> {
+    try {
+      const response = await axios.get('https://stockyard.fractary.dev/api/v1/user', {
+        headers: { Authorization: `Bearer ${token}` },
+        timeout: 5000,
+      });
+      return response.status === 200;
+    } catch {
+      return false;
+    }
+  }
+}
+```
+
+### 10.2 Stockyard Client with Auth
+
+```typescript
+// forge/src/definitions/registry/stockyard/client.ts
+export class StockyardClient {
+  private auth: StockyardAuth;
+
+  constructor(
+    private config: StockyardConfig,
+    private authManager: StockyardAuthManager
+  ) {}
+
+  async initialize(): Promise<void> {
+    this.auth = await this.authManager.resolveAuth();
+    if (this.auth.token) {
+      this.logger.debug(`Authenticated via ${this.auth.tokenSource}`);
+    } else {
+      this.logger.debug('Using anonymous access (public packages only)');
+    }
+  }
+
+  private getHeaders(): Record<string, string> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'User-Agent': `forge/${version}`,
+    };
+
+    if (this.auth.token) {
+      headers['Authorization'] = `Bearer ${this.auth.token}`;
+    }
+
+    return headers;
+  }
+
+  async getAgentMetadata(name: string): Promise<StockyardAgentMetadata> {
+    try {
+      const response = await axios.get(
+        `${this.config.url}/api/v1/agents/${name}/metadata`,
+        {
+          headers: this.getHeaders(),
+          timeout: this.config.timeout || 10000,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      if (error.response?.status === 401) {
+        throw new AuthenticationError(
+          'Authentication required for this resource.\n' +
+          'Run `forge login` to authenticate with Stockyard.'
+        );
+      }
+      if (error.response?.status === 403) {
+        throw new AuthorizationError(
+          `Access denied to agent '${name}'.\n` +
+          'This may be a private package or you lack permission.'
+        );
+      }
+      throw error;
+    }
+  }
+}
+```
+
+**Rationale**: Token-based authentication with optional anonymous access balances security with ease of use. Public packages work without authentication, reducing friction for open-source usage. The multi-source token resolution (env, config, keychain) supports different deployment scenarios from CI/CD to local development.
+
+## 11. CLI Commands
+
+### 11.1 Command Reference
 
 ```bash
 # List installed agents
@@ -862,9 +1317,14 @@ forge validate [--all]
 
 # Generate lockfile
 forge lock
+
+# Authentication
+forge login
+forge logout
+forge whoami
 ```
 
-## 11. Performance Targets
+## 12. Performance Targets
 
 | Operation | Target | Notes |
 |-----------|--------|-------|
@@ -873,29 +1333,130 @@ forge lock
 | Resolve (network) | < 2s | Stockyard API call |
 | Lockfile generation | < 5s | For typical project (10-20 agents) |
 | Update check | < 3s | Parallel manifest fetches |
+| Dependency resolution | < 500ms | With cycle detection |
 
-## 12. Success Criteria
+## 13. Design Decisions
 
-- [ ] Three-tier resolution works (local → global → Stockyard)
+This section documents key design decisions made during specification refinement.
+
+### 13.1 Circular Dependencies: Fail Fast
+
+**Decision**: Detect cycles during dependency resolution and immediately error with a helpful message showing the complete dependency chain.
+
+**Behavior**:
+- Cycle detection uses visited/visiting sets during graph traversal
+- When a cycle is detected, resolution stops immediately
+- Error message includes the full dependency chain for debugging
+
+**Example Error**:
+```
+CircularDependencyError: Circular dependency detected!
+
+Dependency chain:
+  architect-agent -> spec-generator -> validator-agent -> architect-agent
+
+The agent 'architect-agent' depends on itself through this chain.
+Please remove the circular reference to resolve this issue.
+```
+
+**Rationale**: Simple, predictable behavior that prevents infinite loops and makes debugging straightforward.
+
+### 13.2 Offline Cache Miss: Fail Fast
+
+**Decision**: When a lockfile references a version not present in the global cache, error immediately with instructions to run `forge install`.
+
+**Behavior**:
+- No silent fallbacks to different versions
+- No automatic network requests when in offline mode
+- Clear error message with exact command to fix
+
+**Example Error**:
+```
+CacheMissError: Agent 'frame-agent@2.0.0' not found in global cache.
+The lockfile references this version but it is not installed locally.
+
+To fix this, run:
+  forge install
+
+This will download all locked versions to your global cache.
+```
+
+**Rationale**: Fail-fast provides clear, predictable errors. Silent fallbacks lead to subtle bugs and inconsistent behavior across environments.
+
+### 13.3 Fork Merge Conflicts: Interactive Resolution
+
+**Decision**: Use interactive conflict resolution with a Git-like workflow when merging upstream changes into forked agents.
+
+**Behavior**:
+- Display conflicts with diff format (<<<<<<< LOCAL / >>>>>>> UPSTREAM)
+- Prompt for resolution choice per conflict
+- Options: keep local, keep upstream, merge both, edit manually
+- Show final merged result before saving
+- Require explicit confirmation
+
+**Rationale**: Git-like workflow is familiar to developers. Interactive resolution gives users full control and prevents unintended changes.
+
+### 13.4 Local Agent Versioning: YAML Version Field
+
+**Decision**: Local agents declare their version in the YAML definition file's `version` field.
+
+**Behavior**:
+- `version` field is required for local agents
+- Loader validates semver format
+- Missing version causes immediate validation error
+
+**Example**:
+```yaml
+name: my-custom-agent
+version: 1.2.0  # Required
+description: Custom agent
+```
+
+**Rationale**: Self-contained versioning is consistent with package ecosystems. Version information travels with the definition file.
+
+### 13.5 Stockyard Authentication: Token-Based with Anonymous Fallback
+
+**Decision**: Token-based authentication with optional anonymous access for public packages.
+
+**Behavior**:
+- Anonymous access: read-only for public packages
+- Authenticated access: full access including private packages
+- Token resolution order: environment variable, config file, system keychain
+- `forge login` command for interactive authentication
+
+**Token Sources**:
+1. `STOCKYARD_TOKEN` environment variable
+2. `~/.fractary/config/forge.json` (mode 0600)
+3. System keychain (optional)
+
+**Rationale**: Balances security with ease of use. Public packages work without authentication, reducing friction. Multiple token sources support CI/CD and local development scenarios.
+
+## 14. Success Criteria
+
+- [ ] Three-tier resolution works (local -> global -> Stockyard)
 - [ ] Version constraints correctly resolved
 - [ ] Lockfile pins exact versions
 - [ ] Fork workflow supports customization + upstream tracking
+- [ ] Interactive conflict resolution for fork merges
 - [ ] Update notifications work reliably
 - [ ] Cache invalidation is correct
 - [ ] Performance targets met
-- [ ] Offline mode works after initial download
-- [ ] Dependency resolution handles transitive deps
+- [ ] Offline mode works after initial download (fail-fast on cache miss)
+- [ ] Dependency resolution handles transitive deps with cycle detection
+- [ ] Local agents require version field in YAML
+- [ ] Stockyard authentication supports token-based and anonymous access
 
-## 13. Open Questions
-
-1. **Circular Dependencies**: How do we prevent/handle circular agent dependencies?
-2. **Private Registries**: Should we support private Stockyard instances?
-3. **CDN**: Should Stockyard serve definitions via CDN for better performance?
-4. **Integrity**: Should we verify definition integrity with checksums?
-5. **Conflict Resolution**: How do we handle merge conflicts when merging upstream?
-
-## 14. Related Specifications
+## 15. Related Specifications
 
 - **SPEC-FORGE-001**: Agent & Tool Definition System Architecture
 - **SPEC-FABER-002**: Forge Integration Interface
 - **SPEC-MIGRATION-001**: Cross-Project Migration Guide
+
+---
+
+## Changelog
+
+| Date | Version | Author | Changes |
+|------|---------|--------|---------|
+| 2025-12-14 | 1.0.0 | Claude | Initial specification |
+| 2025-12-14 | 1.1.0 | Claude | Refinement round 1: Resolved open questions - circular dependencies (fail fast), offline cache miss (fail fast), merge conflicts (interactive), local versioning (YAML field), Stockyard auth (token-based) |
