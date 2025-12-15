@@ -52,22 +52,56 @@ This specification defines a **manifest-based registry system** for distributing
 | Type | Description | Example | Phase |
 |------|-------------|---------|-------|
 | **manifest** | Git-hosted JSON manifest | `github.com/fractary/forge-registry` | Phase 3B |
-| **stockyard** | Full API with auth, versioning | `api.fractary.com/v1` | Phase 3C |
+| **stockyard** | Full API with auth, versioning | `stockyard.fractary.com/api/v1` | Phase 3C |
 
-### 2.3 Directory Structure
+### 2.3 Two-Level Architecture
+
+**Inspired by Claude Code plugin marketplace:**
+
+```
+Registry Manifest
+└── References Plugins
+    └── Plugin Manifest (separate file per plugin)
+        ├── Agents (YAML definitions)
+        ├── Tools (YAML definitions)
+        ├── Hooks
+        ├── Commands
+        └── Configuration
+```
+
+**Key Benefits:**
+- **Selective enablement**: Enable registry but disable specific plugins
+- **Scalability**: Registry manifest stays small, plugin manifests contain details
+- **Natural bundling**: FABER plugin includes all related agents, tools, hooks, commands
+- **Independent versioning**: Update plugin without touching registry
+- **Organizational flexibility**: Publish plugin repos without registry approval
+
+### 2.4 Directory Structure
 
 ```
 Project-local:
 .fractary/
-├── agents/           # User-created or installed agents
-├── tools/            # User-created or installed tools
+├── plugins/          # Installed plugins
+│   ├── @fractary/
+│   │   ├── faber-plugin/
+│   │   │   ├── plugin.json
+│   │   │   ├── agents/
+│   │   │   ├── tools/
+│   │   │   ├── hooks/
+│   │   │   └── commands/
+│   │   └── work-plugin/
+│   └── @acme/
+│       └── custom-plugin/
+├── agents/           # Standalone user-created agents
+├── tools/            # Standalone user-created tools
 └── config.json       # Registry configuration
 
 Global user:
 ~/.fractary/
 ├── registry/
-│   ├── agents/       # Globally installed agents
-│   ├── tools/        # Globally installed tools
+│   ├── plugins/      # Globally installed plugins
+│   ├── agents/       # Globally installed standalone agents
+│   ├── tools/        # Globally installed standalone tools
 │   └── cache/        # Downloaded manifests
 └── config.json       # Global registry configuration
 ```
@@ -76,80 +110,198 @@ Global user:
 
 ### 3.1 Registry Manifest Schema
 
-**File:** `manifest.json`
+**File:** `manifest.json` (registry-level)
+
+The registry manifest lists available plugins with pointers to their individual manifests.
 
 ```json
 {
   "$schema": "https://fractary.com/schemas/registry-manifest-v1.json",
   "name": "fractary-core",
   "version": "1.0.0",
-  "description": "Official Fractary agent and tool registry",
+  "description": "Official Fractary plugin registry",
   "updated": "2025-12-15T00:00:00Z",
-  "packages": [
+  "plugins": [
     {
-      "name": "@fractary/faber-agents",
+      "name": "@fractary/faber-plugin",
       "version": "2.0.0",
-      "description": "FABER workflow methodology agents",
-      "type": "agent-collection",
-      "homepage": "https://github.com/fractary/faber",
-      "repository": "https://github.com/fractary/forge-registry",
+      "description": "FABER workflow methodology (agents, tools, hooks, commands)",
+      "manifest_url": "https://raw.githubusercontent.com/fractary/faber-plugin/main/plugin.json",
+      "homepage": "https://github.com/fractary/faber-plugin",
+      "repository": "https://github.com/fractary/faber-plugin",
       "license": "MIT",
-      "agents": [
-        {
-          "name": "frame-agent",
-          "version": "2.0.0",
-          "description": "FABER Frame phase - requirements gathering",
-          "source": "https://raw.githubusercontent.com/fractary/forge-registry/main/agents/frame-agent@2.0.0.yaml",
-          "checksum": "sha256:abc123...",
-          "size": 4096,
-          "dependencies": ["fetch_issue", "classify_work_type"]
-        },
-        {
-          "name": "architect-agent",
-          "version": "2.0.0",
-          "description": "FABER Architect phase - solution design",
-          "source": "https://raw.githubusercontent.com/fractary/forge-registry/main/agents/architect-agent@2.0.0.yaml",
-          "checksum": "sha256:def456...",
-          "size": 5120,
-          "dependencies": ["create_specification", "fetch_codex_docs"]
-        }
-      ],
-      "tools": [
-        {
-          "name": "fetch_issue",
-          "version": "2.0.0",
-          "description": "Fetch work item details from tracking systems",
-          "source": "https://raw.githubusercontent.com/fractary/forge-registry/main/tools/fetch_issue@2.0.0.yaml",
-          "checksum": "sha256:ghi789...",
-          "size": 2048
-        }
-      ],
-      "tags": ["faber", "workflow", "official"]
+      "tags": ["faber", "workflow", "official"],
+      "checksum": "sha256:abc123..."
     },
     {
-      "name": "@acme/custom-agents",
+      "name": "@fractary/work-plugin",
+      "version": "2.0.0",
+      "description": "Work tracking integration (GitHub, Jira, Linear)",
+      "manifest_url": "https://raw.githubusercontent.com/fractary/work-plugin/main/plugin.json",
+      "homepage": "https://github.com/fractary/work-plugin",
+      "repository": "https://github.com/fractary/work-plugin",
+      "license": "MIT",
+      "tags": ["work", "tracking", "official"],
+      "checksum": "sha256:def456..."
+    },
+    {
+      "name": "@acme/custom-plugin",
       "version": "1.0.0",
-      "description": "ACME Corp custom workflow agents",
-      "type": "agent-collection",
-      "homepage": "https://github.com/acme-corp/forge-agents",
-      "repository": "https://github.com/acme-corp/forge-agents",
+      "description": "ACME Corp custom workflow plugin",
+      "manifest_url": "https://raw.githubusercontent.com/acme-corp/custom-plugin/main/plugin.json",
+      "homepage": "https://github.com/acme-corp/custom-plugin",
+      "repository": "https://github.com/acme-corp/custom-plugin",
       "license": "Proprietary",
-      "agents": [...],
-      "tools": [...],
-      "tags": ["custom", "acme"]
+      "tags": ["custom", "acme"],
+      "checksum": "sha256:ghi789..."
     }
   ]
 }
 ```
 
-### 3.2 Manifest Schema Validation
+### 3.2 Plugin Manifest Schema
 
-**Zod Schema:** `src/registry/schemas/manifest.ts`
+**File:** `plugin.json` (plugin-level)
+
+Each plugin has its own manifest containing detailed definitions.
+
+```json
+{
+  "$schema": "https://fractary.com/schemas/plugin-manifest-v1.json",
+  "name": "@fractary/faber-plugin",
+  "version": "2.0.0",
+  "description": "FABER workflow methodology - Frame, Architect, Build, Evaluate, Release",
+  "author": "Fractary Team",
+  "homepage": "https://github.com/fractary/faber-plugin",
+  "repository": "https://github.com/fractary/faber-plugin",
+  "license": "MIT",
+  "tags": ["faber", "workflow", "official"],
+
+  "agents": [
+    {
+      "name": "frame-agent",
+      "version": "2.0.0",
+      "description": "FABER Frame phase - requirements gathering",
+      "source": "https://raw.githubusercontent.com/fractary/faber-plugin/main/agents/frame-agent@2.0.0.yaml",
+      "checksum": "sha256:abc123...",
+      "size": 4096,
+      "dependencies": ["fetch_issue", "classify_work_type"]
+    },
+    {
+      "name": "architect-agent",
+      "version": "2.0.0",
+      "description": "FABER Architect phase - solution design",
+      "source": "https://raw.githubusercontent.com/fractary/faber-plugin/main/agents/architect-agent@2.0.0.yaml",
+      "checksum": "sha256:def456...",
+      "size": 5120,
+      "dependencies": ["create_specification"]
+    },
+    {
+      "name": "build-agent",
+      "version": "2.0.0",
+      "description": "FABER Build phase - implementation",
+      "source": "https://raw.githubusercontent.com/fractary/faber-plugin/main/agents/build-agent@2.0.0.yaml",
+      "checksum": "sha256:jkl012...",
+      "size": 6144
+    }
+  ],
+
+  "tools": [
+    {
+      "name": "fetch_issue",
+      "version": "2.0.0",
+      "description": "Fetch work item details from tracking systems",
+      "source": "https://raw.githubusercontent.com/fractary/faber-plugin/main/tools/fetch_issue@2.0.0.yaml",
+      "checksum": "sha256:mno345...",
+      "size": 2048
+    },
+    {
+      "name": "classify_work_type",
+      "version": "2.0.0",
+      "description": "Classify work as feature/bug/chore/patch",
+      "source": "https://raw.githubusercontent.com/fractary/faber-plugin/main/tools/classify_work_type@2.0.0.yaml",
+      "checksum": "sha256:pqr678...",
+      "size": 1536
+    }
+  ],
+
+  "hooks": [
+    {
+      "name": "faber-commit",
+      "version": "2.0.0",
+      "description": "Auto-format commits with FABER metadata",
+      "type": "pre-commit",
+      "source": "https://raw.githubusercontent.com/fractary/faber-plugin/main/hooks/faber-commit@2.0.0.js",
+      "checksum": "sha256:stu901...",
+      "size": 3072
+    }
+  ],
+
+  "commands": [
+    {
+      "name": "faber-run",
+      "version": "2.0.0",
+      "description": "Execute FABER workflow on work item",
+      "source": "https://raw.githubusercontent.com/fractary/faber-plugin/main/commands/faber-run@2.0.0.md",
+      "checksum": "sha256:vwx234...",
+      "size": 2560
+    }
+  ],
+
+  "config": {
+    "default_llm": {
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-20250514"
+    },
+    "permissions": {
+      "read": ["**/*.md", "**/*.yaml"],
+      "write": [".fractary/**"],
+      "execute": ["bash"]
+    }
+  }
+}
+```
+
+### 3.3 Manifest Schema Validation
+
+**Zod Schemas:** `src/registry/schemas/manifest.ts`
 
 ```typescript
 import { z } from 'zod';
 
-export const RegistryItemSchema = z.object({
+// ============================================================================
+// Registry Manifest Schemas
+// ============================================================================
+
+export const RegistryPluginReferenceSchema = z.object({
+  name: z.string().regex(/^@[a-z0-9-]+\/[a-z0-9-]+$/),
+  version: z.string().regex(/^\d+\.\d+\.\d+$/),
+  description: z.string(),
+  manifest_url: z.string().url(),
+  homepage: z.string().url().optional(),
+  repository: z.string().url(),
+  license: z.string(),
+  tags: z.array(z.string()),
+  checksum: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+});
+
+export const RegistryManifestSchema = z.object({
+  $schema: z.string().url().optional(),
+  name: z.string(),
+  version: z.string().regex(/^\d+\.\d+\.\d+$/),
+  description: z.string(),
+  updated: z.string().datetime(),
+  plugins: z.array(RegistryPluginReferenceSchema),
+});
+
+export type RegistryPluginReference = z.infer<typeof RegistryPluginReferenceSchema>;
+export type RegistryManifest = z.infer<typeof RegistryManifestSchema>;
+
+// ============================================================================
+// Plugin Manifest Schemas
+// ============================================================================
+
+export const PluginItemSchema = z.object({
   name: z.string(),
   version: z.string().regex(/^\d+\.\d+\.\d+$/),
   description: z.string(),
@@ -159,31 +311,59 @@ export const RegistryItemSchema = z.object({
   dependencies: z.array(z.string()).optional(),
 });
 
-export const RegistryPackageSchema = z.object({
-  name: z.string().regex(/^@[a-z0-9-]+\/[a-z0-9-]+$/),
-  version: z.string().regex(/^\d+\.\d+\.\d+$/),
-  description: z.string(),
-  type: z.enum(['agent-collection', 'tool-collection', 'mixed']),
-  homepage: z.string().url().optional(),
-  repository: z.string().url(),
-  license: z.string(),
-  agents: z.array(RegistryItemSchema).optional(),
-  tools: z.array(RegistryItemSchema).optional(),
-  tags: z.array(z.string()),
-});
-
-export const RegistryManifestSchema = z.object({
-  $schema: z.string().url().optional(),
+export const PluginHookSchema = z.object({
   name: z.string(),
   version: z.string().regex(/^\d+\.\d+\.\d+$/),
   description: z.string(),
-  updated: z.string().datetime(),
-  packages: z.array(RegistryPackageSchema),
+  type: z.enum(['pre-commit', 'post-commit', 'pre-push', 'post-push', 'session-start', 'session-end']),
+  source: z.string().url(),
+  checksum: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+  size: z.number().min(1),
 });
 
-export type RegistryItem = z.infer<typeof RegistryItemSchema>;
-export type RegistryPackage = z.infer<typeof RegistryPackageSchema>;
-export type RegistryManifest = z.infer<typeof RegistryManifestSchema>;
+export const PluginCommandSchema = z.object({
+  name: z.string(),
+  version: z.string().regex(/^\d+\.\d+\.\d+$/),
+  description: z.string(),
+  source: z.string().url(),
+  checksum: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+  size: z.number().min(1),
+});
+
+export const PluginConfigSchema = z.object({
+  default_llm: z.object({
+    provider: z.enum(['anthropic', 'openai', 'google']),
+    model: z.string(),
+  }).optional(),
+  permissions: z.object({
+    read: z.array(z.string()).optional(),
+    write: z.array(z.string()).optional(),
+    execute: z.array(z.string()).optional(),
+  }).optional(),
+}).optional();
+
+export const PluginManifestSchema = z.object({
+  $schema: z.string().url().optional(),
+  name: z.string().regex(/^@[a-z0-9-]+\/[a-z0-9-]+$/),
+  version: z.string().regex(/^\d+\.\d+\.\d+$/),
+  description: z.string(),
+  author: z.string(),
+  homepage: z.string().url().optional(),
+  repository: z.string().url(),
+  license: z.string(),
+  tags: z.array(z.string()),
+  agents: z.array(PluginItemSchema).optional(),
+  tools: z.array(PluginItemSchema).optional(),
+  hooks: z.array(PluginHookSchema).optional(),
+  commands: z.array(PluginCommandSchema).optional(),
+  config: PluginConfigSchema,
+});
+
+export type PluginItem = z.infer<typeof PluginItemSchema>;
+export type PluginHook = z.infer<typeof PluginHookSchema>;
+export type PluginCommand = z.infer<typeof PluginCommandSchema>;
+export type PluginConfig = z.infer<typeof PluginConfigSchema>;
+export type PluginManifest = z.infer<typeof PluginManifestSchema>;
 ```
 
 ## 4. Configuration
@@ -214,7 +394,7 @@ export type RegistryManifest = z.infer<typeof RegistryManifestSchema>;
     {
       "name": "stockyard-production",
       "type": "stockyard",
-      "url": "https://api.fractary.com/v1",
+      "url": "https://stockyard.fractary.com/api/v1",
       "enabled": false,
       "priority": 3,
       "auth": {
@@ -300,7 +480,7 @@ forge registry list
 # NAME              TYPE       URL                                    ENABLED  PRIORITY
 # fractary-core     manifest   https://raw.githubusercontent.com/...  ✓        1
 # acme-internal     manifest   https://raw.githubusercontent.com/...  ✓        2
-# stockyard         stockyard  https://api.fractary.com/v1            ✗        3
+# stockyard         stockyard  https://stockyard.fractary.com/api/v1  ✗        3
 ```
 
 **Options:**
@@ -341,27 +521,31 @@ forge registry refresh                  # Refresh all registries
 forge registry refresh fractary-core    # Refresh specific registry
 ```
 
-### 5.2 Package Installation
+### 5.2 Plugin Installation
 
 #### `forge install`
 
-Install agents and tools from registries.
+Install plugins (or individual agents/tools) from registries.
 
 ```bash
-# Install a package (installs all agents and tools in package)
-forge install @fractary/faber-agents
+# Install a complete plugin (includes all agents, tools, hooks, commands)
+forge install @fractary/faber-plugin
 
-# Install specific agent
-forge install @fractary/faber-agents/frame-agent
+# Install specific agent from a plugin
+forge install @fractary/faber-plugin/frame-agent
 
-# Install specific tool
-forge install @fractary/faber-agents/fetch_issue
+# Install specific tool from a plugin
+forge install @fractary/faber-plugin/fetch_issue
 
-# Install multiple items
-forge install @fractary/faber-agents/frame-agent @fractary/faber-agents/architect-agent
+# Install multiple plugins
+forge install @fractary/faber-plugin @fractary/work-plugin
 
 # Install with version constraint
-forge install @fractary/faber-agents@2.0.0
+forge install @fractary/faber-plugin@2.0.0
+
+# Enable/disable plugin components selectively
+forge install @fractary/faber-plugin --agents-only  # Only install agents
+forge install @fractary/faber-plugin --no-hooks     # Skip hooks
 ```
 
 **Options:**
@@ -371,51 +555,73 @@ forge install @fractary/faber-agents@2.0.0
 - `--no-deps`: Skip dependency installation
 - `--force`: Overwrite existing files
 - `--dry-run`: Show what would be installed without installing
+- `--agents-only`: Install only agents from plugin
+- `--tools-only`: Install only tools from plugin
+- `--no-hooks`: Skip installing hooks
+- `--no-commands`: Skip installing commands
 
 **Output:**
 ```
-Installing @fractary/faber-agents@2.0.0...
+Installing @fractary/faber-plugin@2.0.0...
   ✓ Resolved from registry: fractary-core
-  ✓ Downloaded frame-agent@2.0.0 (4.0 KB)
-  ✓ Verified checksum: sha256:abc123...
-  ✓ Installed to: ~/.fractary/registry/agents/frame-agent@2.0.0.yaml
-  ✓ Downloaded architect-agent@2.0.0 (5.0 KB)
-  ✓ Verified checksum: sha256:def456...
-  ✓ Installed to: ~/.fractary/registry/agents/architect-agent@2.0.0.yaml
+  ✓ Downloaded plugin manifest (plugin.json)
+  ✓ Verified manifest checksum: sha256:abc123...
 
-Installing dependencies...
-  ✓ fetch_issue@2.0.0
-  ✓ classify_work_type@2.0.0
+Installing agents...
+  ✓ frame-agent@2.0.0 (4.0 KB)
+  ✓ architect-agent@2.0.0 (5.0 KB)
+  ✓ build-agent@2.0.0 (6.0 KB)
 
-Successfully installed @fractary/faber-agents@2.0.0 (2 agents, 12 tools)
+Installing tools...
+  ✓ fetch_issue@2.0.0 (2.0 KB)
+  ✓ classify_work_type@2.0.0 (1.5 KB)
+  ✓ create_specification@2.0.0 (3.0 KB)
+
+Installing hooks...
+  ✓ faber-commit@2.0.0 (3.0 KB)
+
+Installing commands...
+  ✓ faber-run@2.0.0 (2.5 KB)
+
+Successfully installed @fractary/faber-plugin@2.0.0
+  3 agents, 3 tools, 1 hook, 1 command
+  Installed to: ~/.fractary/registry/plugins/@fractary/faber-plugin/
 ```
 
 #### `forge list`
 
-List installed agents and tools.
+List installed plugins, agents, tools, hooks, and commands.
 
 ```bash
 forge list
 
 # Output:
-# TYPE   NAME               VERSION  LOCATION
-# agent  frame-agent        2.0.0    ~/.fractary/registry/agents/
-# agent  architect-agent    2.0.0    ~/.fractary/registry/agents/
-# tool   fetch_issue        2.0.0    ~/.fractary/registry/tools/
+# TYPE    NAME                       VERSION  LOCATION
+# plugin  @fractary/faber-plugin     2.0.0    ~/.fractary/registry/plugins/
+# plugin  @fractary/work-plugin      2.0.0    ~/.fractary/registry/plugins/
+# agent   frame-agent                2.0.0    ~/.fractary/registry/plugins/@fractary/faber-plugin/agents/
+# agent   architect-agent            2.0.0    ~/.fractary/registry/plugins/@fractary/faber-plugin/agents/
+# tool    fetch_issue                2.0.0    ~/.fractary/registry/plugins/@fractary/faber-plugin/tools/
+# hook    faber-commit               2.0.0    ~/.fractary/registry/plugins/@fractary/faber-plugin/hooks/
 ```
 
 **Options:**
-- `--type <agent|tool>`: Filter by type
+- `--type <plugin|agent|tool|hook|command>`: Filter by type
 - `--global`: Show global installations only
 - `--local`: Show local installations only
 - `--all`: Show both global and local [default]
+- `--plugin <name>`: Show only items from specific plugin
 
 #### `forge uninstall`
 
-Uninstall agents and tools.
+Uninstall plugins or individual components.
 
 ```bash
-forge uninstall @fractary/faber-agents/frame-agent
+# Uninstall entire plugin
+forge uninstall @fractary/faber-plugin
+
+# Uninstall specific agent
+forge uninstall @fractary/faber-plugin/frame-agent
 
 # Options:
 # --global: Uninstall from global location
@@ -424,19 +630,19 @@ forge uninstall @fractary/faber-agents/frame-agent
 
 #### `forge search`
 
-Search for packages in registries.
+Search for plugins in registries.
 
 ```bash
 forge search faber
 
 # Output:
-# NAME                      VERSION  DESCRIPTION                           REGISTRY
-# @fractary/faber-agents    2.0.0    FABER workflow methodology agents     fractary-core
-# @acme/faber-extensions    1.0.0    Custom FABER extensions               acme-internal
+# NAME                       VERSION  DESCRIPTION                           REGISTRY
+# @fractary/faber-plugin     2.0.0    FABER workflow methodology            fractary-core
+# @acme/faber-extensions     1.0.0    Custom FABER extensions               acme-internal
 ```
 
 **Options:**
-- `--type <agent|tool>`: Filter by type
+- `--type <plugin|agent|tool>`: Filter by type
 - `--registry <name>`: Search specific registry only
 - `--tag <tag>`: Filter by tag
 
@@ -721,10 +927,69 @@ class StockyardResolver implements RegistryResolver {
 ### 9.3 Migration Steps
 
 1. **Phase 3B (Current)**: Implement manifest-based registries
-2. **Phase 3C (Stockyard)**: Implement StockyardResolver alongside ManifestResolver
+2. **Phase 3C (Stockyard Base)**: Implement StockyardResolver alongside ManifestResolver
 3. **Phase 3D (Transition)**: Default new users to Stockyard, support both types
-4. **Phase 4 (Deprecation)**: Mark manifest registries as legacy, encourage Stockyard
-5. **Phase 5 (Sunset)**: Remove manifest resolver support (TBD, timeline TBD)
+4. **Phase 4 (Translation Service)**: Stockyard auto-converts agents from other formats (see 9.4)
+5. **Phase 5 (Deprecation)**: Mark manifest registries as legacy, encourage Stockyard
+6. **Phase 6 (Sunset)**: Remove manifest resolver support (TBD, timeline TBD)
+
+### 9.4 Stockyard Translation Service (Future Phase 4)
+
+**Strategic Vision**: Stockyard will evolve beyond a simple marketplace to become a **universal translation hub** for agentic artifacts.
+
+#### Translation Architecture
+
+Stockyard will automatically:
+1. **Ingest** artifacts from existing ecosystems:
+   - Claude Code skills/agents/commands
+   - n8n workflows
+   - LangChain agents
+   - Crew AI crews
+   - GitHub Actions workflows
+   - Any published agentic artifact
+
+2. **Auto-convert** to Fractary format:
+   - Parse source format
+   - Generate Fractary YAML definitions
+   - Create plugin manifest
+   - Auto-generate registry for each source
+   - Validate and test conversions
+
+3. **Publish** auto-generated registries:
+   - Each source gets a registry: `stockyard.fractary.com/registries/claude-skills.json`
+   - Users can: `forge registry add claude-skills --url https://stockyard.fractary.com/registries/claude-skills.json`
+   - Instant access to thousands of existing agents
+
+4. **Bidirectional translation**:
+   - Fractary → Claude Code format
+   - Fractary → n8n workflows
+   - Fractary → LangChain
+   - Fractary becomes universal interchange format
+
+#### Strategic Benefits
+
+- **Immediate ecosystem access**: Day 1, users access entire Claude/n8n/LangChain ecosystems
+- **Network effects**: As more formats supported, Fractary becomes central hub
+- **Solves adoption**: "Use Fractary to access agents from ANY framework"
+- **Differentiator**: Not competing with Claude/n8n, but enabling interoperability
+- **Future-proof**: New agentic frameworks automatically supported
+
+#### Example Enhanced Stockyard Listing
+
+```
+Database Schema Generator
+├── Original: Claude Code skill by @author
+├── Source: github.com/author/claude-skills
+├── Formats Available:
+│   ├── Fractary Plugin (auto-generated) [Install via forge]
+│   ├── Claude Code (original) [View source]
+│   ├── LangChain (auto-generated) [Download]
+│   └── n8n Workflow (auto-generated) [Download]
+├── Auto-generated Registry: stockyard.fractary.com/registries/author-claude-skills.json
+└── Stats: ⭐⭐⭐⭐⭐ (247 installs across all formats)
+```
+
+**Implementation**: This translation service will be specified in a future SPEC-FORGE-006 document.
 
 ## 10. Security Considerations
 
@@ -800,3 +1065,4 @@ class StockyardResolver implements RegistryResolver {
 | Date | Version | Changes |
 |------|---------|---------|
 | 2025-12-15 | 1.0.0 | Initial specification created |
+| 2025-12-15 | 1.1.0 | **Major update**: Added two-level plugin architecture inspired by Claude Code marketplace. Registries now reference plugins (not individual agents). Each plugin has its own manifest with agents/tools/hooks/commands. Updated all CLI commands, schemas, and examples. Added Stockyard translation service vision (section 9.4). Fixed Stockyard URL to stockyard.fractary.com |
