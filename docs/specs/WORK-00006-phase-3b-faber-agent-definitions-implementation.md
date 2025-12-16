@@ -9,7 +9,7 @@
 | **Project** | `@fractary/forge` |
 | **Issue** | [#6 - Implement FABER-Forge Phase 3 Integration](https://github.com/fractary/forge/issues/6) |
 | **Branch** | `feat/6-implement-faber-forge-phase-3-integration` |
-| **Related Specs** | FORGE-PHASE-3B-faber-agent-definitions.md, SPEC-FORGE-001, SPEC-FORGE-002, SPEC-FORGE-005 |
+| **Related Specs** | FORGE-PHASE-3B-faber-agent-definitions.md, SPEC-FORGE-001, SPEC-FORGE-002, SPEC-FORGE-005, SPEC-FORGE-008 |
 | **Depends On** | Phase 3A (Completed in @fractary/faber v1.1.1) |
 | **Refined** | 2025-12-15 (Round 1) |
 
@@ -21,6 +21,7 @@
 |------|-------|---------|
 | 2025-12-15 | 1 | Added tool status section, clarified distribution via CLI/Stockyard, updated agent path to `.fractary/agents/`, verified LLMConfigSchema compatibility |
 | 2025-12-15 | 2 | Created SPEC-FORGE-005 for registry manifest system, updated distribution strategy to use manifest-based registries as interim solution before Stockyard |
+| 2025-12-16 | 3 | Updated to directory-per-definition structure (SPEC-FORGE-008). All agents/tools now in dedicated directories with standardized file names (agent.yaml, tool.yaml). Updated resolver code to support new structure. |
 
 ---
 
@@ -39,32 +40,36 @@ Create 5 first-party agent YAML files that FABER's AgentExecutor can resolve and
 
 ### 1.2 Deliverables
 
-**Agent Definitions (5 files):**
+**Agent Definitions (5 directories):**
 
-| Agent | File | Purpose |
-|-------|------|---------|
-| Frame Agent | `agents/frame-agent.yaml` | Requirements extraction and work type classification |
-| Architect Agent | `agents/architect-agent.yaml` | Technical design and specification creation |
-| Build Agent | `agents/build-agent.yaml` | Implementation and code generation |
-| Evaluate Agent | `agents/evaluate-agent.yaml` | Validation and quality assurance |
-| Release Agent | `agents/release-agent.yaml` | PR creation and deployment |
+Following the directory-per-definition structure ([SPEC-FORGE-008](./SPEC-FORGE-008-DIRECTORY-PER-DEFINITION.md)):
 
-**Tool Definitions (~12 files):**
+| Agent | Directory | File | Purpose |
+|-------|-----------|------|---------|
+| Frame Agent | `agents/frame-agent/` | `agent.yaml` | Requirements extraction and work type classification |
+| Architect Agent | `agents/architect-agent/` | `agent.yaml` | Technical design and specification creation |
+| Build Agent | `agents/build-agent/` | `agent.yaml` | Implementation and code generation |
+| Evaluate Agent | `agents/evaluate-agent/` | `agent.yaml` | Validation and quality assurance |
+| Release Agent | `agents/release-agent/` | `agent.yaml` | PR creation and deployment |
 
-| Tool | File | Purpose |
-|------|------|---------|
-| fetch_issue | `tools/fetch-issue.yaml` | Retrieve issue/ticket details from work tracker |
-| classify_work_type | `tools/classify-work-type.yaml` | Classify work as feature/bug/chore/patch |
-| create_specification | `tools/create-specification.yaml` | Generate specification documents |
-| validate_specification | `tools/validate-specification.yaml` | Validate spec format and completeness |
-| run_tests | `tools/run-tests.yaml` | Execute test suites and report results |
-| git_commit | `tools/git-commit.yaml` | Create git commits with messages |
-| git_push | `tools/git-push.yaml` | Push branches to remote |
-| create_pull_request | `tools/create-pull-request.yaml` | Create PRs on GitHub/GitLab/Bitbucket |
-| request_review | `tools/request-review.yaml` | Request PR reviews from team members |
-| create_comment | `tools/create-comment.yaml` | Add comments to issues/PRs |
-| log_phase_start | `tools/log-phase-start.yaml` | Log FABER phase initiation |
-| log_phase_end | `tools/log-phase-end.yaml` | Log FABER phase completion |
+**Tool Definitions (~12 directories):**
+
+Following the directory-per-definition structure ([SPEC-FORGE-008](./SPEC-FORGE-008-DIRECTORY-PER-DEFINITION.md)):
+
+| Tool | Directory | File | Purpose |
+|------|-----------|------|---------|
+| fetch_issue | `tools/fetch-issue/` | `tool.yaml` | Retrieve issue/ticket details from work tracker |
+| classify_work_type | `tools/classify-work-type/` | `tool.yaml` | Classify work as feature/bug/chore/patch |
+| create_specification | `tools/create-specification/` | `tool.yaml` | Generate specification documents |
+| validate_specification | `tools/validate-specification/` | `tool.yaml` | Validate spec format and completeness |
+| run_tests | `tools/run-tests/` | `tool.yaml` | Execute test suites and report results |
+| git_commit | `tools/git-commit/` | `tool.yaml` | Create git commits with messages |
+| git_push | `tools/git-push/` | `tool.yaml` | Push branches to remote |
+| create_pull_request | `tools/create-pull-request/` | `tool.yaml` | Create PRs on GitHub/GitLab/Bitbucket |
+| request_review | `tools/request-review/` | `tool.yaml` | Request PR reviews from team members |
+| create_comment | `tools/create-comment/` | `tool.yaml` | Add comments to issues/PRs |
+| log_phase_start | `tools/log-phase-start/` | `tool.yaml` | Log FABER phase initiation |
+| log_phase_end | `tools/log-phase-end/` | `tool.yaml` | Log FABER phase completion |
 
 **Note:** Native Claude Code tools (`read_file`, `write_file`, `edit_file`, `search_code`, `execute_bash`) are provided by the runtime and don't need Forge definitions.
 

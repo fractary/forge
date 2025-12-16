@@ -42,6 +42,7 @@ export const DefinitionErrorCode = {
   // Validation errors
   YAML_PARSE_ERROR: 'YAML_PARSE_ERROR' as const,
   SCHEMA_VALIDATION_ERROR: 'SCHEMA_VALIDATION_ERROR' as const,
+  EMPTY_SYSTEM_PROMPT: 'EMPTY_SYSTEM_PROMPT' as const,
 
   // Inheritance errors
   INHERITANCE_CYCLE: 'INHERITANCE_CYCLE' as const,

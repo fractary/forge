@@ -11,13 +11,15 @@ import { logger } from '../../logger';
 import { ForgeError, isForgeError } from '../../errors/forge-error';
 import { DefinitionErrorCode } from '../errors';
 import { YAMLLoader } from '../loaders/yaml-loader';
+import { MarkdownLoader } from '../loaders/markdown-loader';
+import { LoaderFactory } from '../loaders/loader-factory';
 import { InheritanceResolver } from '../loaders/inheritance';
 import { DefinitionCache } from './cache';
 import type { ResolvedAgent, ResolvedTool, ParsedName, RegistryConfig } from './types';
 import type { AgentDefinition, ToolDefinition } from '../schemas';
 
 export class DefinitionResolver {
-  private loader = new YAMLLoader();
+  private loader = new LoaderFactory();
   private cache = new DefinitionCache();
   private inheritanceResolver: InheritanceResolver;
   private config: RegistryConfig;
@@ -207,6 +209,10 @@ export class DefinitionResolver {
 
   /**
    * Check global registry for agent definition with version constraint
+   *
+   * Supports both formats in directory-per-definition structure:
+   * - agents/{agent-name}@{version}/agent.md (preferred)
+   * - agents/{agent-name}@{version}/agent.yaml (legacy)
    */
   private async checkGlobalAgent(
     name: string,
@@ -214,19 +220,23 @@ export class DefinitionResolver {
   ): Promise<{ definition: AgentDefinition; path: string } | null> {
     const registryPath = path.join(this.config.global.path, 'agents');
 
-    // Find all versions
-    const pattern = path.join(registryPath, `${name}@*.yaml`);
-    const files = await glob(pattern);
+    // Find all versions (both formats)
+    const mdPattern = path.join(registryPath, `${name}@*`, 'agent.md');
+    const yamlPattern = path.join(registryPath, `${name}@*`, 'agent.yaml');
+    const files = [
+      ...await glob(mdPattern),
+      ...await glob(yamlPattern)
+    ];
 
     if (files.length === 0) {
       return null;
     }
 
-    // Extract versions
+    // Extract versions from directory names
     const versions = files
       .map((f) => {
-        const match = f.match(/@([\d.]+(?:-[\w.]+)?(?:\+[\w.]+)?)\.yaml$/);
-        return match ? { version: match[1], path: f } : null;
+        const match = f.match(/([^/\\]+)@([\d.]+(?:-[\w.]+)?(?:\+[\w.]+)?)[/\\]agent\.(md|yaml)$/);
+        return match ? { version: match[2], path: f } : null;
       })
       .filter((v): v is { version: string; path: string } => v !== null);
 
@@ -240,7 +250,9 @@ export class DefinitionResolver {
       return null;
     }
 
-    const matchedFile = versions.find((v) => v.version === bestVersion);
+    // Prefer .md over .yaml if both exist for the same version
+    const matchedFiles = versions.filter((v) => v.version === bestVersion);
+    const matchedFile = matchedFiles.find((f) => f.path.endsWith('.md')) || matchedFiles[0];
     if (!matchedFile) return null;
 
     const definition = await this.loader.loadAgent(matchedFile.path);
@@ -249,6 +261,10 @@ export class DefinitionResolver {
 
   /**
    * Check global registry for tool definition with version constraint
+   *
+   * Supports both formats in directory-per-definition structure:
+   * - tools/{tool-name}@{version}/tool.md (preferred)
+   * - tools/{tool-name}@{version}/tool.yaml (legacy)
    */
   private async checkGlobalTool(
     name: string,
@@ -256,19 +272,23 @@ export class DefinitionResolver {
   ): Promise<{ definition: ToolDefinition; path: string } | null> {
     const registryPath = path.join(this.config.global.path, 'tools');
 
-    // Find all versions
-    const pattern = path.join(registryPath, `${name}@*.yaml`);
-    const files = await glob(pattern);
+    // Find all versions (both formats)
+    const mdPattern = path.join(registryPath, `${name}@*`, 'tool.md');
+    const yamlPattern = path.join(registryPath, `${name}@*`, 'tool.yaml');
+    const files = [
+      ...await glob(mdPattern),
+      ...await glob(yamlPattern)
+    ];
 
     if (files.length === 0) {
       return null;
     }
 
-    // Extract versions
+    // Extract versions from directory names
     const versions = files
       .map((f) => {
-        const match = f.match(/@([\d.]+(?:-[\w.]+)?(?:\+[\w.]+)?)\.yaml$/);
-        return match ? { version: match[1], path: f } : null;
+        const match = f.match(/([^/\\]+)@([\d.]+(?:-[\w.]+)?(?:\+[\w.]+)?)[/\\]tool\.(md|yaml)$/);
+        return match ? { version: match[2], path: f } : null;
       })
       .filter((v): v is { version: string; path: string } => v !== null);
 
@@ -282,7 +302,9 @@ export class DefinitionResolver {
       return null;
     }
 
-    const matchedFile = versions.find((v) => v.version === bestVersion);
+    // Prefer .md over .yaml if both exist for the same version
+    const matchedFiles = versions.filter((v) => v.version === bestVersion);
+    const matchedFile = matchedFiles.find((f) => f.path.endsWith('.md')) || matchedFiles[0];
     if (!matchedFile) return null;
 
     const definition = await this.loader.loadTool(matchedFile.path);
@@ -369,9 +391,28 @@ export class DefinitionResolver {
 
   /**
    * Get local path for definition
+   *
+   * Supports both formats:
+   * - agents/{agent-name}/agent.md (preferred)
+   * - agents/{agent-name}/agent.yaml (legacy)
+   * - tools/{tool-name}/tool.md (preferred)
+   * - tools/{tool-name}/tool.yaml (legacy)
    */
   private getLocalPath(type: 'agents' | 'tools', name: string): string {
-    return path.join(process.cwd(), '.fractary', type, `${name}.yaml`);
+    const fileName = type === 'agents' ? 'agent' : 'tool';
+    const basePath = path.join(process.cwd(), '.fractary', type, name);
+
+    // Prefer .md over .yaml
+    const mdPath = path.join(basePath, `${fileName}.md`);
+    const yamlPath = path.join(basePath, `${fileName}.yaml`);
+
+    // Check if .md exists first
+    if (fs.existsSync(mdPath)) {
+      return mdPath;
+    }
+
+    // Fall back to .yaml for backward compatibility
+    return yamlPath;
   }
 
   /**

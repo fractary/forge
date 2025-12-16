@@ -20,8 +20,8 @@ export const AgentDefinitionSchema = z.object({
   // LLM configuration
   llm: LLMConfigSchema,
 
-  // System prompt
-  system_prompt: z.string(),
+  // System prompt (optional in frontmatter, derived from Markdown body)
+  system_prompt: z.string().optional(),
 
   // Tools
   tools: z.array(z.string()),
