@@ -211,7 +211,7 @@ export class LangChainExporter implements IExporter {
 
     // System prompt
     code += '        # System prompt\n';
-    const systemPrompt = agent.system_prompt.replace(/"/g, '\\"');
+    const systemPrompt = (agent.system_prompt || '').replace(/"/g, '\\"');
     code += `        self.system_prompt = """${systemPrompt}"""\n\n`;
 
     // Create agent

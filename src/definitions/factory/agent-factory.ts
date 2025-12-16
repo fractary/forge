@@ -65,7 +65,7 @@ export class AgentFactory {
         version: definition.version,
         llm,
         tools,
-        systemPrompt: definition.system_prompt,
+        systemPrompt: definition.system_prompt || '',
         config: definition.config || {},
       };
     } catch (error) {
