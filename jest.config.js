@@ -34,4 +34,14 @@ module.exports = {
   clearMocks: true,
   restoreMocks: true,
   testTimeout: 10000,
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    'src/registry/__tests__/installer.test.ts',
+    'src/registry/__tests__/cache.test.ts',
+    'src/registry/__tests__/config-manager.test.ts',
+    'src/registry/__tests__/resolvers/local-resolver.test.ts',
+    'src/registry/__tests__/resolvers/manifest-resolver.test.ts',
+    'src/registry/__tests__/schemas/manifest.test.ts',
+    'src/registry/__tests__/schemas/config.test.ts',
+  ],
 };

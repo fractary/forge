@@ -1,8 +1,8 @@
 # @fractary/forge
 
-> **Core SDK for Agent & Tool Registry and Resolution**
+> **Core SDK for Agent & Tool Registry, Resolution, and Plugin Distribution**
 
-`@fractary/forge` is a comprehensive TypeScript SDK for managing, resolving, and distributing AI agent and tool definitions across local, global, and remote registries with lockfile support, dependency management, and fork workflows.
+`@fractary/forge` is a comprehensive TypeScript SDK for managing, resolving, and distributing AI agents, tools, workflows, and templates. It provides both a **Definition System** for lockfile-based dependency management and a **Registry System** for manifest-based plugin installation across local, global, and remote registries.
 
 [![npm version](https://img.shields.io/npm/v/@fractary/forge)](https://www.npmjs.com/package/@fractary/forge)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -15,7 +15,12 @@
 - [Features](#features)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
+  - [Definition System](#definition-system-quick-start)
+  - [Registry System](#registry-system-quick-start)
+  - [Exporters](#exporters-quick-start)
 - [Core Concepts](#core-concepts)
+- [Registry Module](#registry-module)
+- [Exporters Module](#exporters-module)
 - [Documentation](#documentation)
 - [Architecture](#architecture)
 - [Use Cases](#use-cases)
@@ -26,27 +31,37 @@
 
 ## ✨ Features
 
-### Registry & Resolution
+### Definition System (Lockfile-Based)
 - **3-Tier Resolution**: Local → Global → Stockyard (remote marketplace)
 - **Version Management**: Semver-based version constraints and resolution
 - **Dependency Resolution**: Automatic dependency tree building with cycle detection
 - **Inheritance System**: Agent/tool definition inheritance with `extends` keyword
-
-### Lockfile & Manifests
 - **Lockfile Generation**: Pin exact versions with SHA-256 integrity hashing
-- **Manifest Management**: Track package metadata, versions, and update status
+- **Fork Workflows**: Fork agents/tools for customization with upstream merging
 - **Update Detection**: Automatic detection of available updates with breaking change warnings
 
-### Fork Workflows
-- **Fork Management**: Fork agents/tools to local registry for customization
-- **Three-Way Merge**: Merge upstream changes with conflict detection
-- **Conflict Resolution**: Auto-resolve or manual conflict resolution strategies
+### Registry System (Plugin-Based)
+- **Plugin Installation**: Install plugins from manifest-based registries
+- **3-Tier Resolution**: Local (.fractary/) → Global (~/.fractary/registry/) → Remote registries
+- **Manifest Caching**: TTL-based caching to reduce network requests
+- **Checksum Verification**: SHA-256 verification for all downloads
+- **Multi-Component Support**: Agents, tools, workflows, templates, hooks, commands
+- **Scope Management**: Global and local installation with proper isolation
+- **Configuration System**: Project and global configuration with priority merging
+
+### Exporters (Framework Integration)
+- **LangChain Export**: Convert to Python code with LangChain/LangGraph
+- **Claude Code Export**: Convert to markdown for .claude/ directory
+- **n8n Export**: Convert to n8n workflow JSON
+- **Flexible Options**: Format-specific export configuration
+- **Batch Export**: Export entire plugins or individual components
 
 ### Developer Experience
 - **TypeScript-First**: Full TypeScript support with comprehensive type definitions
-- **Schema Validation**: Zod-based schema validation for agent/tool definitions
+- **Schema Validation**: Zod-based schema validation for all manifests and definitions
 - **Error Handling**: Detailed error messages with context and suggestions
 - **Extensible**: Plugin-based architecture for custom resolvers and handlers
+- **SDK-Focused**: Clean programmatic API designed for CLI and tool integration
 
 ---
 
@@ -64,7 +79,9 @@ npm install @fractary/forge
 
 ## 🚀 Quick Start
 
-### 1. Initialize Forge Configuration
+### Definition System Quick Start
+
+#### 1. Initialize Forge Configuration
 
 ```typescript
 import { DefinitionResolver, LockfileManager } from '@fractary/forge';
@@ -168,6 +185,145 @@ if (upstreamCheck.hasUpdate) {
   }
 }
 ```
+
+### Registry System Quick Start
+
+The Registry module provides manifest-based plugin installation. It's designed as an SDK for CLI tools (like `fractary/cli`) to consume.
+
+#### 1. Install a Plugin
+
+```typescript
+import { Registry } from '@fractary/forge';
+
+// Install a plugin from remote registry
+const result = await Registry.installer.installPlugin('@fractary/faber-plugin', {
+  scope: 'global', // or 'local'
+  force: false,
+});
+
+console.log(`Installed ${result.plugin.name}@${result.plugin.version}`);
+console.log(`  Agents: ${result.installed.agents}`);
+console.log(`  Tools: ${result.installed.tools}`);
+console.log(`  Workflows: ${result.installed.workflows}`);
+```
+
+#### 2. Resolve a Component
+
+```typescript
+import { Registry } from '@fractary/forge';
+
+// Resolve an agent (checks local → global → remote)
+const resolved = await Registry.resolver.resolve('faber-agent', 'agent');
+
+if (resolved) {
+  console.log(`Found: ${resolved.name}@${resolved.version}`);
+  console.log(`Source: ${resolved.source}`); // 'local', 'global', or 'remote'
+  console.log(`Path: ${resolved.path}`);
+}
+```
+
+#### 3. Manage Registries
+
+```typescript
+import { Registry } from '@fractary/forge';
+
+// Add a custom registry
+await Registry.configManager.addRegistry({
+  name: 'my-registry',
+  type: 'manifest',
+  url: 'https://example.com/registry.json',
+  enabled: true,
+  priority: 2,
+});
+
+// List all registries
+const config = await Registry.configManager.loadConfig();
+console.log('Configured registries:', config.registries);
+```
+
+#### 4. Cache Management
+
+```typescript
+import { Registry } from '@fractary/forge';
+
+// Get cache statistics
+const stats = await Registry.manifestCache.getStats();
+console.log(`Cache entries: ${stats.totalEntries}`);
+console.log(`Fresh: ${stats.freshEntries}, Stale: ${stats.staleEntries}`);
+
+// Clear expired cache entries
+await Registry.manifestCache.cleanup();
+```
+
+For complete SDK documentation, see [src/registry/README.md](./src/registry/README.md).
+
+### Exporters Quick Start
+
+The Exporters module converts Fractary YAML to various framework-specific formats.
+
+#### 1. Export to LangChain (Python)
+
+```typescript
+import { Exporters } from '@fractary/forge';
+
+// Export agents/tools to Python LangChain code
+const result = await Exporters.exporter.export(
+  {
+    agents: [myAgent],
+    tools: [myTool],
+  },
+  {
+    format: 'langchain',
+    outputDir: './langchain-export',
+    formatOptions: {
+      pythonVersion: '3.11',
+      includeTypeHints: true,
+      useAsync: true,
+    },
+  }
+);
+
+console.log(`Exported ${result.summary.totalFiles} files`);
+```
+
+#### 2. Export to Claude Code
+
+```typescript
+import { Exporters } from '@fractary/forge';
+
+// Export to .claude/ directory structure
+const result = await Exporters.exporter.export(
+  { agents: [myAgent], tools: [myTool] },
+  {
+    format: 'claude',
+    outputDir: './claude-export',
+    formatOptions: {
+      includeDirectoryStructure: true,
+      asMCPTools: true,
+    },
+  }
+);
+```
+
+#### 3. Export to n8n Workflows
+
+```typescript
+import { Exporters } from '@fractary/forge';
+
+// Export as n8n workflow JSON
+const result = await Exporters.exporter.export(
+  { agents: [myAgent] },
+  {
+    format: 'n8n',
+    outputDir: './n8n-export',
+    formatOptions: {
+      workflowName: 'My Agent Workflow',
+    },
+  }
+);
+```
+
+For complete SDK documentation, see [src/exporters/README.md](./src/exporters/README.md).
 
 ---
 
@@ -298,6 +454,248 @@ Lockfiles pin exact versions with integrity hashes:
 
 ---
 
+## 📦 Registry Module
+
+The Registry module (`src/registry/`) provides a complete plugin installation and management system following a manifest-based architecture. It's designed as an SDK for CLI tools to consume.
+
+### Key Features
+
+- **Manifest-Based Distribution**: Registry manifests list available plugins and their metadata
+- **Plugin Manifests**: Each plugin has its own manifest describing contained components
+- **Three-Tier Resolution**: Local project (.fractary/) → Global user (~/.fractary/registry/) → Remote registries
+- **TTL Caching**: Configurable cache with automatic freshness checks
+- **Integrity Verification**: SHA-256 checksums for all downloaded files
+- **Flexible Installation**: Install entire plugins or filter by component type
+- **Scope Support**: Install globally (shared across projects) or locally (project-specific)
+
+### Component Types
+
+The Registry system supports these component types:
+
+- **Agents**: AI agents with specific capabilities and prompts
+- **Tools**: Executable functions that agents can use
+- **Workflows**: Multi-step FABER workflow definitions
+- **Templates**: Reusable project or component templates
+- **Hooks**: Lifecycle hooks for automation
+- **Commands**: Custom slash commands
+
+### Architecture
+
+```
+Registry Resolution Flow:
+┌─────────────────────────────────────────────┐
+│  1. Check Local (.fractary/)                │
+│     └─ Project-specific installations       │
+└─────────────────────────────────────────────┘
+                  ↓ (if not found)
+┌─────────────────────────────────────────────┐
+│  2. Check Global (~/.fractary/registry/)    │
+│     └─ User-wide installations              │
+└─────────────────────────────────────────────┘
+                  ↓ (if not found)
+┌─────────────────────────────────────────────┐
+│  3. Fetch from Remote Registries            │
+│     ├─ Check cache (TTL-based)              │
+│     ├─ Fetch registry manifest              │
+│     ├─ Fetch plugin manifest                │
+│     └─ Download & verify components         │
+└─────────────────────────────────────────────┘
+```
+
+### SDK Components
+
+| Component | Purpose |
+|-----------|---------|
+| **Resolver** | Three-tier component resolution (local → global → remote) |
+| **Installer** | Plugin installation with checksum verification |
+| **ConfigManager** | Load/save/merge registry configurations |
+| **ManifestCacheManager** | TTL-based manifest caching |
+| **LocalResolver** | File system-based component discovery |
+| **ManifestResolver** | Remote manifest fetching and validation |
+
+### Usage in CLI Tools
+
+The Registry SDK is designed to be consumed by the `fractary/cli` project. Example integration:
+
+```typescript
+// In fractary/cli project
+import { Registry } from '@fractary/forge';
+
+export async function forgeInstallCommand(pluginName: string, options: any) {
+  try {
+    const result = await Registry.installer.installPlugin(pluginName, {
+      scope: options.global ? 'global' : 'local',
+      force: options.force,
+      agentsOnly: options.agentsOnly,
+      toolsOnly: options.toolsOnly,
+      dryRun: options.dryRun,
+    });
+
+    console.log(`✓ Installed ${result.plugin.name}@${result.plugin.version}`);
+
+    if (result.installed.agents > 0) {
+      console.log(`  • ${result.installed.agents} agents`);
+    }
+    if (result.installed.tools > 0) {
+      console.log(`  • ${result.installed.tools} tools`);
+    }
+    // ... more output
+  } catch (error) {
+    console.error(`✗ Installation failed: ${error.message}`);
+    process.exit(1);
+  }
+}
+```
+
+### Documentation
+
+- **[Registry SDK Documentation](./src/registry/README.md)** - Complete SDK usage guide
+- **[SPEC-FORGE-005](./docs/specs/SPEC-FORGE-005-REGISTRY-MANIFEST-SYSTEM.md)** - Registry manifest specification
+- **CLI Integration Spec** (Coming: SPEC-FORGE-006) - How fractary/cli should integrate
+
+### Example: Installing from Multiple Registries
+
+```typescript
+import { Registry } from '@fractary/forge';
+
+// Configure multiple registries with priority
+await Registry.configManager.addRegistry({
+  name: 'fractary-core',
+  type: 'manifest',
+  url: 'https://raw.githubusercontent.com/fractary/plugins/main/registry.json',
+  priority: 1, // Highest priority
+});
+
+await Registry.configManager.addRegistry({
+  name: 'company-internal',
+  type: 'manifest',
+  url: 'https://internal.example.com/registry.json',
+  priority: 2,
+});
+
+// Resolve will check registries in priority order
+const component = await Registry.resolver.resolve('faber-agent', 'agent', {
+  remoteOnly: false, // Check local/global first
+});
+```
+
+---
+
+## 🔄 Exporters Module
+
+The Exporters module (`src/exporters/`) converts Fractary YAML definitions to framework-specific formats, enabling seamless integration with popular AI frameworks and workflow automation tools.
+
+### Supported Formats
+
+| Format | Output | Use Case |
+|--------|--------|----------|
+| **LangChain** | Python code with LangChain/LangGraph | Deploy agents in Python LangChain applications |
+| **Claude Code** | Markdown files for `.claude/` directory | Use agents in Claude Code projects |
+| **n8n** | JSON workflow definitions | Import as n8n automation workflows |
+
+### Key Features
+
+- **Multi-Format Support**: Export to LangChain, Claude Code, or n8n with a single API
+- **Format-Specific Options**: Customize output for each framework
+- **Batch Export**: Export entire plugins or individual components
+- **Auto-Generation**: Automatically generates supporting files (requirements.txt, README.md, etc.)
+- **Type Safety**: Full TypeScript support with format-specific option types
+
+### Quick Example
+
+```typescript
+import { Exporters } from '@fractary/forge';
+import type { AgentDefinition } from '@fractary/forge';
+
+const agent: AgentDefinition = {
+  name: 'my-agent',
+  type: 'agent',
+  description: 'A helpful AI assistant',
+  llm: {
+    provider: 'anthropic',
+    model: 'claude-3-5-sonnet-20241022',
+    temperature: 0.7,
+    max_tokens: 4096,
+  },
+  system_prompt: 'You are a helpful assistant.',
+  tools: ['web-search', 'file-reader'],
+  version: '1.0.0',
+  tags: ['assistant'],
+};
+
+// Export to all formats
+for (const format of ['langchain', 'claude', 'n8n'] as const) {
+  const result = await Exporters.exporter.export(
+    { agents: [agent] },
+    { format, outputDir: `./output/${format}` }
+  );
+
+  console.log(`${format}: ${result.summary.totalFiles} files`);
+}
+```
+
+### Output Examples
+
+**LangChain Export:**
+```
+langchain-export/
+├── agents/
+│   └── my-agent.py          # Python LangChain agent class
+├── tools/
+│   ├── web-search.py        # LangChain tool implementations
+│   └── file-reader.py
+├── requirements.txt         # Python dependencies
+└── README.md                # Usage instructions
+```
+
+**Claude Code Export:**
+```
+claude-export/
+├── .claude/
+│   ├── agents/
+│   │   └── my-agent.md      # Agent documentation
+│   ├── tools/
+│   │   └── web-search.md
+│   └── mcp/
+│       └── tools/
+│           └── web-search.json  # MCP tool definition
+└── README.md
+```
+
+**n8n Export:**
+```
+n8n-export/
+├── workflows/
+│   └── my-agent.json        # n8n workflow with webhook trigger
+├── nodes/
+│   └── web-search.json      # Custom node templates
+└── README.md
+```
+
+### CLI Integration
+
+The Exporters module is designed for consumption by the `fractary/cli` project:
+
+```bash
+# Export to LangChain
+fractary forge export langchain @fractary/faber-plugin --output ./langchain
+
+# Export to Claude Code
+fractary forge export claude @fractary/faber-plugin --output ./claude
+
+# Export to n8n
+fractary forge export n8n @fractary/faber-plugin --output ./n8n
+```
+
+### Documentation
+
+- **[Exporters SDK Documentation](./src/exporters/README.md)** - Complete usage guide
+- **[LangChain Documentation](https://python.langchain.com/)** - LangChain framework
+- **[Claude Code Documentation](https://docs.anthropic.com/claude-code)** - Claude Code format
+- **[n8n Documentation](https://docs.n8n.io/)** - n8n workflow automation
+
+---
+
 ## 📚 Documentation
 
 ### Comprehensive Guides
@@ -308,10 +706,15 @@ Lockfiles pin exact versions with integrity hashes:
 
 ### Specifications
 
+#### Definition System
 - **[SPEC-FORGE-001](./docs/specs/SPEC-FORGE-001-IMPLEMENTATION.md)** - Agent & Tool Definition System
 - **[SPEC-FORGE-002](./docs/specs/SPEC-FORGE-002-IMPLEMENTATION.md)** - Registry & Resolution Implementation
 - **[SPEC-FORGE-003](./docs/specs/SPEC-FORGE-003-STOCKYARD-INTEGRATION.md)** - Stockyard Integration (Future)
 - **[SPEC-FORGE-004](./docs/specs/SPEC-FORGE-004-CLI-INTEGRATION.md)** - CLI Commands (Future)
+
+#### Registry System
+- **[SPEC-FORGE-005](./docs/specs/SPEC-FORGE-005-REGISTRY-MANIFEST-SYSTEM.md)** - Registry Manifest System
+- **SPEC-FORGE-006** - CLI Integration Guide (Coming Soon)
 
 ### Examples
 
@@ -520,10 +923,10 @@ npm run format
 ```
 forge/
 ├── src/
-│   ├── definitions/          # Agent & Tool definitions
+│   ├── definitions/          # Definition System (lockfile-based)
 │   │   ├── schemas/          # Zod schemas
 │   │   ├── loaders/          # YAML loaders
-│   │   ├── registry/         # Registry & resolution
+│   │   ├── registry/         # Definition registry & resolution
 │   │   │   ├── resolver.ts
 │   │   │   ├── lockfile/
 │   │   │   ├── manifest/
@@ -532,9 +935,18 @@ forge/
 │   │   │   ├── update/
 │   │   │   └── stockyard/
 │   │   └── errors/           # Error handling
+│   ├── registry/             # Registry System (plugin-based)
+│   │   ├── schemas/          # Manifest & config schemas
+│   │   ├── resolvers/        # Local & remote resolvers
+│   │   ├── cache.ts          # Manifest caching
+│   │   ├── config-manager.ts # Configuration management
+│   │   ├── resolver.ts       # Main 3-tier resolver
+│   │   ├── installer.ts      # Plugin installer
+│   │   ├── index.ts          # Public SDK exports
+│   │   └── README.md         # SDK documentation
 │   ├── logger/               # Logging utilities
 │   ├── errors/               # Error classes
-│   └── index.ts              # Main exports
+│   └── index.ts              # Main package exports
 ├── docs/                     # Documentation
 │   ├── API.md
 │   ├── GUIDE.md

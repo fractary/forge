@@ -134,3 +134,30 @@ export type {
   ResolvedComponent,
   ComponentType,
 } from './registry/index.js';
+
+// ============================================================================
+// Exporters Module - Convert Fractary YAML to various formats
+// ============================================================================
+
+/**
+ * Exporters module for converting Fractary YAML to framework-specific formats
+ *
+ * This module provides converters for:
+ * - LangChain (Python code with LangChain/LangGraph)
+ * - Claude Code (Markdown files for .claude/ directory)
+ * - n8n (JSON workflow definitions)
+ *
+ * Used by the fractary/cli project to implement `fractary forge export` commands.
+ */
+export * as Exporters from './exporters/index.js';
+
+// Also export commonly used exporter types at the top level for convenience
+export type {
+  ExportFormat,
+  ExportOptions,
+  ExportResult,
+  ExportedFile,
+  LangChainExportOptions,
+  ClaudeExportOptions,
+  N8nExportOptions,
+} from './exporters/index.js';
