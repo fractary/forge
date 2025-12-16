@@ -1,0 +1,51 @@
+{
+    "name": "fractary-forge",
+    "owner": {
+      "name": "The Fractary",
+      "email": "admin@fractary.com",
+      "url": "https://github.com/fractary/"
+    },
+    "metadata": {
+      "description": "Agent / Team Building Plugins for Claude Code",
+      "version": "2.0.2",
+      "pluginRoot": "./plugins"
+    },
+    "plugins": [
+      {
+        "name": "fractary-forge-agent",
+        "source": "./plugins/forge-agent",
+        "description": "Meta-plugin for creating Claude Code agents, skills, commands, and plugins with automated standards compliance",
+        "version": "0.1.1",
+        "author": {
+          "name": "The Fractary",
+          "url": "https://github.com/fractary"
+        },
+        "homepage": "https://github.com/fractary/forge/tree/main/plugins/faber-agent",
+        "repository": "https://github.com/fractary/forge/tree/main/plugins/faber-agent",
+        "license": "MIT",
+        "keywords": [
+          "meta",
+          "tooling",
+          "plugin-creation",
+          "agent-creation",
+          "scaffolding",
+          "development-tools",
+          "standards-compliance"
+        ],
+        "category": "development",
+        "strict": true,
+        "commands": [
+          "./commands/create-agent.md",
+          "./commands/create-skill.md",
+          "./commands/create-command.md",
+          "./commands/create-plugin.md"
+        ],
+        "agents": [
+          "./agents/agent-creator.md",
+          "./agents/skill-creator.md",
+          "./agents/command-creator.md",
+          "./agents/plugin-creator.md"
+        ]
+      }
+    ]
+  }

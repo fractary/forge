@@ -1,0 +1,14 @@
+{
+  "name": "{{PLUGIN_NAME}}",
+  "version": "{{PLUGIN_VERSION}}",
+  "description": "{{PLUGIN_DESCRIPTION}}",
+  "author": {
+    "name": "The Fractary",
+    "url": "https://github.com/fractary"
+  },
+  "license": "MIT",
+  "requires": {{REQUIRES}},
+  "commands": {{COMMAND_PLACEHOLDERS}},
+  "agents": {{AGENT_PLACEHOLDERS}},
+  "skills": {{SKILL_PLACEHOLDERS}}
+}
