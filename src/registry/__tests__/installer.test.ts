@@ -72,8 +72,8 @@ describe('Installer', () => {
     installer = new Installer(mockResolver, mockManifestResolver);
 
     // Setup directory structure
-    vol.mkdirpSync('/project/.fractary');
-    vol.mkdirpSync('/home/user/.fractary/registry');
+    vol.mkdirSync('/project/.fractary', { recursive: true });
+    vol.mkdirSync('/home/user/.fractary/registry', { recursive: true });
 
     mockFetch.mockReset();
   });
@@ -214,7 +214,7 @@ describe('Installer', () => {
 
     it('should skip reinstall if already installed and force is false', async () => {
       // Pre-install the plugin
-      vol.mkdirpSync('/project/.fractary/agents/@test/plugin');
+      vol.mkdirSync('/project/.fractary/agents/@test/plugin', { recursive: true });
       vol.writeFileSync(
         '/project/.fractary/agents/@test/plugin/plugin.json',
         JSON.stringify(testPluginManifest)
@@ -238,7 +238,7 @@ describe('Installer', () => {
 
     it('should reinstall if force is true', async () => {
       // Pre-install the plugin
-      vol.mkdirpSync('/project/.fractary/agents/@test/plugin');
+      vol.mkdirSync('/project/.fractary/agents/@test/plugin', { recursive: true });
       vol.writeFileSync(
         '/project/.fractary/agents/@test/plugin/plugin.json',
         JSON.stringify(testPluginManifest)
@@ -305,7 +305,7 @@ describe('Installer', () => {
   describe('uninstallPlugin', () => {
     it('should remove plugin from local scope', async () => {
       // Install plugin first
-      vol.mkdirpSync('/project/.fractary/agents/@test/plugin');
+      vol.mkdirSync('/project/.fractary/agents/@test/plugin', { recursive: true });
       vol.writeFileSync(
         '/project/.fractary/agents/@test/plugin/plugin.json',
         JSON.stringify(testPluginManifest)
@@ -325,7 +325,7 @@ describe('Installer', () => {
 
     it('should remove plugin from global scope', async () => {
       // Install plugin first
-      vol.mkdirpSync('/home/user/.fractary/registry/agents/@test/plugin');
+      vol.mkdirSync('/home/user/.fractary/registry/agents/@test/plugin', { recursive: true });
       vol.writeFileSync(
         '/home/user/.fractary/registry/agents/@test/plugin/plugin.json',
         JSON.stringify(testPluginManifest)

@@ -25,10 +25,10 @@ describe('LocalResolver', () => {
     jest.spyOn(process, 'cwd').mockReturnValue('/project');
 
     // Setup directory structure
-    vol.mkdirpSync('/project/.fractary/agents');
-    vol.mkdirpSync('/project/.fractary/tools');
-    vol.mkdirpSync('/home/user/.fractary/registry/agents');
-    vol.mkdirpSync('/home/user/.fractary/registry/tools');
+    vol.mkdirSync('/project/.fractary/agents', { recursive: true });
+    vol.mkdirSync('/project/.fractary/tools', { recursive: true });
+    vol.mkdirSync('/home/user/.fractary/registry/agents', { recursive: true });
+    vol.mkdirSync('/home/user/.fractary/registry/tools', { recursive: true });
   });
 
   afterEach(() => {
@@ -156,7 +156,7 @@ tools: []
 tags: []
 `;
 
-      vol.mkdirpSync('/project/.fractary/agents/@test/plugin');
+      vol.mkdirSync('/project/.fractary/agents/@test/plugin', { recursive: true });
       vol.writeFileSync('/project/.fractary/agents/@test/plugin/plugin.json', pluginJson);
       vol.writeFileSync('/project/.fractary/agents/@test/plugin/test-agent.yaml', agentYaml);
 
@@ -195,7 +195,7 @@ implementation:
 tags: []
 `;
 
-      vol.mkdirpSync('/home/user/.fractary/registry/tools/@test/plugin');
+      vol.mkdirSync('/home/user/.fractary/registry/tools/@test/plugin', { recursive: true });
       vol.writeFileSync('/home/user/.fractary/registry/tools/@test/plugin/plugin.json', pluginJson);
       vol.writeFileSync('/home/user/.fractary/registry/tools/@test/plugin/test-tool.yaml', toolYaml);
 
@@ -278,7 +278,7 @@ tools: []
 tags: []
 `;
 
-      vol.mkdirpSync('/project/.fractary/agents/@test/plugin');
+      vol.mkdirSync('/project/.fractary/agents/@test/plugin', { recursive: true });
       vol.writeFileSync('/project/.fractary/agents/@test/plugin/plugin.json', pluginJson);
       vol.writeFileSync('/project/.fractary/agents/@test/plugin/test-agent.yaml', agentYaml);
 

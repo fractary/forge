@@ -21,7 +21,7 @@ export class Exporter {
   private exporters: Map<ExportFormat, IExporter>;
 
   constructor() {
-    this.exporters = new Map([
+    this.exporters = new Map<ExportFormat, IExporter>([
       ['langchain', new LangChainExporter()],
       ['claude', new ClaudeExporter()],
       ['n8n', new N8nExporter()],

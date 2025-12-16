@@ -24,8 +24,8 @@ describe('ConfigManager', () => {
     configManager = new ConfigManager();
 
     // Setup directory structure
-    vol.mkdirpSync('/home/user/.fractary');
-    vol.mkdirpSync('/project/.fractary');
+    vol.mkdirSync('/home/user/.fractary', { recursive: true });
+    vol.mkdirSync('/project/.fractary', { recursive: true });
 
     // Mock process.cwd() to return /project
     jest.spyOn(process, 'cwd').mockReturnValue('/project');
@@ -38,10 +38,10 @@ describe('ConfigManager', () => {
 
   describe('loadConfig', () => {
     it('should return default config when no config files exist', async () => {
-      const config = await configManager.loadConfig();
+      const result = await configManager.loadConfig();
 
-      expect(config.registries).toHaveLength(1);
-      expect(config.registries[0]).toEqual(DEFAULT_FRACTARY_REGISTRY);
+      expect(result.config.registries).toHaveLength(1);
+      expect(result.config.registries[0]).toEqual(DEFAULT_FRACTARY_REGISTRY);
     });
 
     it('should load project config', async () => {
@@ -62,9 +62,9 @@ describe('ConfigManager', () => {
         JSON.stringify(projectConfig)
       );
 
-      const config = await configManager.loadConfig();
+      const result = await configManager.loadConfig();
 
-      expect(config.registries).toContainEqual(
+      expect(result.config.registries).toContainEqual(
         expect.objectContaining({ name: 'project-registry' })
       );
     });
@@ -87,9 +87,9 @@ describe('ConfigManager', () => {
         JSON.stringify(globalConfig)
       );
 
-      const config = await configManager.loadConfig();
+      const result = await configManager.loadConfig();
 
-      expect(config.registries).toContainEqual(
+      expect(result.config.registries).toContainEqual(
         expect.objectContaining({ name: 'global-registry' })
       );
     });
@@ -128,11 +128,11 @@ describe('ConfigManager', () => {
         JSON.stringify(globalConfig)
       );
 
-      const config = await configManager.loadConfig();
+      const result = await configManager.loadConfig();
 
-      expect(config.registries).toHaveLength(3); // project + global + default
-      expect(config.registries[0].name).toBe('project-registry');
-      expect(config.registries[1].name).toBe('global-registry');
+      expect(result.config.registries).toHaveLength(3); // project + global + default
+      expect(result.config.registries[0].name).toBe('project-registry');
+      expect(result.config.registries[1].name).toBe('global-registry');
     });
 
     it('should override duplicate registries with project config', async () => {
@@ -169,9 +169,9 @@ describe('ConfigManager', () => {
         JSON.stringify(globalConfig)
       );
 
-      const config = await configManager.loadConfig();
+      const result = await configManager.loadConfig();
 
-      const testRegistry = config.registries.find((r) => r.name === 'test-registry');
+      const testRegistry = result.config.registries.find((r) => r.name === 'test-registry');
       expect(testRegistry?.url).toBe('https://project.com/registry.json');
       expect(testRegistry?.enabled).toBe(true);
     });
@@ -250,10 +250,10 @@ describe('ConfigManager', () => {
         cache_ttl: 3600,
       };
 
-      await configManager.addRegistry(registry, 'project');
+      await configManager.addRegistry(registry, 'local');
 
-      const config = await configManager.loadConfig();
-      expect(config.registries).toContainEqual(expect.objectContaining({ name: 'new-registry' }));
+      const result = await configManager.loadConfig();
+      expect(result.config.registries).toContainEqual(expect.objectContaining({ name: 'new-registry' }));
     });
 
     it('should add registry to global config', async () => {
@@ -285,7 +285,7 @@ describe('ConfigManager', () => {
         cache_ttl: 3600,
       };
 
-      await configManager.addRegistry(registry1, 'project');
+      await configManager.addRegistry(registry1, 'local');
 
       const registry2: RegistryConfig = {
         name: 'test-registry',
@@ -296,10 +296,10 @@ describe('ConfigManager', () => {
         cache_ttl: 1800,
       };
 
-      await configManager.addRegistry(registry2, 'project');
+      await configManager.addRegistry(registry2, 'local');
 
-      const config = await configManager.loadConfig();
-      const testRegistry = config.registries.find((r) => r.name === 'test-registry');
+      const result = await configManager.loadConfig();
+      const testRegistry = result.config.registries.find((r) => r.name === 'test-registry');
 
       expect(testRegistry?.url).toBe('https://test2.com/registry.json');
       expect(testRegistry?.enabled).toBe(false);
@@ -318,11 +318,11 @@ describe('ConfigManager', () => {
         cache_ttl: 3600,
       };
 
-      await configManager.addRegistry(registry, 'project');
-      await configManager.removeRegistry('test-registry', 'project');
+      await configManager.addRegistry(registry, 'local');
+      await configManager.removeRegistry('test-registry', 'local');
 
-      const config = await configManager.loadConfig();
-      expect(config.registries).not.toContainEqual(
+      const result = await configManager.loadConfig();
+      expect(result.config.registries).not.toContainEqual(
         expect.objectContaining({ name: 'test-registry' })
       );
     });
@@ -351,7 +351,7 @@ describe('ConfigManager', () => {
 
     it('should not fail if registry does not exist', async () => {
       await expect(
-        configManager.removeRegistry('non-existent', 'project')
+        configManager.removeRegistry('non-existent', 'local')
       ).resolves.not.toThrow();
     });
   });
@@ -367,16 +367,16 @@ describe('ConfigManager', () => {
         cache_ttl: 3600,
       };
 
-      await configManager.addRegistry(registry, 'project');
+      await configManager.addRegistry(registry, 'local');
 
       await configManager.updateRegistry(
         'test-registry',
         { enabled: false, priority: 10 },
-        'project'
+        'local'
       );
 
-      const config = await configManager.loadConfig();
-      const testRegistry = config.registries.find((r) => r.name === 'test-registry');
+      const result = await configManager.loadConfig();
+      const testRegistry = result.config.registries.find((r) => r.name === 'test-registry');
 
       expect(testRegistry?.enabled).toBe(false);
       expect(testRegistry?.priority).toBe(10);
@@ -385,7 +385,7 @@ describe('ConfigManager', () => {
 
     it('should throw if registry does not exist', async () => {
       await expect(
-        configManager.updateRegistry('non-existent', { enabled: false }, 'project')
+        configManager.updateRegistry('non-existent', { enabled: false }, 'local')
       ).rejects.toThrow();
     });
   });

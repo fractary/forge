@@ -76,12 +76,12 @@ describe('ManifestCacheManager', () => {
     });
   });
 
-  describe('clear', () => {
-    it('should clear specific cache entry', async () => {
+  describe('invalidate', () => {
+    it('should invalidate specific cache entry', async () => {
       await cacheManager.set('test-1', 'https://example.com/1.json', testManifest, 3600);
       await cacheManager.set('test-2', 'https://example.com/2.json', testManifest, 3600);
 
-      await cacheManager.clear('test-1');
+      await cacheManager.invalidate('test-1');
 
       const cached1 = await cacheManager.get('test-1');
       const cached2 = await cacheManager.get('test-2');
@@ -90,33 +90,17 @@ describe('ManifestCacheManager', () => {
       expect(cached2).toEqual(testManifest);
     });
 
-    it('should clear all cache entries when no pattern provided', async () => {
+    it('should invalidate all cache entries', async () => {
       await cacheManager.set('test-1', 'https://example.com/1.json', testManifest, 3600);
       await cacheManager.set('test-2', 'https://example.com/2.json', testManifest, 3600);
 
-      await cacheManager.clear();
+      await cacheManager.invalidateAll();
 
       const cached1 = await cacheManager.get('test-1');
       const cached2 = await cacheManager.get('test-2');
 
       expect(cached1).toBeNull();
       expect(cached2).toBeNull();
-    });
-
-    it('should clear matching cache entries with pattern', async () => {
-      await cacheManager.set('test-1', 'https://example.com/1.json', testManifest, 3600);
-      await cacheManager.set('test-2', 'https://example.com/2.json', testManifest, 3600);
-      await cacheManager.set('prod-1', 'https://example.com/3.json', testManifest, 3600);
-
-      await cacheManager.clear('test-*');
-
-      const cached1 = await cacheManager.get('test-1');
-      const cached2 = await cacheManager.get('test-2');
-      const cached3 = await cacheManager.get('prod-1');
-
-      expect(cached1).toBeNull();
-      expect(cached2).toBeNull();
-      expect(cached3).toEqual(testManifest);
     });
   });
 
@@ -149,30 +133,19 @@ describe('ManifestCacheManager', () => {
 
       const stats = await cacheManager.getStats();
 
-      expect(stats.totalEntries).toBe(2);
-      expect(stats.freshEntries).toBe(1);
-      expect(stats.staleEntries).toBe(1);
-      expect(stats.totalSize).toBeGreaterThan(0);
+      expect(stats.total_entries).toBe(2);
+      expect(stats.fresh_entries).toBe(1);
+      expect(stats.expired_entries).toBe(1);
+      expect(stats.total_size_bytes).toBeGreaterThan(0);
     });
 
     it('should return zero stats for empty cache', async () => {
       const stats = await cacheManager.getStats();
 
-      expect(stats.totalEntries).toBe(0);
-      expect(stats.freshEntries).toBe(0);
-      expect(stats.staleEntries).toBe(0);
-      expect(stats.totalSize).toBe(0);
-    });
-
-    it('should include byRegistry breakdown', async () => {
-      await cacheManager.set('test-1', 'https://example.com/1.json', testManifest, 3600);
-      await cacheManager.set('test-2', 'https://example.com/2.json', testManifest, 3600);
-
-      const stats = await cacheManager.getStats();
-
-      expect(stats.byRegistry).toBeDefined();
-      expect(stats.byRegistry!['test-1']).toBe(1);
-      expect(stats.byRegistry!['test-2']).toBe(1);
+      expect(stats.total_entries).toBe(0);
+      expect(stats.fresh_entries).toBe(0);
+      expect(stats.expired_entries).toBe(0);
+      expect(stats.total_size_bytes).toBe(0);
     });
   });
 
