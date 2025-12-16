@@ -1,6 +1,6 @@
 # Agent & Tool Definition System
 
-A powerful YAML-based system for defining, managing, and executing AI agents and tools with full semantic versioning, inheritance, and multi-provider LLM support.
+A powerful Markdown + YAML frontmatter system for defining, managing, and executing AI agents and tools with full semantic versioning, inheritance, and multi-provider LLM support.
 
 ## 🚀 Quick Start
 
@@ -19,7 +19,8 @@ console.log(result.output);
 
 ## ✨ Features
 
-- **YAML-based Definitions** - Simple, readable agent and tool configurations
+- **Markdown + YAML Frontmatter** - System prompts in Markdown, configuration in YAML frontmatter
+- **Backward Compatible** - Legacy pure YAML format still supported
 - **Semantic Versioning** - Full npm semver support (^, ~, >=, ranges, etc.)
 - **Three-Tier Registry** - Local, global, and remote (Stockyard) resolution
 - **LLM Multi-Provider** - Anthropic, OpenAI, and Google support
@@ -35,19 +36,22 @@ console.log(result.output);
 - **[API Reference](./API.md)** - Complete API documentation
 - **[Usage Examples](./EXAMPLES.md)** - Comprehensive examples and patterns
 - **[SPEC-FORGE-001](../specs/SPEC-FORGE-001-agent-tool-definition-system.md)** - Architecture specification
+- **[SPEC-FORGE-008](../specs/SPEC-FORGE-008-DIRECTORY-PER-DEFINITION.md)** - Directory structure specification
+- **[SPEC-FORGE-009](../../specs/SPEC-FORGE-009-MARKDOWN-FRONTMATTER-FORMAT.md)** - Markdown format specification
 - **[Implementation Guide](../specs/SPEC-FORGE-001-IMPLEMENTATION.md)** - Detailed implementation details
 
 ## 🏗️ Architecture
 
 ### Three-Tier Registry
 
-1. **Local** (`.fractary/agents/`, `.fractary/tools/`)
+1. **Local** (`.fractary/agents/{name}/agent.md`, `.fractary/tools/{name}/tool.md`)
    - Project-specific definitions
    - Highest priority in resolution
+   - Directory-per-definition structure
 
-2. **Global** (`~/.fractary/registry/`)
+2. **Global** (`~/.fractary/registry/agents/{name}@{version}/agent.md`)
    - User-wide shared definitions
-   - Versioned storage
+   - Versioned storage with semver
 
 3. **Stockyard** (Remote registry - future)
    - Organization/public definitions
@@ -59,7 +63,7 @@ console.log(result.output);
 @fractary/forge/definitions
 ├── api/              # Public APIs (AgentAPI, ToolAPI)
 ├── schemas/          # Zod validation schemas
-├── loaders/          # YAML loading and inheritance
+├── loaders/          # MarkdownLoader, YAMLLoader, inheritance
 ├── registry/         # Three-tier resolution with semver
 ├── executor/         # Tool execution (bash, python, HTTP)
 ├── factory/          # Agent creation with LangChain
@@ -68,9 +72,55 @@ console.log(result.output);
 
 ## 📖 Usage
 
-### Define an Agent
+### Define an Agent (Markdown Format - Recommended)
 
-Create `.fractary/agents/my-agent.yaml`:
+Create `.fractary/agents/my-agent/agent.md`:
+
+```markdown
+---
+name: my-agent
+type: agent
+description: A helpful assistant
+version: "1.0.0"
+tags: [assistant, general]
+llm:
+  provider: anthropic
+  model: claude-3-5-sonnet-20241022
+  temperature: 0.7
+  max_tokens: 4096
+tools:
+  - web-search
+  - calculator
+caching:
+  enabled: true
+  cache_sources:
+    - type: file
+      path: ./docs/context.md
+      label: Context Documentation
+      ttl: 3600
+---
+
+# My Agent
+
+You are a helpful assistant that provides clear, concise responses.
+
+## Responsibilities
+
+- Answer user questions accurately
+- Search the web when needed
+- Perform calculations
+
+## Guidelines
+
+- Be concise and direct
+- Use tools when appropriate
+- Cite sources for factual claims
+```
+
+<details>
+<summary>Legacy YAML Format (Still Supported)</summary>
+
+Create `.fractary/agents/my-agent/agent.yaml`:
 
 ```yaml
 name: my-agent
@@ -78,21 +128,17 @@ type: agent
 description: A helpful assistant
 version: 1.0.0
 tags: [assistant, general]
-
 llm:
   provider: anthropic
   model: claude-3-5-sonnet-20241022
   temperature: 0.7
   max_tokens: 4096
-
 system_prompt: |
   You are a helpful assistant.
   Provide clear, concise responses.
-
 tools:
   - web-search
   - calculator
-
 caching:
   enabled: true
   cache_sources:
@@ -101,10 +147,56 @@ caching:
       label: Context Documentation
       ttl: 3600
 ```
+</details>
 
-### Define a Tool
+### Define a Tool (Markdown Format - Recommended)
 
-Create `.fractary/tools/calculator.yaml`:
+Create `.fractary/tools/calculator/tool.md`:
+
+```markdown
+---
+name: calculator
+type: tool
+description: Perform mathematical calculations
+version: "1.0.0"
+tags: [math, utility]
+parameters:
+  expression:
+    type: string
+    description: Mathematical expression to evaluate
+    required: true
+implementation:
+  type: bash
+  bash:
+    command: echo "$(( ${expression} ))"
+    sandbox:
+      enabled: true
+      max_execution_time: 5000
+---
+
+# Calculator Tool
+
+Evaluates mathematical expressions safely in a sandboxed environment.
+
+## Usage
+
+Pass a mathematical expression in the `expression` parameter.
+
+## Examples
+
+- `2 + 2` → 4
+- `15 * 23` → 345
+- `(10 + 5) * 2` → 30
+
+## Safety
+
+This tool runs in a sandboxed environment with a 5-second timeout.
+```
+
+<details>
+<summary>Legacy YAML Format (Still Supported)</summary>
+
+Create `.fractary/tools/calculator/tool.yaml`:
 
 ```yaml
 name: calculator
@@ -112,13 +204,11 @@ type: tool
 description: Perform mathematical calculations
 version: 1.0.0
 tags: [math, utility]
-
 parameters:
   expression:
     type: string
     description: Mathematical expression to evaluate
     required: true
-
 implementation:
   type: bash
   bash:
@@ -127,6 +217,7 @@ implementation:
       enabled: true
       max_execution_time: 5000
 ```
+</details>
 
 ### Use in Code
 
@@ -398,6 +489,7 @@ Built with:
 - [Zod](https://github.com/colinhacks/zod) - Schema validation
 - [LangChain](https://github.com/langchain-ai/langchainjs) - LLM integration
 - [semver](https://github.com/npm/node-semver) - Version resolution
+- [gray-matter](https://github.com/jonschlinkert/gray-matter) - YAML frontmatter parsing
 - [js-yaml](https://github.com/nodeca/js-yaml) - YAML parsing
 
 ---
