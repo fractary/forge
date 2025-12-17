@@ -14,6 +14,10 @@ import { agentCreateCommand } from './commands/agent/create.js';
 import { agentInfoCommand } from './commands/agent/info.js';
 import { agentListCommand } from './commands/agent/list.js';
 import { agentValidateCommand } from './commands/agent/validate.js';
+import { toolCreateCommand } from './commands/tool/create.js';
+import { toolInfoCommand } from './commands/tool/info.js';
+import { toolListCommand } from './commands/tool/list.js';
+import { toolValidateCommand } from './commands/tool/validate.js';
 
 // Registry commands
 import {
@@ -68,6 +72,12 @@ export function createProgram(): Command {
   program.addCommand(agentInfoCommand());
   program.addCommand(agentListCommand());
   program.addCommand(agentValidateCommand());
+
+  // Tool management commands
+  program.addCommand(toolCreateCommand());
+  program.addCommand(toolInfoCommand());
+  program.addCommand(toolListCommand());
+  program.addCommand(toolValidateCommand());
 
   // Registry management commands
   program.addCommand(createInstallCommand());

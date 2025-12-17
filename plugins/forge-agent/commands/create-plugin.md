@@ -1,5 +1,5 @@
 ---
-name: fractary-faber-agent:create-plugin
+name: fractary-forge-agent:create-plugin
 description: Create a new plugin with complete directory structure following Fractary plugin standards
 model: claude-haiku-4-5
 argument-hint: <name> --type <workflow|primitive|utility> [--requires <plugins>]
@@ -78,13 +78,13 @@ Your role is to parse user input and invoke the plugin-creator agent with the ap
 **Examples**:
 ```bash
 # Create a workflow plugin
-/fractary-faber-agent:create-plugin fractary-faber-data --type workflow --requires fractary-faber
+/fractary-forge-agent:create-plugin fractary-faber-data --type workflow --requires fractary-faber
 
 # Create a primitive plugin
-/fractary-faber-agent:create-plugin fractary-storage --type primitive
+/fractary-forge-agent:create-plugin fractary-storage --type primitive
 
 # Create with custom counts
-/fractary-faber-agent:create-plugin fractary-faber-mobile --type workflow --agents 2 --skills 5 --commands 3
+/fractary-forge-agent:create-plugin fractary-faber-mobile --type workflow --agents 2 --skills 5 --commands 3
 ```
 
 ## Argument Validation
@@ -114,7 +114,7 @@ Your role is to parse user input and invoke the plugin-creator agent with the ap
 
 After parsing arguments, invoke the agent using **declarative syntax**:
 
-**Agent**: plugin-creator (or @agent-fractary-faber-agent:plugin-creator)
+**Agent**: plugin-creator (or @agent-fractary-forge-agent:plugin-creator)
 
 **Request structure**:
 ```json
@@ -154,13 +154,13 @@ Common errors to handle:
 **Missing required argument**:
 ```
 Error: Plugin name is required
-Usage: /fractary-faber-agent:create-plugin <name> --type <type>
+Usage: /fractary-forge-agent:create-plugin <name> --type <type>
 ```
 
 **Missing type flag**:
 ```
 Error: --type flag is required
-Usage: /fractary-faber-agent:create-plugin <name> --type <workflow|primitive|utility>
+Usage: /fractary-forge-agent:create-plugin <name> --type <workflow|primitive|utility>
 Valid types: workflow, primitive, utility
 ```
 
@@ -192,16 +192,16 @@ Please choose a different name or remove existing plugin first.
 
 ```bash
 # Create a workflow plugin for data analysis
-/fractary-faber-agent:create-plugin fractary-faber-data --type workflow --requires fractary-faber
+/fractary-forge-agent:create-plugin fractary-faber-data --type workflow --requires fractary-faber
 
 # Create a primitive plugin for storage management
-/fractary-faber-agent:create-plugin fractary-storage --type primitive
+/fractary-forge-agent:create-plugin fractary-storage --type primitive
 
 # Create a utility plugin
-/fractary-faber-agent:create-plugin fractary-convert --type utility
+/fractary-forge-agent:create-plugin fractary-convert --type utility
 
 # Create with custom placeholder counts
-/fractary-faber-agent:create-plugin fractary-faber-mobile --type workflow --agents 2 --skills 5 --commands 3 --requires fractary-faber
+/fractary-forge-agent:create-plugin fractary-faber-mobile --type workflow --agents 2 --skills 5 --commands 3 --requires fractary-faber
 ```
 
 ## Expected Output
@@ -301,8 +301,8 @@ This command integrates with:
 ## See Also
 
 Related commands:
-- `/fractary-faber-agent:create-agent` - Create an agent for the plugin
-- `/fractary-faber-agent:create-skill` - Create a skill for the plugin
-- `/fractary-faber-agent:create-command` - Create a command for the plugin
+- `/fractary-forge-agent:create-agent` - Create an agent for the plugin
+- `/fractary-forge-agent:create-skill` - Create a skill for the plugin
+- `/fractary-forge-agent:create-command` - Create a command for the plugin
 
 </NOTES>

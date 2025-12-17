@@ -186,7 +186,7 @@ You coordinate:
 
 ## Phase 1: FETCH (Data Retrieval)
 
-Use @skill-fractary-faber-agent:data-fetcher to fetch data:
+Use @skill-fractary-forge-agent:data-fetcher to fetch data:
 
 ```json
 {
@@ -212,7 +212,7 @@ Store result:
 
 ## Phase 2: VALIDATE (Data Validation)
 
-Use @skill-fractary-faber-agent:data-validator to validate:
+Use @skill-fractary-forge-agent:data-validator to validate:
 
 ```json
 {
@@ -280,7 +280,7 @@ Use AskUserQuestion:
 
 ## Phase 5: PROCESS (Data Processing)
 
-If approved, use @skill-fractary-faber-agent:data-processor:
+If approved, use @skill-fractary-forge-agent:data-processor:
 
 ```json
 {
@@ -501,7 +501,7 @@ tools: Bash, Skill, Read, Write, Glob, Grep, AskUserQuestion
 **Correct:**
 ```markdown
 ## Phase 5: Process
-Use @skill-fractary-faber-agent:data-processor:  # ✓ Invoke skill
+Use @skill-fractary-forge-agent:data-processor:  # ✓ Invoke skill
 
 ```json
 {
@@ -559,7 +559,7 @@ Use reporting skill
 
 After converting agent chains:
 
-1. Run `/fractary-faber-agent:audit` to find other anti-patterns
+1. Run `/fractary-forge-agent:audit` to find other anti-patterns
 2. Review [Hybrid Agent Splitting](hybrid-agent-splitting.md) guide
 3. Review [Script Extraction](script-extraction.md) guide
 4. Update tests for new Manager-as-Agent structure

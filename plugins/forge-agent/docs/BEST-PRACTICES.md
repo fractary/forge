@@ -604,7 +604,7 @@ If updating an existing project from old patterns:
 
 ### Run Audit
 
-- [ ] Run `/fractary-faber-agent:audit` on your project
+- [ ] Run `/fractary-forge-agent:audit` on your project
 - [ ] Fix any detected anti-patterns
 - [ ] Verify compliance with new standards
 

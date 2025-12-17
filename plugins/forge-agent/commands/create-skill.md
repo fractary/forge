@@ -1,5 +1,5 @@
 ---
-name: fractary-faber-agent:create-skill
+name: fractary-forge-agent:create-skill
 description: Create a new skill following Fractary plugin standards
 model: claude-haiku-4-5
 argument-hint: <name> [--plugin <plugin-name>] [--handler-type <type>]
@@ -69,13 +69,13 @@ Your role is to parse user input and invoke the skill-creator agent with the app
 **Examples**:
 ```bash
 # Create a basic skill in current plugin
-/fractary-faber-agent:create-skill data-fetcher
+/fractary-forge-agent:create-skill data-fetcher
 
 # Create a handler skill in specific plugin
-/fractary-faber-agent:create-skill terraform-deployer --handler-type iac --plugin faber-cloud
+/fractary-forge-agent:create-skill terraform-deployer --handler-type iac --plugin faber-cloud
 
 # Create with custom tools
-/fractary-faber-agent:create-skill api-client --tools "Bash, Read, WebFetch"
+/fractary-forge-agent:create-skill api-client --tools "Bash, Read, WebFetch"
 ```
 
 ## Argument Validation
@@ -98,7 +98,7 @@ Your role is to parse user input and invoke the skill-creator agent with the app
 
 After parsing arguments, invoke the agent using **declarative syntax**:
 
-**Agent**: skill-creator (or @agent-fractary-faber-agent:skill-creator)
+**Agent**: skill-creator (or @agent-fractary-forge-agent:skill-creator)
 
 **Request structure**:
 ```json
@@ -135,7 +135,7 @@ Common errors to handle:
 **Missing required argument**:
 ```
 Error: Skill name is required
-Usage: /fractary-faber-agent:create-skill <name>
+Usage: /fractary-forge-agent:create-skill <name>
 ```
 
 **Invalid skill name format**:
@@ -157,16 +157,16 @@ Please ensure you're in a valid plugin directory or specify --plugin
 
 ```bash
 # Simple skill
-/fractary-faber-agent:create-skill data-fetcher
+/fractary-forge-agent:create-skill data-fetcher
 
 # Handler skill for infrastructure
-/fractary-faber-agent:create-skill terraform-deployer --handler-type iac --plugin faber-cloud
+/fractary-forge-agent:create-skill terraform-deployer --handler-type iac --plugin faber-cloud
 
 # Skill with custom description
-/fractary-faber-agent:create-skill api-client --description "Fetches data from REST APIs"
+/fractary-forge-agent:create-skill api-client --description "Fetches data from REST APIs"
 
 # Skill with custom tools
-/fractary-faber-agent:create-skill file-processor --tools "Bash, Read, Write, Edit"
+/fractary-forge-agent:create-skill file-processor --tools "Bash, Read, Write, Edit"
 ```
 
 ## Expected Output
@@ -223,8 +223,8 @@ This command integrates with:
 ## See Also
 
 Related commands:
-- `/fractary-faber-agent:create-agent` - Create an agent
-- `/fractary-faber-agent:create-command` - Create a command
-- `/fractary-faber-agent:create-plugin` - Create a complete plugin
+- `/fractary-forge-agent:create-agent` - Create an agent
+- `/fractary-forge-agent:create-command` - Create a command
+- `/fractary-forge-agent:create-plugin` - Create a complete plugin
 
 </NOTES>

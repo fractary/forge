@@ -209,7 +209,7 @@ Requirements collected:
 
 **Execute:**
 
-Use the @skill-fractary-faber-agent:workflow-designer skill with operation `design-architecture`:
+Use the @skill-fractary-forge-agent:workflow-designer skill with operation `design-architecture`:
 ```json
 {
   "operation": "design-architecture",
@@ -431,7 +431,7 @@ Exit workflow gracefully.
 
 **5.1 Create Manager Agent**
 
-Use the @skill-fractary-faber-agent:workflow-designer skill with operation `create-manager-agent`:
+Use the @skill-fractary-forge-agent:workflow-designer skill with operation `create-manager-agent`:
 ```json
 {
   "operation": "create-manager-agent",
@@ -519,7 +519,7 @@ File: {file_path}
 
 **Execute:**
 
-Use the @skill-fractary-faber-agent:workflow-designer skill with operation `validate-workflow`:
+Use the @skill-fractary-forge-agent:workflow-designer skill with operation `validate-workflow`:
 ```json
 {
   "operation": "validate-workflow",

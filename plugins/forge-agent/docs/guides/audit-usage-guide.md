@@ -11,7 +11,7 @@ The FABER Agent audit system detects architectural anti-patterns in plugins and 
 ### Run an Audit
 
 ```bash
-/fractary-faber-agent:audit /path/to/plugin
+/fractary-forge-agent:audit /path/to/plugin
 ```
 
 **Example output:**
@@ -63,7 +63,7 @@ Path: /plugins/my-plugin
   - /tmp/conversion-specs/hybrid-split-20250111.json
 
 Next: Review conversion specs with:
-  /fractary-faber-agent:review-conversion <spec-file>
+  /fractary-forge-agent:review-conversion <spec-file>
 ```
 
 ---
@@ -73,20 +73,20 @@ Next: Review conversion specs with:
 ### Basic Audit
 
 ```bash
-/fractary-faber-agent:audit <plugin-path>
+/fractary-forge-agent:audit <plugin-path>
 ```
 
 Audits a single plugin for anti-patterns.
 
 **Example:**
 ```bash
-/fractary-faber-agent:audit /plugins/my-plugin
+/fractary-forge-agent:audit /plugins/my-plugin
 ```
 
 ### Audit with Options
 
 ```bash
-/fractary-faber-agent:audit <plugin-path> [options]
+/fractary-forge-agent:audit <plugin-path> [options]
 ```
 
 **Options:**
@@ -100,7 +100,7 @@ Filter by severity level:
 
 **Example:**
 ```bash
-/fractary-faber-agent:audit /plugins/my-plugin --severity critical
+/fractary-forge-agent:audit /plugins/my-plugin --severity critical
 ```
 
 #### `--pattern <pattern>`
@@ -113,7 +113,7 @@ Filter by specific anti-pattern:
 
 **Example:**
 ```bash
-/fractary-faber-agent:audit /plugins/my-plugin --pattern manager-as-skill
+/fractary-forge-agent:audit /plugins/my-plugin --pattern manager-as-skill
 ```
 
 #### `--output <format>`
@@ -125,7 +125,7 @@ Output format:
 
 **Example:**
 ```bash
-/fractary-faber-agent:audit /plugins/my-plugin --output json > audit-report.json
+/fractary-forge-agent:audit /plugins/my-plugin --output json > audit-report.json
 ```
 
 #### `--generate-specs`
@@ -134,7 +134,7 @@ Automatically generate conversion specifications:
 
 **Example:**
 ```bash
-/fractary-faber-agent:audit /plugins/my-plugin --generate-specs
+/fractary-forge-agent:audit /plugins/my-plugin --generate-specs
 ```
 
 **Generates:**
@@ -370,7 +370,7 @@ A conversion specification is a JSON file describing:
 ### Review a Conversion Spec
 
 ```bash
-/fractary-faber-agent:review-conversion /tmp/conversion-specs/manager-inversion-fix-20250111.json
+/fractary-forge-agent:review-conversion /tmp/conversion-specs/manager-inversion-fix-20250111.json
 ```
 
 **Output:**
@@ -411,13 +411,13 @@ Severity: Critical
   - Files affected: 3
 
 Next: Apply conversion with:
-  /fractary-faber-agent:apply-conversion <spec-file>
+  /fractary-forge-agent:apply-conversion <spec-file>
 ```
 
 ### Apply a Conversion
 
 ```bash
-/fractary-faber-agent:apply-conversion /tmp/conversion-specs/manager-inversion-fix-20250111.json
+/fractary-forge-agent:apply-conversion /tmp/conversion-specs/manager-inversion-fix-20250111.json
 ```
 
 **Interactive mode:**
@@ -469,7 +469,7 @@ Next steps:
   1. Review generated agent file
   2. Test workflow end-to-end
   3. Run audit again to verify fix:
-     /fractary-faber-agent:audit /plugins/my-plugin
+     /fractary-forge-agent:audit /plugins/my-plugin
 ```
 
 ---
@@ -479,7 +479,7 @@ Next steps:
 ### Audit Multiple Plugins
 
 ```bash
-/fractary-faber-agent:audit-all
+/fractary-forge-agent:audit-all
 ```
 
 Audits all plugins in the repository.
@@ -522,7 +522,7 @@ Next: Review individual audit reports
 ### Audit with Filters
 
 ```bash
-/fractary-faber-agent:audit-all --severity critical --pattern manager-as-skill
+/fractary-forge-agent:audit-all --severity critical --pattern manager-as-skill
 ```
 
 Only shows critical Manager-as-Skill inversions across all plugins.
@@ -611,13 +611,13 @@ CHANGED_PLUGIN=$(git diff --name-only --cached | grep "plugins/" | head -1 | cut
 if [[ -n "$CHANGED_PLUGIN" ]]; then
   echo "Running FABER audit on $CHANGED_PLUGIN..."
 
-  /fractary-faber-agent:audit "$CHANGED_PLUGIN" --severity critical --output json > /tmp/audit.json
+  /fractary-forge-agent:audit "$CHANGED_PLUGIN" --severity critical --output json > /tmp/audit.json
 
   CRITICAL_COUNT=$(jq '.issues | map(select(.severity == "critical")) | length' /tmp/audit.json)
 
   if [[ $CRITICAL_COUNT -gt 0 ]]; then
     echo "❌ Audit failed: $CRITICAL_COUNT critical issues found"
-    echo "Run: /fractary-faber-agent:audit $CHANGED_PLUGIN"
+    echo "Run: /fractary-forge-agent:audit $CHANGED_PLUGIN"
     exit 1
   fi
 fi
@@ -644,7 +644,7 @@ jobs:
 
       - name: Run FABER Audit
         run: |
-          /fractary-faber-agent:audit-all --severity critical --output json > audit-report.json
+          /fractary-forge-agent:audit-all --severity critical --output json > audit-report.json
 
       - name: Check Results
         run: |
@@ -669,10 +669,10 @@ jobs:
 
 ```bash
 # Weekly audit
-/fractary-faber-agent:audit-all
+/fractary-forge-agent:audit-all
 
 # After major changes
-git commit && /fractary-faber-agent:audit /plugins/my-plugin
+git commit && /fractary-forge-agent:audit /plugins/my-plugin
 ```
 
 ### 2. Fix Critical Issues First
@@ -687,7 +687,7 @@ Don't try to fix everything at once:
 
 Always review specs:
 ```bash
-/fractary-faber-agent:review-conversion <spec-file>
+/fractary-forge-agent:review-conversion <spec-file>
 ```
 
 Don't blindly apply:
@@ -701,20 +701,20 @@ Don't blindly apply:
 After applying a conversion:
 ```bash
 # 1. Run audit again
-/fractary-faber-agent:audit /plugins/my-plugin
+/fractary-forge-agent:audit /plugins/my-plugin
 
 # 2. Test workflow
 /my-plugin:test-workflow
 
 # 3. Validate generated files
-/fractary-faber-agent:validate my-workflow
+/fractary-forge-agent:validate my-workflow
 ```
 
 ### 5. Generate Specs for Documentation
 
 Even if not applying immediately:
 ```bash
-/fractary-faber-agent:audit /plugins/my-plugin --generate-specs
+/fractary-forge-agent:audit /plugins/my-plugin --generate-specs
 ```
 
 Specs serve as:
@@ -780,7 +780,7 @@ Add exception to audit config:
 **Solution:**
 Resolve manually or use `--force`:
 ```bash
-/fractary-faber-agent:apply-conversion <spec> --force
+/fractary-forge-agent:apply-conversion <spec> --force
 ```
 
 ---

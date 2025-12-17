@@ -129,7 +129,7 @@ Priority: {priority_filter}
 **Execute:**
 
 **If audit_results_path provided:**
-Use the @skill-fractary-faber-agent:spec-generator skill with operation `load-audit-results`:
+Use the @skill-fractary-forge-agent:spec-generator skill with operation `load-audit-results`:
 ```json
 {
   "operation": "load-audit-results",
@@ -139,7 +139,7 @@ Use the @skill-fractary-faber-agent:spec-generator skill with operation `load-au
 ```
 
 **If entity_name provided (no audit):**
-Use the @skill-fractary-faber-agent:project-analyzer skill to inspect specific entity:
+Use the @skill-fractary-forge-agent:project-analyzer skill to inspect specific entity:
 ```json
 {
   "operation": "inspect-entity",
@@ -198,7 +198,7 @@ Low Priority: {low_count}
 **Purpose:** Analyze conversion candidates and create generation plan
 
 **Execute:**
-Use the @skill-fractary-faber-agent:spec-generator skill with operation `analyze-conversions`:
+Use the @skill-fractary-forge-agent:spec-generator skill with operation `analyze-conversions`:
 ```json
 {
   "operation": "analyze-conversions",
@@ -353,7 +353,7 @@ Specs to Generate: {count}
 
 **Execute:**
 
-For each approved conversion, use the @skill-fractary-faber-agent:spec-generator skill:
+For each approved conversion, use the @skill-fractary-forge-agent:spec-generator skill:
 
 **For Agent Chain conversions:**
 ```json
@@ -444,7 +444,7 @@ Generating: {entity_name} ({conversion_type})
 
 **Execute:**
 
-Use the @skill-fractary-faber-agent:spec-generator skill with operation `validate-specs`:
+Use the @skill-fractary-forge-agent:spec-generator skill with operation `validate-specs`:
 ```json
 {
   "operation": "validate-specs",

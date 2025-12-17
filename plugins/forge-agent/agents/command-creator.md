@@ -86,7 +86,7 @@ Invokes: {agent_name}
 **Purpose:** Collect all information needed to create the command
 
 **Execute:**
-Use the @skill-fractary-faber-agent:gather-requirements skill with:
+Use the @skill-fractary-forge-agent:gather-requirements skill with:
 ```json
 {
   "artifact_type": "command",
@@ -181,7 +181,7 @@ Output phase complete:
 
 **Execute:**
 
-Use the @skill-fractary-faber-agent:generate-from-template skill with:
+Use the @skill-fractary-forge-agent:generate-from-template skill with:
 ```json
 {
   "template_file": "plugins/faber-agent/templates/command/command.md.template",
@@ -411,7 +411,7 @@ Resolution:
 ## Integration
 
 **Invoked By:**
-- create-command command (fractary-faber-agent:create-command)
+- create-command command (fractary-forge-agent:create-command)
 
 **Invokes:**
 - gather-requirements skill (Phase 1)

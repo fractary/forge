@@ -445,7 +445,7 @@ If you encounter problems during conversion:
 
 3. **Run audit after changes**
    ```bash
-   /fractary-faber-agent:audit-project
+   /fractary-forge-agent:audit-project
    ```
 
 4. **Consult SPEC-025** for architectural guidance

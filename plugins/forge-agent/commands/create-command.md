@@ -1,5 +1,5 @@
 ---
-name: fractary-faber-agent:create-command
+name: fractary-forge-agent:create-command
 description: Create a new command following Fractary plugin standards
 model: claude-haiku-4-5
 argument-hint: <name> --invokes <agent> [--plugin <plugin-name>]
@@ -70,13 +70,13 @@ Your role is to parse user input and invoke the command-creator agent with the a
 **Examples**:
 ```bash
 # Create a command that invokes an agent
-/fractary-faber-agent:create-command create-feature --invokes feature-creator
+/fractary-forge-agent:create-command create-feature --invokes feature-creator
 
 # Create in specific plugin
-/fractary-faber-agent:create-command deploy --invokes deployment-manager --plugin faber-cloud
+/fractary-forge-agent:create-command deploy --invokes deployment-manager --plugin faber-cloud
 
 # Create with custom arguments
-/fractary-faber-agent:create-command analyze --invokes data-analyzer --arguments "<dataset> [--format <type>]"
+/fractary-forge-agent:create-command analyze --invokes data-analyzer --arguments "<dataset> [--format <type>]"
 ```
 
 ## Argument Validation
@@ -100,7 +100,7 @@ Your role is to parse user input and invoke the command-creator agent with the a
 
 After parsing arguments, invoke the agent using **declarative syntax**:
 
-**Agent**: command-creator (or @agent-fractary-faber-agent:command-creator)
+**Agent**: command-creator (or @agent-fractary-forge-agent:command-creator)
 
 **Request structure**:
 ```json
@@ -136,14 +136,14 @@ Common errors to handle:
 **Missing required argument**:
 ```
 Error: Command name is required
-Usage: /fractary-faber-agent:create-command <name> --invokes <agent>
+Usage: /fractary-forge-agent:create-command <name> --invokes <agent>
 ```
 
 **Missing --invokes flag**:
 ```
 Error: --invokes flag is required
-Usage: /fractary-faber-agent:create-command <name> --invokes <agent>
-Example: /fractary-faber-agent:create-command deploy --invokes deployment-manager
+Usage: /fractary-forge-agent:create-command <name> --invokes <agent>
+Example: /fractary-forge-agent:create-command deploy --invokes deployment-manager
 ```
 
 **Invalid command name format**:
@@ -165,16 +165,16 @@ Please ensure you're in a valid plugin directory or specify --plugin
 
 ```bash
 # Simple command
-/fractary-faber-agent:create-command create-feature --invokes feature-creator
+/fractary-forge-agent:create-command create-feature --invokes feature-creator
 
 # Command in specific plugin
-/fractary-faber-agent:create-command deploy --invokes deployment-manager --plugin faber-cloud
+/fractary-forge-agent:create-command deploy --invokes deployment-manager --plugin faber-cloud
 
 # Command with custom description
-/fractary-faber-agent:create-command analyze --invokes data-analyzer --description "Analyze datasets and generate insights"
+/fractary-forge-agent:create-command analyze --invokes data-analyzer --description "Analyze datasets and generate insights"
 
 # Command with argument hint
-/fractary-faber-agent:create-command process --invokes data-processor --arguments "<input-file> --output <path> [--format <type>]"
+/fractary-forge-agent:create-command process --invokes data-processor --arguments "<input-file> --output <path> [--format <type>]"
 ```
 
 ## Expected Output
@@ -230,8 +230,8 @@ This command integrates with:
 ## See Also
 
 Related commands:
-- `/fractary-faber-agent:create-agent` - Create an agent
-- `/fractary-faber-agent:create-skill` - Create a skill
-- `/fractary-faber-agent:create-plugin` - Create a complete plugin
+- `/fractary-forge-agent:create-agent` - Create an agent
+- `/fractary-forge-agent:create-skill` - Create a skill
+- `/fractary-forge-agent:create-plugin` - Create a complete plugin
 
 </NOTES>

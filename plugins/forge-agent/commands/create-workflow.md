@@ -31,7 +31,7 @@ You immediately invoke the workflow-creator agent with a structured request.
 
 **Command Format:**
 ```bash
-/fractary-faber-agent:create-workflow <workflow-name> [options]
+/fractary-forge-agent:create-workflow <workflow-name> [options]
 
 Arguments:
   workflow-name              Name of the workflow (required)
@@ -48,19 +48,19 @@ Options:
 **Examples:**
 ```bash
 # Create basic data processing workflow
-/fractary-faber-agent:create-workflow data-processor
+/fractary-forge-agent:create-workflow data-processor
 
 # Create with specific pattern
-/fractary-faber-agent:create-workflow code-fixer --pattern builder-debugger
+/fractary-forge-agent:create-workflow code-fixer --pattern builder-debugger
 
 # Create with batch support
-/fractary-faber-agent:create-workflow file-processor --batch --domain data
+/fractary-forge-agent:create-workflow file-processor --batch --domain data
 
 # Create with description
-/fractary-faber-agent:create-workflow api-client --description "Integrate with external APIs"
+/fractary-forge-agent:create-workflow api-client --description "Integrate with external APIs"
 
 # Non-interactive mode
-/fractary-faber-agent:create-workflow validator --no-interactive --domain data
+/fractary-forge-agent:create-workflow validator --no-interactive --domain data
 ```
 
 </INPUTS>
@@ -108,11 +108,11 @@ Build structured request for workflow-creator agent:
 
 ## Step 4: Route to Agent
 
-Use the @agent-fractary-faber-agent:workflow-creator agent with the structured request.
+Use the @agent-fractary-forge-agent:workflow-creator agent with the structured request.
 
 **Invocation:**
 ```
-Use the @agent-fractary-faber-agent:workflow-creator agent to create a new workflow with the following request:
+Use the @agent-fractary-forge-agent:workflow-creator agent to create a new workflow with the following request:
 
 {structured_request_json}
 ```
@@ -133,12 +133,12 @@ Use the @agent-fractary-faber-agent:workflow-creator agent to create a new workf
 ```
 ❌ ERROR: Workflow name is required
 
-Usage: /fractary-faber-agent:create-workflow <workflow-name> [options]
+Usage: /fractary-forge-agent:create-workflow <workflow-name> [options]
 
 Examples:
-  /fractary-faber-agent:create-workflow data-processor
-  /fractary-faber-agent:create-workflow code-fixer --pattern builder-debugger
-  /fractary-faber-agent:create-workflow api-client --batch
+  /fractary-forge-agent:create-workflow data-processor
+  /fractary-forge-agent:create-workflow code-fixer --pattern builder-debugger
+  /fractary-forge-agent:create-workflow api-client --batch
 ```
 
 **Invalid Workflow Name:**

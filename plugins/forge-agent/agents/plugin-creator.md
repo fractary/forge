@@ -89,7 +89,7 @@ Dependencies: {requires or "none"}
 **Purpose:** Collect all information needed to create the plugin
 
 **Execute:**
-Use the @skill-fractary-faber-agent:gather-requirements skill with:
+Use the @skill-fractary-forge-agent:gather-requirements skill with:
 ```json
 {
   "artifact_type": "plugin",
@@ -202,7 +202,7 @@ echo "✅ Created directory structure"
 
 ### 3.2: Generate plugin.json
 
-Use the @skill-fractary-faber-agent:generate-from-template skill with:
+Use the @skill-fractary-forge-agent:generate-from-template skill with:
 ```json
 {
   "template_file": "plugins/faber-agent/templates/plugin/plugin.json.template",
@@ -222,7 +222,7 @@ Use the @skill-fractary-faber-agent:generate-from-template skill with:
 
 ### 3.3: Generate README.md
 
-Use the @skill-fractary-faber-agent:generate-from-template skill with:
+Use the @skill-fractary-forge-agent:generate-from-template skill with:
 ```json
 {
   "template_file": "plugins/faber-agent/templates/plugin/README.md.template",
@@ -526,9 +526,9 @@ Next steps:
 6. Create configuration templates in config/
 
 7. Test plugin artifacts:
-   /fractary-faber-agent:create-agent <name> --plugin {plugin_name}
-   /fractary-faber-agent:create-skill <name> --plugin {plugin_name}
-   /fractary-faber-agent:create-command <name> --invokes <agent> --plugin {plugin_name}
+   /fractary-forge-agent:create-agent <name> --plugin {plugin_name}
+   /fractary-forge-agent:create-skill <name> --plugin {plugin_name}
+   /fractary-forge-agent:create-command <name> --invokes <agent> --plugin {plugin_name}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
@@ -640,7 +640,7 @@ Resolution:
 ## Integration
 
 **Invoked By:**
-- create-plugin command (fractary-faber-agent:create-plugin)
+- create-plugin command (fractary-forge-agent:create-plugin)
 
 **Invokes:**
 - gather-requirements skill (Phase 1)
