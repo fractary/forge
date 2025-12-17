@@ -8,6 +8,7 @@
 import { Command } from 'commander';
 import ora from 'ora';
 import chalk from 'chalk';
+import { Registry } from '@fractary/forge';
 import { loadForgeConfig } from '../../utils/forge-config.js';
 import {
   formatInstallResult,
@@ -63,9 +64,6 @@ export function createInstallCommand(): Command {
  * Install command implementation
  */
 async function installCommand(pluginName: string, options: InstallCommandOptions): Promise<void> {
-  // Lazy-load SDK to avoid CommonJS/ESM interop issues
-  const { Registry } = await import('@fractary/forge');
-
   // Parse plugin name and version
   const { name, version } = parsePluginIdentifier(pluginName);
 

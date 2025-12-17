@@ -22,7 +22,6 @@
   },
   "license": "MIT",
   "author": "Fractary",
-  "type": "module",
   "bin": {
     "fractary-forge": "bin/fractary-forge.js"
   },

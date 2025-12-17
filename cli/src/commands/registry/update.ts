@@ -7,6 +7,7 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
+import { Registry } from '@fractary/forge';
 import {
   checkComponentUpdate,
   checkAllComponentUpdates,
@@ -66,9 +67,6 @@ async function updateCommand(
   pluginName: string | undefined,
   options: UpdateCommandOptions
 ): Promise<void> {
-  // Lazy-load SDK to avoid CommonJS/ESM interop issues
-  const { Registry } = await import('@fractary/forge');
-
   // Load configuration
   const { config } = await loadForgeConfig();
 

@@ -6,8 +6,7 @@
 
 import { Command } from 'commander';
 import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { join } from 'path';
 
 // Agent/Tool commands
 import { initCommand } from './commands/init.js';
@@ -39,8 +38,7 @@ import {
  */
 function getVersion(): string {
   try {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = dirname(__filename);
+    // In CommonJS, __dirname is automatically available
     // From dist/src/index.js, go up two levels to reach /cli/package.json
     const packagePath = join(__dirname, '..', '..', 'package.json');
     const packageJson = JSON.parse(readFileSync(packagePath, 'utf-8'));

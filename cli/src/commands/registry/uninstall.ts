@@ -9,6 +9,7 @@ import { Command } from 'commander';
 import ora from 'ora';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
+import { Registry } from '@fractary/forge';
 import { loadForgeConfig } from '../../utils/forge-config.js';
 import {
   formatSuccess,
@@ -54,9 +55,6 @@ export function createUninstallCommand(): Command {
  * Uninstall command implementation
  */
 async function uninstallCommand(pluginName: string, options: UninstallCommandOptions): Promise<void> {
-  // Lazy-load SDK to avoid CommonJS/ESM interop issues
-  const { Registry } = await import('@fractary/forge');
-
   // Parse plugin name (remove version if provided)
   const { name } = parsePluginIdentifier(pluginName);
 
@@ -163,9 +161,6 @@ function parsePluginIdentifier(identifier: string): { name: string } {
  * Check if plugin is installed
  */
 async function checkPluginInstalled(name: string, scope: 'global' | 'local'): Promise<boolean> {
-  // Lazy-load SDK to avoid CommonJS/ESM interop issues
-  const { Registry } = await import('@fractary/forge');
-
   try {
     // Use local resolver to check installation
     const listMethod = scope === 'local'

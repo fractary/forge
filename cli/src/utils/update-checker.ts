@@ -6,7 +6,7 @@
  */
 
 import semver from 'semver';
-import type { RegistryConfig } from '@fractary/forge';
+import { Registry, type RegistryConfig } from '@fractary/forge';
 import { loadForgeConfig } from './forge-config.js';
 
 type ComponentType = 'agent' | 'tool' | 'workflow' | 'template' | 'plugin';
@@ -53,9 +53,6 @@ export async function checkComponentUpdate(
     hasUpdate: false,
     updateType: 'none',
   };
-
-  // Lazy-load SDK to avoid CommonJS/ESM interop issues
-  const { Registry } = await import('@fractary/forge');
 
   // Normalize version
   const current = semver.coerce(currentVersion)?.version || currentVersion;

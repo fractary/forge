@@ -7,6 +7,7 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
+import { Registry } from '@fractary/forge';
 import type { ComponentType } from '@fractary/forge';
 import { loadForgeConfig } from '../../utils/forge-config.js';
 import { formatComponentInfo, formatError } from '../../utils/formatters.js';
@@ -108,9 +109,6 @@ async function resolveComponent(
   description?: string;
   dependencies?: string[];
 } | null> {
-  // Lazy-load SDK to avoid CommonJS/ESM interop issues
-  const { Registry } = await import('@fractary/forge');
-
   // Determine search scope
   const scopes = determineScopes(options);
 

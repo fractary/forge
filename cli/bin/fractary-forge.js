@@ -2,14 +2,16 @@
 
 /**
  * Binary entry point for fractary-forge CLI
- * Uses dynamic import to load the main CLI program
+ * Loads the CommonJS main CLI program
  */
 
-import('../dist/src/index.js')
-  .then(({ main }) => {
-    return main();
-  })
-  .catch((error) => {
+try {
+  const { main } = require('../dist/src/index.js');
+  main().catch((error) => {
     console.error('Fatal error:', error);
     process.exit(1);
   });
+} catch (error) {
+  console.error('Fatal error:', error);
+  process.exit(1);
+}

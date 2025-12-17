@@ -7,6 +7,7 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
+import { Registry } from '@fractary/forge';
 
 type ComponentType = 'agent' | 'tool' | 'workflow' | 'template' | 'plugin';
 
@@ -60,9 +61,6 @@ export function createListCommand(): Command {
  * List command implementation
  */
 async function listCommand(options: ListCommandOptions): Promise<void> {
-  // Lazy-load SDK to avoid CommonJS/ESM interop issues
-  const { Registry } = await import('@fractary/forge');
-
   // Load configuration
   const { config, configSource } = await loadForgeConfig();
 
