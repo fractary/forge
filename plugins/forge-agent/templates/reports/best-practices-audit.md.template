@@ -176,7 +176,7 @@ To track progress on remediation:
 1. Copy the remediation checklist above to your issue tracker
 2. Re-run audit after completing items:
    ```bash
-   /fractary-faber-agent:audit-project
+   /fractary-forge-agent:audit-project
    ```
 3. Compare compliance scores between reports
 

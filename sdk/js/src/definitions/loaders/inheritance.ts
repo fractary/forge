@@ -12,8 +12,8 @@ import type { AgentDefinition, ToolDefinition } from '../schemas';
  * Interface for definition resolver (to avoid circular dependency)
  */
 export interface IDefinitionResolver {
-  resolveAgent(name: string): Promise<{ definition: AgentDefinition } | null>;
-  resolveTool(name: string): Promise<{ definition: ToolDefinition } | null>;
+  agentResolve(name: string): Promise<{ definition: AgentDefinition } | null>;
+  toolResolve(name: string): Promise<{ definition: ToolDefinition } | null>;
 }
 
 export class InheritanceResolver {
@@ -27,7 +27,7 @@ export class InheritanceResolver {
   /**
    * Resolve agent inheritance
    */
-  async resolveAgent(definition: AgentDefinition): Promise<AgentDefinition> {
+  async agentResolve(definition: AgentDefinition): Promise<AgentDefinition> {
     if (!definition.extends) {
       return definition;
     }
@@ -49,7 +49,7 @@ export class InheritanceResolver {
 
     try {
       // Resolve base agent
-      const baseAgent = await this.resolver.resolveAgent(definition.extends);
+      const baseAgent = await this.resolver.agentResolve(definition.extends);
       if (!baseAgent) {
         throw new ForgeError(
           DefinitionErrorCode.INHERITANCE_BASE_NOT_FOUND,
@@ -59,7 +59,7 @@ export class InheritanceResolver {
       }
 
       // Recursively resolve base's extends
-      const resolvedBase = await this.resolveAgent(baseAgent.definition);
+      const resolvedBase = await this.agentResolve(baseAgent.definition);
 
       // Merge: child overrides base
       return this.mergeAgentDefinitions(resolvedBase, definition);
@@ -71,7 +71,7 @@ export class InheritanceResolver {
   /**
    * Resolve tool inheritance
    */
-  async resolveTool(definition: ToolDefinition): Promise<ToolDefinition> {
+  async toolResolve(definition: ToolDefinition): Promise<ToolDefinition> {
     if (!definition.extends) {
       return definition;
     }
@@ -93,7 +93,7 @@ export class InheritanceResolver {
 
     try {
       // Resolve base tool
-      const baseTool = await this.resolver.resolveTool(definition.extends);
+      const baseTool = await this.resolver.toolResolve(definition.extends);
       if (!baseTool) {
         throw new ForgeError(
           DefinitionErrorCode.INHERITANCE_BASE_NOT_FOUND,
@@ -103,7 +103,7 @@ export class InheritanceResolver {
       }
 
       // Recursively resolve base's extends
-      const resolvedBase = await this.resolveTool(baseTool.definition);
+      const resolvedBase = await this.toolResolve(baseTool.definition);
 
       // Merge: child overrides base
       return this.mergeToolDefinitions(resolvedBase, definition);

@@ -11,7 +11,7 @@ This example demonstrates creating a complete CSV data processing workflow using
 ### Step 1: Run Creation Command
 
 ```bash
-/fractary-faber-agent:create-workflow csv-processor \
+/fractary-forge-agent:create-workflow csv-processor \
   --pattern multi-phase \
   --description "Process and validate CSV files with transformations" \
   --domain data \
@@ -99,7 +99,7 @@ You manage state across all phases and get user approval before processing.
 
 ## Phase 1: FETCH (Retrieve CSV Data)
 
-Use @skill-fractary-faber-agent:csv-fetcher to fetch CSV file:
+Use @skill-fractary-forge-agent:csv-fetcher to fetch CSV file:
 
 ```json
 {
@@ -129,7 +129,7 @@ Store result:
 
 ## Phase 2: VALIDATE (Schema and Data Validation)
 
-Use @skill-fractary-faber-agent:csv-validator to validate:
+Use @skill-fractary-forge-agent:csv-validator to validate:
 
 ```json
 {
@@ -242,7 +242,7 @@ If user cancels → ABORT workflow and proceed to Phase 7 (REPORT)
 
 ## Phase 5: TRANSFORM (Data Transformation)
 
-If approved, use @skill-fractary-faber-agent:csv-transformer:
+If approved, use @skill-fractary-forge-agent:csv-transformer:
 
 ```json
 {
@@ -279,7 +279,7 @@ Store result:
 
 ## Phase 6: LOAD (Data Loading)
 
-Use @skill-fractary-faber-agent:csv-loader:
+Use @skill-fractary-forge-agent:csv-loader:
 
 ```json
 {

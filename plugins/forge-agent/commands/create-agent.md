@@ -1,5 +1,5 @@
 ---
-name: fractary-faber-agent:create-agent
+name: fractary-forge-agent:create-agent
 description: Create a new agent following Fractary plugin standards
 model: claude-haiku-4-5
 argument-hint: <name> --type <manager|handler> [--plugin <plugin-name>]
@@ -70,13 +70,13 @@ Your role is to parse user input and invoke the agent-creator agent with the app
 **Examples**:
 ```bash
 # Create a manager agent in current plugin
-/fractary-faber-agent:create-agent data-analyzer --type manager
+/fractary-forge-agent:create-agent data-analyzer --type manager
 
 # Create a handler agent in specific plugin
-/fractary-faber-agent:create-agent terraform-deployer --type handler --plugin faber-cloud
+/fractary-forge-agent:create-agent terraform-deployer --type handler --plugin faber-cloud
 
 # Create with custom tools
-/fractary-faber-agent:create-agent api-client --type manager --tools "Bash, Skill, WebFetch"
+/fractary-forge-agent:create-agent api-client --type manager --tools "Bash, Skill, WebFetch"
 ```
 
 ## Argument Validation
@@ -99,7 +99,7 @@ Your role is to parse user input and invoke the agent-creator agent with the app
 
 After parsing arguments, invoke the agent using **declarative syntax**:
 
-**Agent**: agent-creator (or @agent-fractary-faber-agent:agent-creator)
+**Agent**: agent-creator (or @agent-fractary-forge-agent:agent-creator)
 
 **Request structure**:
 ```json
@@ -135,13 +135,13 @@ Common errors to handle:
 **Missing required argument**:
 ```
 Error: Agent name is required
-Usage: /fractary-faber-agent:create-agent <name> --type <manager|handler>
+Usage: /fractary-forge-agent:create-agent <name> --type <manager|handler>
 ```
 
 **Missing type flag**:
 ```
 Error: --type flag is required
-Usage: /fractary-faber-agent:create-agent <name> --type <manager|handler>
+Usage: /fractary-forge-agent:create-agent <name> --type <manager|handler>
 Valid types: manager, handler
 ```
 
@@ -170,16 +170,16 @@ Please ensure you're in a valid plugin directory or specify --plugin
 
 ```bash
 # Simple manager agent
-/fractary-faber-agent:create-agent data-analyzer --type manager
+/fractary-forge-agent:create-agent data-analyzer --type manager
 
 # Handler agent for cloud infrastructure
-/fractary-faber-agent:create-agent terraform-deployer --type handler --plugin faber-cloud
+/fractary-forge-agent:create-agent terraform-deployer --type handler --plugin faber-cloud
 
 # Agent with custom description
-/fractary-faber-agent:create-agent workflow-manager --type manager --description "Orchestrates complete FABER workflows"
+/fractary-forge-agent:create-agent workflow-manager --type manager --description "Orchestrates complete FABER workflows"
 
 # Agent with custom tools
-/fractary-faber-agent:create-agent api-client --type manager --tools "Bash, Skill, WebFetch"
+/fractary-forge-agent:create-agent api-client --type manager --tools "Bash, Skill, WebFetch"
 ```
 
 ## Expected Output
@@ -237,8 +237,8 @@ For detailed documentation, see:
 - `/docs/standards/FRACTARY-PLUGIN-STANDARDS.md`
 
 Related commands:
-- `/fractary-faber-agent:create-skill` - Create a skill
-- `/fractary-faber-agent:create-command` - Create a command
-- `/fractary-faber-agent:create-plugin` - Create a complete plugin
+- `/fractary-forge-agent:create-skill` - Create a skill
+- `/fractary-forge-agent:create-command` - Create a command
+- `/fractary-forge-agent:create-plugin` - Create a complete plugin
 
 </NOTES>

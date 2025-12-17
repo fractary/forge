@@ -101,7 +101,7 @@ export const agentInfo: ToolDefinition = {
   handler: async (args) => {
     try {
       const agentAPI = new AgentAPI();
-      const info = await agentAPI.getAgentInfo(args.name as string);
+      const info = await agentAPI.agentInfoGet(args.name as string);
 
       return formatSuccess({
         name: info.name,

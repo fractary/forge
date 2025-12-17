@@ -1,5 +1,5 @@
 ---
-name: fractary-faber-agent:audit-project
+name: fractary-forge-agent:audit-project
 description: Audit Claude Code project for architectural compliance and anti-patterns
 model: claude-haiku-4-5
 argument-hint: [project-path] [--output <file>] [--format <json|markdown>] [--verbose]
@@ -34,9 +34,9 @@ Parse user input and invoke the project-auditor agent.
 
 **Examples**:
 ```bash
-/fractary-faber-agent:audit-project
-/fractary-faber-agent:audit-project /path/to/project
-/fractary-faber-agent:audit-project --format json --verbose
+/fractary-forge-agent:audit-project
+/fractary-forge-agent:audit-project /path/to/project
+/fractary-forge-agent:audit-project --format json --verbose
 ```
 </ARGUMENTS>
 

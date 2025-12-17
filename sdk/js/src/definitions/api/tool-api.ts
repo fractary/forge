@@ -30,23 +30,23 @@ export class ToolAPI {
   /**
    * Execute a tool with timeout support
    */
-  async executeTool(
+  async toolExecute(
     name: string,
     params: Record<string, any>,
     options?: ToolExecutionOptions
   ): Promise<ToolResult> {
     logger.info(`ToolAPI: Executing tool ${name}`);
 
-    const resolved = await this.resolver.resolveTool(name);
+    const resolved = await this.resolver.toolResolve(name);
     return await this.executor.execute(resolved.definition, params, options);
   }
 
   /**
    * Check if a tool exists
    */
-  async hasTool(name: string): Promise<boolean> {
+  async toolHas(name: string): Promise<boolean> {
     try {
-      await this.resolver.resolveTool(name);
+      await this.resolver.toolResolve(name);
       return true;
     } catch (error) {
       if (isForgeError(error) && error.code === 'TOOL_NOT_FOUND') {
@@ -59,8 +59,8 @@ export class ToolAPI {
   /**
    * Get tool information
    */
-  async getToolInfo(name: string): Promise<ToolInfo> {
-    const resolved = await this.resolver.resolveTool(name);
+  async toolInfoGet(name: string): Promise<ToolInfo> {
+    const resolved = await this.resolver.toolResolve(name);
     return {
       name: resolved.definition.name,
       version: resolved.version,
@@ -74,9 +74,9 @@ export class ToolAPI {
   /**
    * List available tools
    */
-  async listTools(filters?: { tags?: string[] }): Promise<ToolInfo[]> {
+  async toolList(filters?: { tags?: string[] }): Promise<ToolInfo[]> {
     // TODO: Implement listing logic
-    logger.warn('listTools not yet fully implemented');
+    logger.warn('toolList not yet fully implemented');
     return [];
   }
 }

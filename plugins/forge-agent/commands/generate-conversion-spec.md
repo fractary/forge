@@ -31,7 +31,7 @@ You immediately invoke the conversion-spec-generator agent with a structured req
 
 **Command Format:**
 ```bash
-/fractary-faber-agent:generate-conversion-spec [options]
+/fractary-forge-agent:generate-conversion-spec [options]
 
 Options:
   --audit-results <path>     Path to audit results JSON (optional if auto-detected)
@@ -46,19 +46,19 @@ Options:
 **Examples:**
 ```bash
 # Generate spec from audit results
-/fractary-faber-agent:generate-conversion-spec --audit-results audit.json
+/fractary-forge-agent:generate-conversion-spec --audit-results audit.json
 
 # Generate spec for specific entity
-/fractary-faber-agent:generate-conversion-spec --entity catalog-processor --pattern agent-chain
+/fractary-forge-agent:generate-conversion-spec --entity catalog-processor --pattern agent-chain
 
 # Generate high-priority conversions only
-/fractary-faber-agent:generate-conversion-spec --priority high --output high-priority-conversions.md
+/fractary-forge-agent:generate-conversion-spec --priority high --output high-priority-conversions.md
 
 # Interactive mode
-/fractary-faber-agent:generate-conversion-spec --interactive
+/fractary-forge-agent:generate-conversion-spec --interactive
 
 # JSON output for automation
-/fractary-faber-agent:generate-conversion-spec --format json --output conversion.json
+/fractary-forge-agent:generate-conversion-spec --format json --output conversion.json
 ```
 
 </INPUTS>
@@ -103,11 +103,11 @@ Build structured request for conversion-spec-generator agent:
 
 ## Step 4: Route to Agent
 
-Use the @agent-fractary-faber-agent:conversion-spec-generator agent with the structured request.
+Use the @agent-fractary-forge-agent:conversion-spec-generator agent with the structured request.
 
 **Invocation:**
 ```
-Use the @agent-fractary-faber-agent:conversion-spec-generator agent to generate a conversion specification with the following request:
+Use the @agent-fractary-forge-agent:conversion-spec-generator agent to generate a conversion specification with the following request:
 
 {structured_request_json}
 ```

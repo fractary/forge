@@ -347,7 +347,7 @@ You NEVER execute work directly - you delegate to skills.
 
 ## Phase 1: LINT (Code Quality Check)
 
-Use @skill-fractary-faber-agent:code-linter to lint code:
+Use @skill-fractary-forge-agent:code-linter to lint code:
 
 ```json
 {
@@ -424,7 +424,7 @@ If user declines → ABORT workflow
 
 ## Phase 4: BUILD (Code Compilation)
 
-Use @skill-fractary-faber-agent:code-builder to build:
+Use @skill-fractary-forge-agent:code-builder to build:
 
 ```json
 {
@@ -455,7 +455,7 @@ If build fails → ABORT workflow
 
 ## Phase 5: TEST (Quality Verification)
 
-Use @skill-fractary-faber-agent:test-runner to run tests:
+Use @skill-fractary-forge-agent:test-runner to run tests:
 
 ```json
 {
@@ -799,7 +799,7 @@ Use @skill-build-preparer:
 
 After splitting hybrid agents:
 
-1. Run `/fractary-faber-agent:audit` to find other hybrids
+1. Run `/fractary-forge-agent:audit` to find other hybrids
 2. Review [Script Extraction](script-extraction.md) guide for script best practices
 3. Review [Agent Chain Migration](agent-chain-to-skills.md) if agent chains exist
 4. Test each skill independently

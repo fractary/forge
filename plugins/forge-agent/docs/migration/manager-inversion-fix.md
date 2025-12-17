@@ -131,7 +131,7 @@ Run through these questions:
 Use the workflow-validator:
 
 ```bash
-/fractary-faber-agent:audit
+/fractary-forge-agent:audit
 
 # Output will show:
 # ❌ Manager-as-Skill Inversion Detected:
@@ -655,7 +655,7 @@ Generate final report using state from all phases.
 
 ### Pre-Migration
 
-- [ ] Run `/fractary-faber-agent:audit` to detect inversions
+- [ ] Run `/fractary-forge-agent:audit` to detect inversions
 - [ ] Identify all Manager-as-Skill instances
 - [ ] Document current workflow and dependencies
 - [ ] Identify user interaction points
@@ -796,7 +796,7 @@ grep -r "^tools:" plugins/*/agents/*.md | grep -v "Bash, Skill, Read, Write, Glo
 
 After fixing Manager-as-Skill inversions:
 
-1. Run `/fractary-faber-agent:audit` to verify no inversions remain
+1. Run `/fractary-forge-agent:audit` to verify no inversions remain
 2. Test all converted managers end-to-end
 3. Update documentation with new agent locations
 4. Review [Agent Chain Migration](agent-chain-to-skills.md) for related patterns

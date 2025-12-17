@@ -493,7 +493,7 @@ You've identified a custom anti-pattern not detected by the auditor.
 **Step 2: Apply spec**
 
 ```bash
-/fractary-faber-agent:apply-conversion /path/to/conv-custom-20250111-001.json
+/fractary-forge-agent:apply-conversion /path/to/conv-custom-20250111-001.json
 ```
 
 ---
@@ -682,7 +682,7 @@ You've identified a custom anti-pattern not detected by the auditor.
 ### Validate a Spec
 
 ```bash
-/fractary-faber-agent:validate-spec /path/to/spec.json
+/fractary-forge-agent:validate-spec /path/to/spec.json
 ```
 
 **Checks:**

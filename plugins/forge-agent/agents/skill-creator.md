@@ -100,7 +100,7 @@ Handler: {handler_type or "none"}
 **Purpose:** Collect all information needed to create the skill
 
 **Execute:**
-Use the @skill-fractary-faber-agent:gather-requirements skill with:
+Use the @skill-fractary-forge-agent:gather-requirements skill with:
 ```json
 {
   "artifact_type": "skill",
@@ -237,7 +237,7 @@ Output phase complete:
    ```
 
 2. **Generate SKILL.md:**
-   Use the @skill-fractary-faber-agent:generate-from-template skill with:
+   Use the @skill-fractary-forge-agent:generate-from-template skill with:
    ```json
    {
      "template_file": "{template_path}",
@@ -596,7 +596,7 @@ Resolution: Template appears incomplete. Please check template file.
 ## Integration
 
 **Invoked By:**
-- create-skill command (fractary-faber-agent:create-skill)
+- create-skill command (fractary-forge-agent:create-skill)
 
 **Invokes:**
 - gather-requirements skill (Phase 1)

@@ -64,7 +64,7 @@ Generate report
 ## Step 1: Run Audit
 
 ```bash
-/fractary-faber-agent:audit /plugins/my-plugin
+/fractary-forge-agent:audit /plugins/my-plugin
 ```
 
 **Output:**
@@ -105,7 +105,7 @@ Path: /plugins/my-plugin
   /tmp/conversion-specs/manager-inversion-fix-deployment-20250111.json
 
 Next: Review conversion spec with:
-  /fractary-faber-agent:review-conversion <spec-file>
+  /fractary-forge-agent:review-conversion <spec-file>
 ```
 
 ---
@@ -113,7 +113,7 @@ Next: Review conversion spec with:
 ## Step 2: Review Conversion Spec
 
 ```bash
-/fractary-faber-agent:review-conversion /tmp/conversion-specs/manager-inversion-fix-deployment-20250111.json
+/fractary-forge-agent:review-conversion /tmp/conversion-specs/manager-inversion-fix-deployment-20250111.json
 ```
 
 **Output:**
@@ -194,7 +194,7 @@ Severity: Critical
 📖 Migration Guide: docs/migration/manager-inversion-fix.md
 
 Next: Apply conversion with:
-  /fractary-faber-agent:apply-conversion <spec-file>
+  /fractary-forge-agent:apply-conversion <spec-file>
 ```
 
 ---
@@ -202,7 +202,7 @@ Next: Apply conversion with:
 ## Step 3: Apply Conversion
 
 ```bash
-/fractary-faber-agent:apply-conversion /tmp/conversion-specs/manager-inversion-fix-deployment-20250111.json
+/fractary-forge-agent:apply-conversion /tmp/conversion-specs/manager-inversion-fix-deployment-20250111.json
 ```
 
 **Interactive execution:**
@@ -314,7 +314,7 @@ Next steps:
   2. Customize workflow phases if needed
   3. Test workflow end-to-end
   4. Run audit again to verify fix:
-     /fractary-faber-agent:audit /plugins/my-plugin
+     /fractary-forge-agent:audit /plugins/my-plugin
 ```
 
 ---
@@ -322,7 +322,7 @@ Next steps:
 ## Step 4: Verify Fix
 
 ```bash
-/fractary-faber-agent:audit /plugins/my-plugin
+/fractary-forge-agent:audit /plugins/my-plugin
 ```
 
 **Output:**
@@ -546,7 +546,7 @@ git checkout agents/deployment-director.md
 Or use spec rollback:
 
 ```bash
-/fractary-faber-agent:rollback-conversion /tmp/conversion-specs/manager-inversion-fix-deployment-20250111.json
+/fractary-forge-agent:rollback-conversion /tmp/conversion-specs/manager-inversion-fix-deployment-20250111.json
 ```
 
 ---

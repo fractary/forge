@@ -100,7 +100,7 @@ export const toolInfo: ToolDefinition = {
   handler: async (args) => {
     try {
       const toolAPI = new ToolAPI();
-      const info = await toolAPI.getToolInfo(args.name as string);
+      const info = await toolAPI.toolInfoGet(args.name as string);
 
       return formatSuccess({
         name: info.name,

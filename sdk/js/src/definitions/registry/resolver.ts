@@ -46,7 +46,7 @@ export class DefinitionResolver {
   /**
    * Resolve agent with three-tier lookup and version constraints
    */
-  async resolveAgent(name: string): Promise<ResolvedAgent> {
+  async agentResolve(name: string): Promise<ResolvedAgent> {
     logger.info(`Resolving agent: ${name}`);
 
     // Parse name with version constraint
@@ -71,7 +71,7 @@ export class DefinitionResolver {
         };
 
         // Resolve inheritance
-        resolved.definition = await this.inheritanceResolver.resolveAgent(resolved.definition);
+        resolved.definition = await this.inheritanceResolver.agentResolve(resolved.definition);
 
         this.cache.setAgent(name, resolved);
         return resolved;
@@ -90,7 +90,7 @@ export class DefinitionResolver {
         };
 
         // Resolve inheritance
-        resolved.definition = await this.inheritanceResolver.resolveAgent(resolved.definition);
+        resolved.definition = await this.inheritanceResolver.agentResolve(resolved.definition);
 
         this.cache.setAgent(name, resolved);
         return resolved;
@@ -113,7 +113,7 @@ export class DefinitionResolver {
   /**
    * Resolve tool with three-tier lookup and version constraints
    */
-  async resolveTool(name: string): Promise<ResolvedTool> {
+  async toolResolve(name: string): Promise<ResolvedTool> {
     logger.info(`Resolving tool: ${name}`);
 
     // Parse name with version constraint
@@ -138,7 +138,7 @@ export class DefinitionResolver {
         };
 
         // Resolve inheritance
-        resolved.definition = await this.inheritanceResolver.resolveTool(resolved.definition);
+        resolved.definition = await this.inheritanceResolver.toolResolve(resolved.definition);
 
         this.cache.setTool(name, resolved);
         return resolved;
@@ -157,7 +157,7 @@ export class DefinitionResolver {
         };
 
         // Resolve inheritance
-        resolved.definition = await this.inheritanceResolver.resolveTool(resolved.definition);
+        resolved.definition = await this.inheritanceResolver.toolResolve(resolved.definition);
 
         this.cache.setTool(name, resolved);
         return resolved;
