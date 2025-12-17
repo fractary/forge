@@ -105,11 +105,9 @@ export class ForkManager {
     const forked = yaml.load(content) as any;
 
     if (!forked.fork_of) {
-      throw new ForgeError(
-        DefinitionErrorCode.AGENT_INVALID,
-        `${forkedName} is not a fork`,
-        { name: forkedName }
-      );
+      throw new ForgeError(DefinitionErrorCode.AGENT_INVALID, `${forkedName} is not a fork`, {
+        name: forkedName,
+      });
     }
 
     // Check upstream for updates
@@ -117,9 +115,7 @@ export class ForkManager {
     const hasUpdate = semver.gt(upstream.version, forked.fork_of.version);
 
     if (hasUpdate) {
-      logger.info(
-        `Upstream update available: ${forked.fork_of.version} → ${upstream.version}`
-      );
+      logger.info(`Upstream update available: ${forked.fork_of.version} → ${upstream.version}`);
     } else {
       logger.success('Fork is up to date with upstream');
     }
@@ -145,11 +141,9 @@ export class ForkManager {
     const forked = yaml.load(content) as any;
 
     if (!forked.fork_of) {
-      throw new ForgeError(
-        DefinitionErrorCode.TOOL_INVALID,
-        `${forkedName} is not a fork`,
-        { name: forkedName }
-      );
+      throw new ForgeError(DefinitionErrorCode.TOOL_INVALID, `${forkedName} is not a fork`, {
+        name: forkedName,
+      });
     }
 
     // Check upstream for updates
@@ -157,9 +151,7 @@ export class ForkManager {
     const hasUpdate = semver.gt(upstream.version, forked.fork_of.version);
 
     if (hasUpdate) {
-      logger.info(
-        `Upstream update available: ${forked.fork_of.version} → ${upstream.version}`
-      );
+      logger.info(`Upstream update available: ${forked.fork_of.version} → ${upstream.version}`);
     } else {
       logger.success('Fork is up to date with upstream');
     }
@@ -183,11 +175,9 @@ export class ForkManager {
     const forked = yaml.load(content) as any;
 
     if (!forked.fork_of) {
-      throw new ForgeError(
-        DefinitionErrorCode.AGENT_INVALID,
-        `${forkedName} is not a fork`,
-        { name: forkedName }
-      );
+      throw new ForgeError(DefinitionErrorCode.AGENT_INVALID, `${forkedName} is not a fork`, {
+        name: forkedName,
+      });
     }
 
     // Fetch base version (original fork point)
@@ -241,11 +231,9 @@ export class ForkManager {
     const forked = yaml.load(content) as any;
 
     if (!forked.fork_of) {
-      throw new ForgeError(
-        DefinitionErrorCode.TOOL_INVALID,
-        `${forkedName} is not a fork`,
-        { name: forkedName }
-      );
+      throw new ForgeError(DefinitionErrorCode.TOOL_INVALID, `${forkedName} is not a fork`, {
+        name: forkedName,
+      });
     }
 
     // Fetch base version (original fork point)

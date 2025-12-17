@@ -32,7 +32,9 @@ export class InheritanceResolver {
       return definition;
     }
 
-    logger.debug(`Resolving inheritance for agent: ${definition.name} extends ${definition.extends}`);
+    logger.debug(
+      `Resolving inheritance for agent: ${definition.name} extends ${definition.extends}`
+    );
 
     // Detect cycles
     if (this.resolutionStack.has(definition.name)) {
@@ -74,7 +76,9 @@ export class InheritanceResolver {
       return definition;
     }
 
-    logger.debug(`Resolving inheritance for tool: ${definition.name} extends ${definition.extends}`);
+    logger.debug(
+      `Resolving inheritance for tool: ${definition.name} extends ${definition.extends}`
+    );
 
     // Detect cycles
     if (this.resolutionStack.has(definition.name)) {
@@ -111,10 +115,7 @@ export class InheritanceResolver {
   /**
    * Merge agent definitions (child overrides base)
    */
-  private mergeAgentDefinitions(
-    base: AgentDefinition,
-    child: AgentDefinition
-  ): AgentDefinition {
+  private mergeAgentDefinitions(base: AgentDefinition, child: AgentDefinition): AgentDefinition {
     return {
       ...base,
       ...child,
@@ -134,19 +135,14 @@ export class InheritanceResolver {
   /**
    * Merge tool definitions (child overrides base)
    */
-  private mergeToolDefinitions(
-    base: ToolDefinition,
-    child: ToolDefinition
-  ): ToolDefinition {
+  private mergeToolDefinitions(base: ToolDefinition, child: ToolDefinition): ToolDefinition {
     return {
       ...base,
       ...child,
       // Merge parameters (child can override)
       parameters: { ...(base.parameters || {}), ...(child.parameters || {}) },
       // Merge depends_on arrays
-      depends_on: Array.from(
-        new Set([...(base.depends_on || []), ...(child.depends_on || [])])
-      ),
+      depends_on: Array.from(new Set([...(base.depends_on || []), ...(child.depends_on || [])])),
       // Merge tags
       tags: Array.from(new Set([...(base.tags || []), ...(child.tags || [])])),
       // Child's extends is removed after resolution

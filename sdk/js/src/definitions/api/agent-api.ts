@@ -8,12 +8,7 @@ import { DefinitionErrorCode } from '../errors';
 import { DefinitionResolver } from '../registry/resolver';
 import { AgentFactory } from '../factory/agent-factory';
 import { PromptCacheManager } from '../caching/cache-manager';
-import type {
-  ExecutableAgentInterface,
-  AgentResult,
-  AgentInfo,
-  HealthCheckResult,
-} from './types';
+import type { ExecutableAgentInterface, AgentResult, AgentInfo, HealthCheckResult } from './types';
 
 export class AgentAPI {
   private resolver: DefinitionResolver;
@@ -130,9 +125,7 @@ export class AgentAPI {
         }
       }
       result.checks.tools =
-        missingTools.length === 0
-          ? { passed: true }
-          : { passed: false, missing: missingTools };
+        missingTools.length === 0 ? { passed: true } : { passed: false, missing: missingTools };
 
       // Check 3: LLM provider is configured
       const provider = resolved.definition.llm.provider;
@@ -163,9 +156,7 @@ export class AgentAPI {
         }
       }
       result.checks.cache_sources =
-        inaccessible.length === 0
-          ? { passed: true }
-          : { passed: false, inaccessible };
+        inaccessible.length === 0 ? { passed: true } : { passed: false, inaccessible };
 
       // Overall health
       result.healthy = Object.values(result.checks).every((c) => c.passed);

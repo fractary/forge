@@ -4,9 +4,4 @@
 
 export { ManifestManager } from './manifest-manager';
 
-export type {
-  PackageManifest,
-  ManifestVersion,
-  ForkInfo,
-  ManifestSyncOptions,
-} from './types';
+export type { PackageManifest, ManifestVersion, ForkInfo, ManifestSyncOptions } from './types';

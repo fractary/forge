@@ -65,7 +65,13 @@ export { ConfigManager, configManager, loadConfig, getDefaultGlobalConfig } from
 export { CacheManager } from './cache';
 
 // Error exports
-export { ErrorCode, ForgeError, getUserFriendlyMessage, isForgeError, assertDefined } from './errors';
+export {
+  ErrorCode,
+  ForgeError,
+  getUserFriendlyMessage,
+  isForgeError,
+  assertDefined,
+} from './errors';
 
 // Logger exports
 export { Logger, logger } from './logger';

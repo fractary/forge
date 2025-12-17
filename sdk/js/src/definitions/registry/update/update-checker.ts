@@ -32,12 +32,7 @@ export class UpdateChecker {
         continue;
       }
 
-      const updateInfo = this.checkPackageUpdate(
-        name,
-        'agent',
-        entry.version,
-        manifest.latest
-      );
+      const updateInfo = this.checkPackageUpdate(name, 'agent', entry.version, manifest.latest);
 
       if (updateInfo) {
         updates.push(updateInfo);
@@ -55,12 +50,7 @@ export class UpdateChecker {
         continue;
       }
 
-      const updateInfo = this.checkPackageUpdate(
-        name,
-        'tool',
-        entry.version,
-        manifest.latest
-      );
+      const updateInfo = this.checkPackageUpdate(name, 'tool', entry.version, manifest.latest);
 
       if (updateInfo) {
         updates.push(updateInfo);
@@ -135,23 +125,22 @@ export class UpdateChecker {
     }
 
     const allVersions = manifest.versions
-      .filter(v => v.status === 'stable')
-      .map(v => v.version)
-      .filter(v => semver.gt(v, currentVersion));
+      .filter((v) => v.status === 'stable')
+      .map((v) => v.version)
+      .filter((v) => semver.gt(v, currentVersion));
 
     switch (strategy) {
       case 'patch':
         // Only patch updates (e.g., 1.0.x)
-        return allVersions.filter(v =>
-          semver.major(v) === semver.major(currentVersion) &&
-          semver.minor(v) === semver.minor(currentVersion)
+        return allVersions.filter(
+          (v) =>
+            semver.major(v) === semver.major(currentVersion) &&
+            semver.minor(v) === semver.minor(currentVersion)
         );
 
       case 'minor':
         // Minor and patch updates (e.g., 1.x.x)
-        return allVersions.filter(v =>
-          semver.major(v) === semver.major(currentVersion)
-        );
+        return allVersions.filter((v) => semver.major(v) === semver.major(currentVersion));
 
       case 'latest':
       default:

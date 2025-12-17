@@ -49,7 +49,7 @@ export class MarkdownLoader {
       // Body content always wins over any frontmatter system_prompt
       const definition: AgentDefinition = {
         ...frontmatter,
-        system_prompt: systemPrompt
+        system_prompt: systemPrompt,
       } as AgentDefinition;
 
       // Validate schema
@@ -94,7 +94,7 @@ export class MarkdownLoader {
       // For tools, markdown body becomes extended_description
       const definition = {
         ...frontmatter,
-        extended_description: markdown.trim() || undefined
+        extended_description: markdown.trim() || undefined,
       } as unknown as ToolDefinition;
 
       // Validate schema
@@ -134,7 +134,7 @@ export class MarkdownLoader {
 
       const definition = {
         ...frontmatter,
-        system_prompt: systemPrompt
+        system_prompt: systemPrompt,
       } as AgentDefinition;
 
       return this.validator.validateAgent(definition);
@@ -162,7 +162,7 @@ export class MarkdownLoader {
 
       const definition = {
         ...frontmatter,
-        extended_description: markdown.trim() || undefined
+        extended_description: markdown.trim() || undefined,
       } as unknown as ToolDefinition;
 
       return this.validator.validateTool(definition);

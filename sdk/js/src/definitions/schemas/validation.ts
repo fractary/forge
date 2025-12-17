@@ -24,9 +24,7 @@ export interface ValidationResult {
 /**
  * Convert Zod errors to ValidationError array
  */
-export function zodErrorsToValidationErrors(
-  zodError: z.ZodError
-): ValidationError[] {
+export function zodErrorsToValidationErrors(zodError: z.ZodError): ValidationError[] {
   return zodError.errors.map((err) => ({
     field: err.path.join('.'),
     message: err.message,

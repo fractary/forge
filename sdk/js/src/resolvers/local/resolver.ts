@@ -27,7 +27,11 @@ export class LocalResolver {
     logger.debug(`Attempting local resolution: ${identifier}`);
 
     // Try as file path first
-    if (identifier.startsWith('file://') || identifier.startsWith('/') || identifier.startsWith('.')) {
+    if (
+      identifier.startsWith('file://') ||
+      identifier.startsWith('/') ||
+      identifier.startsWith('.')
+    ) {
       return this.resolveFromPath(identifier, type);
     }
 
@@ -38,7 +42,10 @@ export class LocalResolver {
   /**
    * Resolve from file path
    */
-  private async resolveFromPath(filePath: string, type?: 'bundle' | 'starter'): Promise<AssetPackage> {
+  private async resolveFromPath(
+    filePath: string,
+    type?: 'bundle' | 'starter'
+  ): Promise<AssetPackage> {
     const assetPath = filePath.replace('file://', '');
 
     if (!(await fs.pathExists(assetPath))) {
@@ -151,7 +158,10 @@ export class LocalResolver {
   /**
    * Find manifest file in directory
    */
-  private async findManifest(assetPath: string, type: 'bundle' | 'starter'): Promise<string | null> {
+  private async findManifest(
+    assetPath: string,
+    type: 'bundle' | 'starter'
+  ): Promise<string | null> {
     const manifestNames = [
       type === 'starter' ? 'starter.manifest.json' : 'bundle.manifest.json',
       'forge.manifest.json',

@@ -197,7 +197,10 @@ tags: []
 
       vol.mkdirSync('/home/user/.fractary/registry/tools/@test/plugin', { recursive: true });
       vol.writeFileSync('/home/user/.fractary/registry/tools/@test/plugin/plugin.json', pluginJson);
-      vol.writeFileSync('/home/user/.fractary/registry/tools/@test/plugin/test-tool.yaml', toolYaml);
+      vol.writeFileSync(
+        '/home/user/.fractary/registry/tools/@test/plugin/test-tool.yaml',
+        toolYaml
+      );
 
       const result = await resolver.resolve('@test/plugin/test-tool', 'tool');
 

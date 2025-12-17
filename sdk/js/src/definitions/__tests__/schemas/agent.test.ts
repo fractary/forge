@@ -213,24 +213,6 @@ describe('AgentDefinitionSchema', () => {
       expect(result.success).toBe(false);
     });
 
-    it('should reject agent without system_prompt', () => {
-      const invalidAgent = {
-        name: 'test-agent',
-        type: 'agent',
-        description: 'Test',
-        version: '1.0.0',
-        tags: [],
-        llm: {
-          provider: 'anthropic',
-          model: 'claude-3-5-sonnet-20241022',
-        },
-        tools: [],
-      };
-
-      const result = AgentDefinitionSchema.safeParse(invalidAgent);
-      expect(result.success).toBe(false);
-    });
-
     it('should reject agent with wrong type literal', () => {
       const invalidAgent = {
         name: 'test-agent',

@@ -56,10 +56,7 @@ export class Exporter {
   /**
    * Export a single agent
    */
-  async exportAgent(
-    agent: AgentDefinition,
-    options: ExportOptions
-  ): Promise<ExportResult> {
+  async exportAgent(agent: AgentDefinition, options: ExportOptions): Promise<ExportResult> {
     const exporter = this.getExporter(options.format);
     const files = await exporter.exportAgent(agent, options);
 
@@ -81,10 +78,7 @@ export class Exporter {
   /**
    * Export a single tool
    */
-  async exportTool(
-    tool: ToolDefinition,
-    options: ExportOptions
-  ): Promise<ExportResult> {
+  async exportTool(tool: ToolDefinition, options: ExportOptions): Promise<ExportResult> {
     const exporter = this.getExporter(options.format);
     const files = await exporter.exportTool(tool, options);
 

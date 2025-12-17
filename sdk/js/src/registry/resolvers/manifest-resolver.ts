@@ -6,11 +6,7 @@
  */
 
 import * as crypto from 'crypto';
-import type {
-  RegistryManifest,
-  RegistryConfig,
-  PluginManifest,
-} from '../types.js';
+import type { RegistryManifest, RegistryConfig, PluginManifest } from '../types.js';
 import { validateRegistryManifest, validatePluginManifest } from '../types.js';
 import { ManifestCacheManager } from '../cache.js';
 
@@ -61,9 +57,7 @@ export class ManifestResolver {
       });
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status}: ${response.statusText}`
-        );
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       return await response.text();
@@ -178,7 +172,7 @@ export class ManifestResolver {
 
       try {
         const result = await this.fetchManifest(registry);
-        const pluginRef = result.manifest.plugins.find(p => p.name === pluginName);
+        const pluginRef = result.manifest.plugins.find((p) => p.name === pluginName);
 
         if (pluginRef) {
           return {

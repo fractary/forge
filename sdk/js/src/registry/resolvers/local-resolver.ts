@@ -71,10 +71,7 @@ export class LocalResolver {
   /**
    * Find component in project directory
    */
-  private async findInProject(
-    name: string,
-    type: ComponentType
-  ): Promise<LocalComponent | null> {
+  private async findInProject(name: string, type: ComponentType): Promise<LocalComponent | null> {
     const baseDir = getProjectFractaryDir(this.cwd);
     const componentDir = getComponentDir(baseDir, type);
 
@@ -111,10 +108,7 @@ export class LocalResolver {
   /**
    * Find component in global directory
    */
-  private async findInGlobal(
-    name: string,
-    type: ComponentType
-  ): Promise<LocalComponent | null> {
+  private async findInGlobal(name: string, type: ComponentType): Promise<LocalComponent | null> {
     const baseDir = getGlobalFractaryDir();
     const componentDir = getComponentDir(baseDir, type);
 
@@ -160,15 +154,11 @@ export class LocalResolver {
     const baseDir = isProject ? getProjectFractaryDir(this.cwd) : getGlobalFractaryDir();
     const pluginDir = path.join(baseDir, 'plugins', pluginName);
 
-    if (!await fs.pathExists(pluginDir)) {
+    if (!(await fs.pathExists(pluginDir))) {
       return null;
     }
 
-    const componentPath = path.join(
-      pluginDir,
-      `${componentType}s`,
-      `${componentName}.yaml`
-    );
+    const componentPath = path.join(pluginDir, `${componentType}s`, `${componentName}.yaml`);
 
     if (await fs.pathExists(componentPath)) {
       return {
@@ -188,10 +178,7 @@ export class LocalResolver {
    * @param name Component name (or @plugin/component for plugin components)
    * @param type Component type
    */
-  async resolve(
-    name: string,
-    type: ComponentType
-  ): Promise<LocalComponent | null> {
+  async resolve(name: string, type: ComponentType): Promise<LocalComponent | null> {
     // Check if name includes plugin reference (@plugin/component)
     const pluginMatch = name.match(/^@([^/]+)\/(.+)$/);
 
@@ -225,7 +212,7 @@ export class LocalResolver {
     const baseDir = getProjectFractaryDir(this.cwd);
     const componentDir = getComponentDir(baseDir, type);
 
-    if (!await fs.pathExists(componentDir)) {
+    if (!(await fs.pathExists(componentDir))) {
       return [];
     }
 
@@ -239,7 +226,7 @@ export class LocalResolver {
         const manifestPath = path.join(pluginPath, 'plugin.json');
         const stat = await fs.stat(pluginPath);
 
-        if (stat.isDirectory() && await fs.pathExists(manifestPath)) {
+        if (stat.isDirectory() && (await fs.pathExists(manifestPath))) {
           components.push({
             name: entry,
             type,
@@ -254,8 +241,8 @@ export class LocalResolver {
       // List YAML files
       const files = await fs.readdir(componentDir);
       return files
-        .filter(f => f.endsWith('.yaml'))
-        .map(f => ({
+        .filter((f) => f.endsWith('.yaml'))
+        .map((f) => ({
           name: f.replace('.yaml', ''),
           type,
           path: path.join(componentDir, f),
@@ -271,7 +258,7 @@ export class LocalResolver {
     const baseDir = getGlobalFractaryDir();
     const componentDir = getComponentDir(baseDir, type);
 
-    if (!await fs.pathExists(componentDir)) {
+    if (!(await fs.pathExists(componentDir))) {
       return [];
     }
 
@@ -285,7 +272,7 @@ export class LocalResolver {
         const manifestPath = path.join(pluginPath, 'plugin.json');
         const stat = await fs.stat(pluginPath);
 
-        if (stat.isDirectory() && await fs.pathExists(manifestPath)) {
+        if (stat.isDirectory() && (await fs.pathExists(manifestPath))) {
           components.push({
             name: entry,
             type,
@@ -300,8 +287,8 @@ export class LocalResolver {
       // List YAML files
       const files = await fs.readdir(componentDir);
       return files
-        .filter(f => f.endsWith('.yaml'))
-        .map(f => ({
+        .filter((f) => f.endsWith('.yaml'))
+        .map((f) => ({
           name: f.replace('.yaml', ''),
           type,
           path: path.join(componentDir, f),

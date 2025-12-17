@@ -24,18 +24,10 @@ jest.mock('@/logger', () => ({
 jest.mock('../discovery');
 jest.mock('../integrity');
 
-const mockDiscoverUsedAgents = discoverUsedAgents as jest.MockedFunction<
-  typeof discoverUsedAgents
->;
-const mockDiscoverUsedTools = discoverUsedTools as jest.MockedFunction<
-  typeof discoverUsedTools
->;
-const mockCalculateIntegrity = calculateIntegrity as jest.MockedFunction<
-  typeof calculateIntegrity
->;
-const mockVerifyIntegrity = verifyIntegrity as jest.MockedFunction<
-  typeof verifyIntegrity
->;
+const mockDiscoverUsedAgents = discoverUsedAgents as jest.MockedFunction<typeof discoverUsedAgents>;
+const mockDiscoverUsedTools = discoverUsedTools as jest.MockedFunction<typeof discoverUsedTools>;
+const mockCalculateIntegrity = calculateIntegrity as jest.MockedFunction<typeof calculateIntegrity>;
+const mockVerifyIntegrity = verifyIntegrity as jest.MockedFunction<typeof verifyIntegrity>;
 
 describe('LockfileManager', () => {
   let manager: LockfileManager;
@@ -184,9 +176,7 @@ describe('LockfileManager', () => {
       mockDiscoverUsedAgents.mockResolvedValue(['missing-agent']);
       mockDiscoverUsedTools.mockResolvedValue([]);
 
-      mockResolver.resolveAgent.mockRejectedValue(
-        new Error('Agent not found')
-      );
+      mockResolver.resolveAgent.mockRejectedValue(new Error('Agent not found'));
 
       await expect(manager.generate()).rejects.toThrow('Agent not found');
     });
@@ -216,18 +206,14 @@ describe('LockfileManager', () => {
     });
 
     it('should throw error if lockfile does not exist', async () => {
-      await expect(manager.load()).rejects.toThrow(
-        /Lockfile not found/
-      );
+      await expect(manager.load()).rejects.toThrow(/Lockfile not found/);
     });
 
     it('should throw error for invalid JSON', async () => {
       await fs.ensureDir(path.dirname(lockfilePath));
       await fs.writeFile(lockfilePath, 'invalid json', 'utf-8');
 
-      await expect(manager.load()).rejects.toThrow(
-        /Failed to parse lockfile/
-      );
+      await expect(manager.load()).rejects.toThrow(/Failed to parse lockfile/);
     });
 
     it('should throw error for unsupported version', async () => {
@@ -241,9 +227,7 @@ describe('LockfileManager', () => {
       await fs.ensureDir(path.dirname(lockfilePath));
       await fs.writeFile(lockfilePath, JSON.stringify(lockfile), 'utf-8');
 
-      await expect(manager.load()).rejects.toThrow(
-        /Unsupported lockfile version/
-      );
+      await expect(manager.load()).rejects.toThrow(/Unsupported lockfile version/);
     });
   });
 
@@ -370,9 +354,7 @@ describe('LockfileManager', () => {
     });
 
     it('should detect missing definitions', async () => {
-      mockResolver.resolveAgent.mockRejectedValue(
-        new Error('Agent not found')
-      );
+      mockResolver.resolveAgent.mockRejectedValue(new Error('Agent not found'));
 
       const lockfile: Lockfile = {
         version: 1,

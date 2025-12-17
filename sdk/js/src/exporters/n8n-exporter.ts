@@ -52,21 +52,14 @@ interface N8nWorkflow {
 export class N8nExporter implements IExporter {
   readonly format = 'n8n' as const;
 
-  async exportAgent(
-    agent: AgentDefinition,
-    options: ExportOptions
-  ): Promise<ExportedFile[]> {
+  async exportAgent(agent: AgentDefinition, options: ExportOptions): Promise<ExportedFile[]> {
     const files: ExportedFile[] = [];
 
     // Convert agent to n8n workflow
     const workflow = this.agentToWorkflow(agent, options);
     const workflowJson = JSON.stringify(workflow, null, 2);
 
-    const workflowFilePath = path.join(
-      options.outputDir,
-      'workflows',
-      `${agent.name}.json`
-    );
+    const workflowFilePath = path.join(options.outputDir, 'workflows', `${agent.name}.json`);
 
     await fs.ensureDir(path.dirname(workflowFilePath));
     await fs.writeFile(workflowFilePath, workflowJson);
@@ -81,21 +74,14 @@ export class N8nExporter implements IExporter {
     return files;
   }
 
-  async exportTool(
-    tool: ToolDefinition,
-    options: ExportOptions
-  ): Promise<ExportedFile[]> {
+  async exportTool(tool: ToolDefinition, options: ExportOptions): Promise<ExportedFile[]> {
     const files: ExportedFile[] = [];
 
     // Convert tool to n8n node template
     const nodeTemplate = this.toolToNodeTemplate(tool);
     const nodeJson = JSON.stringify(nodeTemplate, null, 2);
 
-    const nodeFilePath = path.join(
-      options.outputDir,
-      'nodes',
-      `${tool.name}.json`
-    );
+    const nodeFilePath = path.join(options.outputDir, 'nodes', `${tool.name}.json`);
 
     await fs.ensureDir(path.dirname(nodeFilePath));
     await fs.writeFile(nodeFilePath, nodeJson);
@@ -168,10 +154,7 @@ export class N8nExporter implements IExporter {
   /**
    * Convert Fractary agent to n8n workflow
    */
-  private agentToWorkflow(
-    agent: AgentDefinition,
-    options: ExportOptions
-  ): N8nWorkflow {
+  private agentToWorkflow(agent: AgentDefinition, options: ExportOptions): N8nWorkflow {
     const formatOptions = (options.formatOptions || {}) as N8nExportOptions;
     const nodes: N8nNode[] = [];
     const connections: Record<string, { main: N8nConnection[][] }> = {};
@@ -349,7 +332,8 @@ export class N8nExporter implements IExporter {
     options?: N8nExportOptions
   ): Promise<ExportedFile> {
     let content = '# Exported n8n Workflows\n\n';
-    content += 'This directory contains workflows and nodes exported from Fractary YAML format to n8n JSON.\n\n';
+    content +=
+      'This directory contains workflows and nodes exported from Fractary YAML format to n8n JSON.\n\n';
 
     content += '## Installation\n\n';
     content += '1. Open n8n\n';

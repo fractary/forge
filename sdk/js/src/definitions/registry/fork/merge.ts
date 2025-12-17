@@ -31,11 +31,7 @@ export async function performMerge(input: MergeInput): Promise<MergeResult> {
   };
 
   // Get all paths from all three versions
-  const allPaths = new Set([
-    ...getAllPaths(base),
-    ...getAllPaths(local),
-    ...getAllPaths(upstream),
-  ]);
+  const allPaths = new Set([...getAllPaths(base), ...getAllPaths(local), ...getAllPaths(upstream)]);
 
   for (const path of Array.from(allPaths)) {
     const baseValue = getValueAtPath(base, path);
@@ -78,7 +74,9 @@ export async function performMerge(input: MergeInput): Promise<MergeResult> {
       local: localValue,
       upstream: upstreamValue,
     });
-    logger.warn(`Conflict at ${path}: local=${JSON.stringify(localValue)}, upstream=${JSON.stringify(upstreamValue)}`);
+    logger.warn(
+      `Conflict at ${path}: local=${JSON.stringify(localValue)}, upstream=${JSON.stringify(upstreamValue)}`
+    );
   }
 
   if (result.conflicts.length > 0) {
@@ -137,5 +135,5 @@ function isEqual(a: any, b: any): boolean {
 
   if (aKeys.length !== bKeys.length) return false;
 
-  return aKeys.every(key => bKeys.includes(key) && isEqual(a[key], b[key]));
+  return aKeys.every((key) => bKeys.includes(key) && isEqual(a[key], b[key]));
 }

@@ -78,10 +78,7 @@ export function isForgeError(error: unknown): error is ForgeError {
 /**
  * Assert that value is defined (not null or undefined)
  */
-export function assertDefined<T>(
-  value: T | undefined | null,
-  message: string
-): asserts value is T {
+export function assertDefined<T>(value: T | undefined | null, message: string): asserts value is T {
   if (value === undefined || value === null) {
     throw new ForgeError(ErrorCode.INVALID_ARGUMENT, message);
   }

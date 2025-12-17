@@ -313,11 +313,7 @@ describe('UpdateChecker', () => {
 
       mockManifestManager.getManifest.mockResolvedValue(manifest);
 
-      const versions = await updateChecker.getAvailableVersions(
-        'test-agent',
-        '1.0.0',
-        'latest'
-      );
+      const versions = await updateChecker.getAvailableVersions('test-agent', '1.0.0', 'latest');
 
       expect(versions).toEqual(['1.1.0', '2.0.0']);
     });
@@ -341,11 +337,7 @@ describe('UpdateChecker', () => {
 
       mockManifestManager.getManifest.mockResolvedValue(manifest);
 
-      const versions = await updateChecker.getAvailableVersions(
-        'test-agent',
-        '1.0.0',
-        'patch'
-      );
+      const versions = await updateChecker.getAvailableVersions('test-agent', '1.0.0', 'patch');
 
       expect(versions).toEqual(['1.0.1']);
     });
@@ -369,11 +361,7 @@ describe('UpdateChecker', () => {
 
       mockManifestManager.getManifest.mockResolvedValue(manifest);
 
-      const versions = await updateChecker.getAvailableVersions(
-        'test-agent',
-        '1.0.0',
-        'minor'
-      );
+      const versions = await updateChecker.getAvailableVersions('test-agent', '1.0.0', 'minor');
 
       expect(versions).toEqual(['1.0.1', '1.1.0']);
     });

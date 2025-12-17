@@ -10,7 +10,13 @@ import { execSync } from 'child_process';
 import { minimatch } from 'minimatch';
 import { logger } from '../../logger';
 import { ForgeError, ErrorCode } from '../../errors';
-import type { BundleManifest, StarterManifest, AssetIdentifier, AssetLocation, AssetPackage } from '../../types';
+import type {
+  BundleManifest,
+  StarterManifest,
+  AssetIdentifier,
+  AssetLocation,
+  AssetPackage,
+} from '../../types';
 
 export interface GitHubResolverOptions {
   token?: string;
@@ -606,10 +612,7 @@ export class GitHubResolver {
       }
     } else {
       // Exclusion mode - include all except excluded patterns
-      const exclusions = [
-        ...this.getDefaultExclusions(),
-        ...(manifest.exclude || []),
-      ];
+      const exclusions = [...this.getDefaultExclusions(), ...(manifest.exclude || [])];
 
       for (const [filePath, content] of files) {
         // Skip always-excluded files
@@ -618,9 +621,7 @@ export class GitHubResolver {
         }
 
         // Check if file matches any exclusion pattern
-        const excluded = exclusions.some((pattern) =>
-          minimatch(filePath, pattern, { dot: true })
-        );
+        const excluded = exclusions.some((pattern) => minimatch(filePath, pattern, { dot: true }));
 
         if (!excluded) {
           filtered.set(filePath, content);
@@ -628,9 +629,7 @@ export class GitHubResolver {
       }
     }
 
-    logger.debug(
-      `Filtered ${files.size} files to ${filtered.size} distributable files`
-    );
+    logger.debug(`Filtered ${files.size} files to ${filtered.size} distributable files`);
 
     return filtered;
   }

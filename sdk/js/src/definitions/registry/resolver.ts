@@ -223,10 +223,7 @@ export class DefinitionResolver {
     // Find all versions (both formats)
     const mdPattern = path.join(registryPath, `${name}@*`, 'agent.md');
     const yamlPattern = path.join(registryPath, `${name}@*`, 'agent.yaml');
-    const files = [
-      ...await glob(mdPattern),
-      ...await glob(yamlPattern)
-    ];
+    const files = [...(await glob(mdPattern)), ...(await glob(yamlPattern))];
 
     if (files.length === 0) {
       return null;
@@ -275,10 +272,7 @@ export class DefinitionResolver {
     // Find all versions (both formats)
     const mdPattern = path.join(registryPath, `${name}@*`, 'tool.md');
     const yamlPattern = path.join(registryPath, `${name}@*`, 'tool.yaml');
-    const files = [
-      ...await glob(mdPattern),
-      ...await glob(yamlPattern)
-    ];
+    const files = [...(await glob(mdPattern)), ...(await glob(yamlPattern))];
 
     if (files.length === 0) {
       return null;

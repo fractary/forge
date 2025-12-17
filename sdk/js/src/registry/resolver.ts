@@ -10,7 +10,11 @@
  */
 
 import * as semver from 'semver';
-import { LocalResolver, type LocalComponent, type ComponentType } from './resolvers/local-resolver.js';
+import {
+  LocalResolver,
+  type LocalComponent,
+  type ComponentType,
+} from './resolvers/local-resolver.js';
 import { ManifestResolver } from './resolvers/manifest-resolver.js';
 import { ConfigManager } from './config-manager.js';
 import type { ForgeConfig, RegistryConfig } from './types.js';
@@ -107,11 +111,11 @@ export class Resolver {
     const config = configResult.config;
 
     // Filter and sort registries
-    let registries = config.registries.filter(r => r.enabled);
+    let registries = config.registries.filter((r) => r.enabled);
 
     // Filter by specific registry if requested
     if (options.registry) {
-      registries = registries.filter(r => r.name === options.registry);
+      registries = registries.filter((r) => r.name === options.registry);
     }
 
     // Sort by priority (lower number = higher priority)
@@ -120,12 +124,7 @@ export class Resolver {
     // Search each registry in priority order
     for (const registry of registries) {
       try {
-        const component = await this.resolveFromRegistry(
-          name,
-          type,
-          registry,
-          options
-        );
+        const component = await this.resolveFromRegistry(name, type, registry, options);
 
         if (component) {
           return component;
@@ -161,13 +160,7 @@ export class Resolver {
 
     if (pluginMatch) {
       const [, pluginName, componentName] = pluginMatch;
-      return this.resolvePluginComponent(
-        pluginName,
-        componentName,
-        type,
-        registry,
-        options
-      );
+      return this.resolvePluginComponent(pluginName, componentName, type, registry, options);
     }
 
     // For standalone components, we'd need to search all plugins
@@ -189,7 +182,7 @@ export class Resolver {
     const result = await this.manifestResolver.fetchManifest(registry);
 
     // Find plugin reference
-    const pluginRef = result.manifest.plugins.find(p => p.name === pluginName);
+    const pluginRef = result.manifest.plugins.find((p) => p.name === pluginName);
 
     if (!pluginRef) {
       return null;
@@ -208,7 +201,7 @@ export class Resolver {
 
     // Find component in plugin manifest
     const componentsList = this.getComponentList(pluginManifest, componentType);
-    const component = componentsList?.find(c => c.name === componentName);
+    const component = componentsList?.find((c) => c.name === componentName);
 
     if (!component) {
       return null;
@@ -272,12 +265,12 @@ export class Resolver {
 
     // Get enabled registries sorted by priority
     let registries = config.registries
-      .filter(r => r.enabled)
+      .filter((r) => r.enabled)
       .sort((a, b) => a.priority - b.priority);
 
     // Filter by specific registry if requested
     if (options.registry) {
-      registries = registries.filter(r => r.name === options.registry);
+      registries = registries.filter((r) => r.name === options.registry);
     }
 
     // Search each registry
@@ -288,7 +281,7 @@ export class Resolver {
 
       try {
         const result = await this.manifestResolver.fetchManifest(registry);
-        const pluginRef = result.manifest.plugins.find(p => p.name === pluginName);
+        const pluginRef = result.manifest.plugins.find((p) => p.name === pluginName);
 
         if (pluginRef) {
           // Check version constraint
@@ -328,12 +321,12 @@ export class Resolver {
 
     // Get enabled registries
     let registries = config.registries
-      .filter(r => r.enabled)
+      .filter((r) => r.enabled)
       .sort((a, b) => a.priority - b.priority);
 
     // Filter by specific registry if requested
     if (options.registry) {
-      registries = registries.filter(r => r.name === options.registry);
+      registries = registries.filter((r) => r.name === options.registry);
     }
 
     // Search each registry
