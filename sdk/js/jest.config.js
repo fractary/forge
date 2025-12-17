@@ -28,8 +28,6 @@ module.exports = {
   },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-    '^chalk$': '<rootDir>/node_modules/chalk/source/index.js',
-    '^ora$': '<rootDir>/node_modules/ora/index.js',
   },
   clearMocks: true,
   restoreMocks: true,
