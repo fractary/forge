@@ -1,0 +1,30 @@
+{
+  "name": "@fractary/forge-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fractary Forge monorepo - AI agent definitions framework",
+  "workspaces": [
+    "sdk/js",
+    "cli"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "clean": "npm run clean --workspaces",
+    "lint": "npm run lint --workspaces",
+    "format": "npm run format --workspaces"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fractary/forge.git"
+  },
+  "keywords": [
+    "fractary",
+    "forge",
+    "ai",
+    "agents",
+    "tools"
+  ],
+  "author": "Fractary",
+  "license": "MIT"
+}

@@ -6,30 +6,37 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
+      "import": "./dist/index.js",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
     "./resolvers": {
+      "import": "./dist/resolvers/index.js",
       "require": "./dist/resolvers/index.js",
       "types": "./dist/resolvers/index.d.ts"
     },
     "./types": {
+      "import": "./dist/types/index.js",
       "require": "./dist/types/index.js",
       "types": "./dist/types/index.d.ts"
     },
     "./config": {
+      "import": "./dist/config/index.js",
       "require": "./dist/config/index.js",
       "types": "./dist/config/index.d.ts"
     },
     "./cache": {
+      "import": "./dist/cache/index.js",
       "require": "./dist/cache/index.js",
       "types": "./dist/cache/index.d.ts"
     },
     "./errors": {
+      "import": "./dist/errors/index.js",
       "require": "./dist/errors/index.js",
       "types": "./dist/errors/index.d.ts"
     },
     "./definitions": {
+      "import": "./dist/definitions/index.js",
       "require": "./dist/definitions/index.js",
       "types": "./dist/definitions/index.d.ts"
     }
@@ -78,7 +85,6 @@
   "dependencies": {
     "@fractary/codex": "^0.1.3",
     "@fractary/faber": "^1.2.0",
-    "@fractary/forge": "^1.1.1",
     "@langchain/anthropic": "^0.3.0",
     "@langchain/core": "^0.3.0",
     "@langchain/google-genai": "^0.1.0",

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-16T22:55:54Z",
-  "prompt": "{\"session_id\":\"96eb7aeb-6df2-4f40-b351-6f92d532f45b\",\"transcript_path\":\"/home/jmcwilliam/.claude/projects/-mnt-c-GitHub-fractary-forge/96eb7aeb-6df2-4f40-b351-6f92d532f45b.jsonl\",\"cwd\":\"/mnt/c/GitHub/fractary/forge\",\"permission_mode\":\"bypassPermissions\",\"hook_event_name\":\"UserPromptSubmit\",\"prompt\":\"commit and push all\"} ",
-  "prompt_short": "{\"session_id\":\"96eb7aeb-6df2-4f40-b35..."
+  "timestamp": "2025-12-17T11:32:11Z",
+  "prompt": "{\"session_id\":\"8153e504-1f10-4db1-b410-59620116d004\",\"transcript_path\":\"/home/jmcwilliam/.claude/projects/-mnt-c-GitHub-fractary-forge/8153e504-1f10-4db1-b410-59620116d004.jsonl\",\"cwd\":\"/mnt/c/GitHub/fractary/forge/cli\",\"permission_mode\":\"bypassPermissions\",\"hook_event_name\":\"UserPromptSubmit\",\"prompt\":\"you said there was 5% left, lets finish\"} ",
+  "prompt_short": "{\"session_id\":\"8153e504-1f10-4db1-b41..."
 }
