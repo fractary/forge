@@ -26,7 +26,7 @@ export function toolListCommand(): Command {
           filters.tags = options.tags.split(',').map((t: string) => t.trim());
         }
 
-        const tools = await client.listTools(filters);
+        const tools = await client.toolList(filters);
 
         if (options.json) {
           console.log(JSON.stringify(tools, null, 2));

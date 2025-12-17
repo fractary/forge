@@ -23,7 +23,7 @@ export function agentValidateCommand(): Command {
         const client = await getClient();
 
         // Resolve agent to trigger validation
-        const resolved = await client.resolveAgent(name);
+        const resolved = await client.agentResolve(name);
 
         // Basic validation result
         const result = {
@@ -36,7 +36,7 @@ export function agentValidateCommand(): Command {
         // Additional tool checking if requested
         if (options.checkTools && resolved.definition.tools) {
           for (const toolName of resolved.definition.tools) {
-            const exists = await client.hasTool(toolName);
+            const exists = await client.toolHas(toolName);
             if (!exists) {
               result.valid = false;
               result.errors.push({

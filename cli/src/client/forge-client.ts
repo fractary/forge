@@ -138,43 +138,43 @@ export class ForgeClient {
   /**
    * Resolve an agent definition
    */
-  async resolveAgent(name: string): Promise<ResolvedAgent> {
-    return this.resolver.resolveAgent(name);
+  async agentResolve(name: string): Promise<ResolvedAgent> {
+    return this.resolver.agentResolve(name);
   }
 
   /**
    * Get agent information
    */
-  async getAgentInfo(name: string): Promise<AgentInfo> {
-    return this.agentAPI.getAgentInfo(name);
+  async agentInfoGet(name: string): Promise<AgentInfo> {
+    return this.agentAPI.agentInfoGet(name);
   }
 
   /**
    * Check if agent exists
    */
-  async hasAgent(name: string): Promise<boolean> {
-    return this.agentAPI.hasAgent(name);
+  async agentHas(name: string): Promise<boolean> {
+    return this.agentAPI.agentHas(name);
   }
 
   /**
    * List available agents
    */
-  async listAgents(filters?: { tags?: string[] }): Promise<AgentInfo[]> {
-    return this.agentAPI.listAgents(filters);
+  async agentList(filters?: { tags?: string[] }): Promise<AgentInfo[]> {
+    return this.agentAPI.agentList(filters);
   }
 
   /**
    * Health check an agent
    */
-  async healthCheckAgent(name: string) {
-    return this.agentAPI.healthCheck(name);
+  async agentHealthCheck(name: string) {
+    return this.agentAPI.agentHealthCheck(name);
   }
 
   /**
    * Refresh agent prompt cache
    */
-  async refreshAgentCache(name: string): Promise<void> {
-    return this.agentAPI.refreshCache(name);
+  async agentCacheRefresh(name: string): Promise<void> {
+    return this.agentAPI.agentCacheRefresh(name);
   }
 
   // Tool operations
@@ -182,40 +182,40 @@ export class ForgeClient {
   /**
    * Resolve a tool definition
    */
-  async resolveTool(name: string): Promise<ResolvedTool> {
-    return this.resolver.resolveTool(name);
+  async toolResolve(name: string): Promise<ResolvedTool> {
+    return this.resolver.toolResolve(name);
   }
 
   /**
    * Get tool information
    */
-  async getToolInfo(name: string): Promise<ToolInfo> {
-    return this.toolAPI.getToolInfo(name);
+  async toolInfoGet(name: string): Promise<ToolInfo> {
+    return this.toolAPI.toolInfoGet(name);
   }
 
   /**
    * Check if tool exists
    */
-  async hasTool(name: string): Promise<boolean> {
-    return this.toolAPI.hasTool(name);
+  async toolHas(name: string): Promise<boolean> {
+    return this.toolAPI.toolHas(name);
   }
 
   /**
    * List available tools
    */
-  async listTools(filters?: { tags?: string[] }): Promise<ToolInfo[]> {
-    return this.toolAPI.listTools(filters);
+  async toolList(filters?: { tags?: string[] }): Promise<ToolInfo[]> {
+    return this.toolAPI.toolList(filters);
   }
 
   /**
    * Execute a tool
    */
-  async executeTool(
+  async toolExecute(
     name: string,
     params: Record<string, any>,
     options?: any
   ) {
-    return this.toolAPI.executeTool(name, params, options);
+    return this.toolAPI.toolExecute(name, params, options);
   }
 
   // Getters

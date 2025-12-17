@@ -22,11 +22,11 @@ export class AgentAPI {
   /**
    * Resolve and load an executable agent
    */
-  async resolveAgent(name: string): Promise<ExecutableAgentInterface> {
+  async agentResolve(name: string): Promise<ExecutableAgentInterface> {
     logger.info(`AgentAPI: Resolving agent ${name}`);
 
     // Resolve definition
-    const resolved = await this.resolver.resolveAgent(name);
+    const resolved = await this.resolver.agentResolve(name);
 
     // Create executable agent
     const executableAgent = await this.factory.createAgent(resolved.definition);
@@ -66,9 +66,9 @@ export class AgentAPI {
   /**
    * Check if an agent exists
    */
-  async hasAgent(name: string): Promise<boolean> {
+  async agentHas(name: string): Promise<boolean> {
     try {
-      await this.resolver.resolveAgent(name);
+      await this.resolver.agentResolve(name);
       return true;
     } catch (error) {
       if (isForgeError(error) && error.code === 'AGENT_NOT_FOUND') {
@@ -81,8 +81,8 @@ export class AgentAPI {
   /**
    * Get agent information
    */
-  async getAgentInfo(name: string): Promise<AgentInfo> {
-    const resolved = await this.resolver.resolveAgent(name);
+  async agentInfoGet(name: string): Promise<AgentInfo> {
+    const resolved = await this.resolver.agentResolve(name);
     return {
       name: resolved.definition.name,
       version: resolved.version,
@@ -96,7 +96,7 @@ export class AgentAPI {
   /**
    * Health check for CI/CD validation
    */
-  async healthCheck(name: string): Promise<HealthCheckResult> {
+  async agentHealthCheck(name: string): Promise<HealthCheckResult> {
     const startTime = Date.now();
     const result: HealthCheckResult = {
       healthy: true,
@@ -112,14 +112,14 @@ export class AgentAPI {
 
     try {
       // Check 1: Definition exists and is valid
-      const resolved = await this.resolver.resolveAgent(name);
+      const resolved = await this.resolver.agentResolve(name);
       result.checks.definition = { passed: true };
 
       // Check 2: All referenced tools are available
       const missingTools: string[] = [];
       for (const toolName of resolved.definition.tools || []) {
         try {
-          await this.resolver.resolveTool(toolName);
+          await this.resolver.toolResolve(toolName);
         } catch {
           missingTools.push(toolName);
         }
@@ -175,9 +175,9 @@ export class AgentAPI {
   /**
    * Refresh prompt cache for an agent
    */
-  async refreshCache(name: string): Promise<void> {
+  async agentCacheRefresh(name: string): Promise<void> {
     logger.info(`Refreshing cache for agent: ${name}`);
-    const resolved = await this.resolver.resolveAgent(name);
+    const resolved = await this.resolver.agentResolve(name);
 
     if (resolved.definition.caching?.enabled) {
       await this.cacheManager.invalidate(name);
@@ -188,9 +188,9 @@ export class AgentAPI {
   /**
    * List available agents
    */
-  async listAgents(filters?: { tags?: string[] }): Promise<AgentInfo[]> {
+  async agentList(filters?: { tags?: string[] }): Promise<AgentInfo[]> {
     // TODO: Implement listing logic
-    logger.warn('listAgents not yet fully implemented');
+    logger.warn('agentList not yet fully implemented');
     return [];
   }
 }

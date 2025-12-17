@@ -21,7 +21,7 @@ export function agentInfoCommand(): Command {
     .action(async (name: string, options: any) => {
       try {
         const client = await getClient();
-        const info = await client.getAgentInfo(name);
+        const info = await client.agentInfoGet(name);
 
         if (options.json) {
           console.log(JSON.stringify(info, null, 2));

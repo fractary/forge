@@ -22,7 +22,7 @@ export function toolValidateCommand(): Command {
         const client = await getClient();
 
         // Resolve tool to trigger validation
-        const resolved = await client.resolveTool(name);
+        const resolved = await client.toolResolve(name);
 
         // Basic validation result
         const result = {

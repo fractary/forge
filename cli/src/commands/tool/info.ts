@@ -20,7 +20,7 @@ export function toolInfoCommand(): Command {
     .action(async (name: string, options: any) => {
       try {
         const client = await getClient();
-        const info = await client.getToolInfo(name);
+        const info = await client.toolInfoGet(name);
 
         if (options.json) {
           console.log(JSON.stringify(info, null, 2));

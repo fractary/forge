@@ -26,7 +26,7 @@ export function agentListCommand(): Command {
           filters.tags = options.tags.split(',').map((t: string) => t.trim());
         }
 
-        const agents = await client.listAgents(filters);
+        const agents = await client.agentList(filters);
 
         if (options.json) {
           console.log(JSON.stringify(agents, null, 2));
