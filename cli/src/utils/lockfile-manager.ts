@@ -9,7 +9,6 @@
 
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { Registry } from '@fractary/forge';
 import { getForgeDir } from './forge-config.js';
 
 type ComponentType = 'agent' | 'tool' | 'workflow' | 'template' | 'plugin';
@@ -95,6 +94,9 @@ export async function generateLockfile(
   cwd: string = process.cwd(),
   options: { update?: boolean } = {}
 ): Promise<LockFile> {
+  // Lazy-load SDK to avoid CommonJS/ESM interop issues
+  const { Registry } = await import('@fractary/forge');
+
   const lockFile = createEmptyLockFile();
 
   // Define component types
