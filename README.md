@@ -65,6 +65,41 @@
 
 ---
 
+## 🆕 What's New in v1.2.0
+
+### Breaking Changes: Naming Convention Update
+
+Version 1.2.0 introduces consistent `{noun}-{action}` naming across all systems:
+
+- **JavaScript SDK**: All methods renamed to `{noun}{Action}` camelCase (e.g., `agentResolve()`, `toolExecute()`)
+- **Python SDK**: New! Full feature parity with `{noun}_{action}` snake_case (e.g., `agent_resolve()`, `tool_execute()`)
+- **CLI**: Already compliant with `{noun}-{action}` kebab-case (e.g., `agent-info`, `tool-list`)
+- **MCP Server**: Already compliant with `fractary_forge_{noun}_{action}` (e.g., `fractary_forge_agent_info`)
+
+**Migration**: See [MIGRATION-GUIDE-v1.2.0.md](./MIGRATION-GUIDE-v1.2.0.md) for detailed migration instructions and automated migration scripts.
+
+**Naming Conventions**: See [docs/NAMING-CONVENTIONS.md](./docs/NAMING-CONVENTIONS.md) for the complete naming convention reference.
+
+### New Python SDK
+
+The Python SDK is now available with 100% feature parity to the JavaScript SDK:
+
+```python
+from fractary_forge import AgentRegistry, ToolRegistry
+
+# Three-tier resolution
+registry = AgentRegistry()
+agent = registry.agent_resolve('my-agent')
+
+# Tool execution
+tool_registry = ToolRegistry()
+result = tool_registry.tool_execute('my-tool', {'param': 'value'})
+```
+
+See [sdk/python/README.md](./sdk/python/README.md) for full Python SDK documentation.
+
+---
+
 ## 📦 Installation
 
 ```bash

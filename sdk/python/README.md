@@ -2,6 +2,8 @@
 
 Python SDK for Fractary Forge - Create, manage, and execute AI agent definitions.
 
+**Version 1.2.0** introduces the Python SDK with 100% feature parity to the JavaScript SDK, following Pythonic `{noun}_{action}` snake_case naming conventions.
+
 ## Installation
 
 ```bash
