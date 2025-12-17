@@ -5,7 +5,8 @@
   "description": "Fractary Forge monorepo - AI agent definitions framework",
   "workspaces": [
     "sdk/js",
-    "cli"
+    "cli",
+    "mcp/server"
   ],
   "scripts": {
     "build": "npm run build --workspaces",
