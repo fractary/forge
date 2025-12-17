@@ -41,10 +41,12 @@ function getVersion(): string {
   try {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = dirname(__filename);
-    const packagePath = join(__dirname, '..', 'package.json');
+    // From dist/src/index.js, go up two levels to reach /cli/package.json
+    const packagePath = join(__dirname, '..', '..', 'package.json');
     const packageJson = JSON.parse(readFileSync(packagePath, 'utf-8'));
     return packageJson.version;
-  } catch {
+  } catch (error) {
+    console.error('Failed to read version:', error);
     return '1.0.0';
   }
 }
