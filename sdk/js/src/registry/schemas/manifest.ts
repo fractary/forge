@@ -72,7 +72,14 @@ export const PluginHookSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   version: z.string().regex(/^\d+\.\d+\.\d+$/, 'Version must be semantic version'),
   description: z.string().min(1, 'Description is required'),
-  type: z.enum(['pre-commit', 'post-commit', 'pre-push', 'post-push', 'session-start', 'session-end']),
+  type: z.enum([
+    'pre-commit',
+    'post-commit',
+    'pre-push',
+    'post-push',
+    'session-start',
+    'session-end',
+  ]),
   source: z.string().url('Source URL must be valid HTTPS URL'),
   checksum: z.string().regex(/^sha256:[a-f0-9]{64}$/, 'Checksum must be SHA-256 hash'),
   size: z.number().min(1, 'Size must be positive number'),
@@ -130,17 +137,23 @@ export type PluginTemplate = z.infer<typeof PluginTemplateSchema>;
  * Plugin configuration
  * Default settings for LLM and permissions
  */
-export const PluginConfigSchema = z.object({
-  default_llm: z.object({
-    provider: z.enum(['anthropic', 'openai', 'google']),
-    model: z.string(),
-  }).optional(),
-  permissions: z.object({
-    read: z.array(z.string()).optional(),
-    write: z.array(z.string()).optional(),
-    execute: z.array(z.string()).optional(),
-  }).optional(),
-}).optional();
+export const PluginConfigSchema = z
+  .object({
+    default_llm: z
+      .object({
+        provider: z.enum(['anthropic', 'openai', 'google']),
+        model: z.string(),
+      })
+      .optional(),
+    permissions: z
+      .object({
+        read: z.array(z.string()).optional(),
+        write: z.array(z.string()).optional(),
+        execute: z.array(z.string()).optional(),
+      })
+      .optional(),
+  })
+  .optional();
 
 export type PluginConfig = z.infer<typeof PluginConfigSchema>;
 

@@ -25,10 +25,7 @@ export class LockfileManager {
     private resolver: DefinitionResolver,
     projectRoot: string = process.cwd()
   ) {
-    this.lockfilePath = path.join(
-      projectRoot,
-      '.fractary/plugins/forge/lockfile.json'
-    );
+    this.lockfilePath = path.join(projectRoot, '.fractary/plugins/forge/lockfile.json');
   }
 
   /**
@@ -101,7 +98,9 @@ export class LockfileManager {
     }
 
     logger.success(`Lockfile generated: ${this.lockfilePath}`);
-    logger.info(`Locked ${Object.keys(lockfile.agents).length} agent(s) and ${Object.keys(lockfile.tools).length} tool(s)`);
+    logger.info(
+      `Locked ${Object.keys(lockfile.agents).length} agent(s) and ${Object.keys(lockfile.tools).length} tool(s)`
+    );
 
     return lockfile;
   }
@@ -127,7 +126,9 @@ export class LockfileManager {
         throw new Error(`Unsupported lockfile version: ${lockfile.version}`);
       }
 
-      logger.debug(`Loaded lockfile: ${Object.keys(lockfile.agents).length} agent(s), ${Object.keys(lockfile.tools).length} tool(s)`);
+      logger.debug(
+        `Loaded lockfile: ${Object.keys(lockfile.agents).length} agent(s), ${Object.keys(lockfile.tools).length} tool(s)`
+      );
 
       return lockfile;
     } catch (error) {
@@ -149,11 +150,7 @@ export class LockfileManager {
    */
   async save(lockfile: Lockfile): Promise<void> {
     await fs.ensureDir(path.dirname(this.lockfilePath));
-    await fs.writeFile(
-      this.lockfilePath,
-      JSON.stringify(lockfile, null, 2),
-      'utf-8'
-    );
+    await fs.writeFile(this.lockfilePath, JSON.stringify(lockfile, null, 2), 'utf-8');
     logger.debug(`Saved lockfile to: ${this.lockfilePath}`);
   }
 

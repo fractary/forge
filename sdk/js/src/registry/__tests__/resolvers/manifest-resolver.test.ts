@@ -168,9 +168,7 @@ describe('ManifestResolver', () => {
         });
       });
 
-      await expect(
-        resolver.fetchManifest(testRegistry, { timeout: 100 })
-      ).rejects.toThrow();
+      await expect(resolver.fetchManifest(testRegistry, { timeout: 100 })).rejects.toThrow();
     });
 
     it('should validate fetched manifest schema', async () => {
@@ -200,15 +198,10 @@ describe('ManifestResolver', () => {
         text: async () => JSON.stringify(testPluginManifest),
       } as any);
 
-      const result = await resolver.fetchPluginManifest(
-        'https://example.com/plugin.json'
-      );
+      const result = await resolver.fetchPluginManifest('https://example.com/plugin.json');
 
       expect(result).toEqual(testPluginManifest);
-      expect(mockFetch).toHaveBeenCalledWith(
-        'https://example.com/plugin.json',
-        expect.any(Object)
-      );
+      expect(mockFetch).toHaveBeenCalledWith('https://example.com/plugin.json', expect.any(Object));
     });
 
     it('should throw on HTTP error', async () => {
@@ -217,9 +210,9 @@ describe('ManifestResolver', () => {
         status: 404,
       } as any);
 
-      await expect(
-        resolver.fetchPluginManifest('https://example.com/plugin.json')
-      ).rejects.toThrow('HTTP 404');
+      await expect(resolver.fetchPluginManifest('https://example.com/plugin.json')).rejects.toThrow(
+        'HTTP 404'
+      );
     });
 
     it('should validate plugin manifest schema', async () => {
@@ -269,10 +262,7 @@ describe('ManifestResolver', () => {
         text: async () => fileContent,
       } as any);
 
-      const result = await resolver.fetchFile(
-        'https://example.com/file.yaml',
-        correctChecksum
-      );
+      const result = await resolver.fetchFile('https://example.com/file.yaml', correctChecksum);
 
       expect(result).toBe(fileContent);
     });

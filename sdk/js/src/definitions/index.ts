@@ -4,7 +4,13 @@
 
 // API
 export { AgentAPI, ToolAPI } from './api';
-export type { AgentResult, AgentInfo, HealthCheckResult, ExecutableAgentInterface, ToolInfo } from './api';
+export type {
+  AgentResult,
+  AgentInfo,
+  HealthCheckResult,
+  ExecutableAgentInterface,
+  ToolInfo,
+} from './api';
 
 // Schemas
 export type {

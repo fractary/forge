@@ -87,7 +87,9 @@ export class PromptCacheManager {
       try {
         await this.load(source);
       } catch (error) {
-        logger.warn(`Failed to preload cache source: ${source.label}: ${error instanceof Error ? error.message : String(error)}`);
+        logger.warn(
+          `Failed to preload cache source: ${source.label}: ${error instanceof Error ? error.message : String(error)}`
+        );
       }
     }
   }

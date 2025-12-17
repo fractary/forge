@@ -135,7 +135,8 @@ describe('Integrity', () => {
         tags: [],
       };
 
-      const fakeIntegrity = 'sha256-0000000000000000000000000000000000000000000000000000000000000000';
+      const fakeIntegrity =
+        'sha256-0000000000000000000000000000000000000000000000000000000000000000';
       const valid = await verifyIntegrity(definition, fakeIntegrity);
 
       expect(valid).toBe(false);

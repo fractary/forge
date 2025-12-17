@@ -147,18 +147,12 @@ export interface IExporter {
   /**
    * Export an agent
    */
-  exportAgent(
-    agent: AgentDefinition,
-    options: ExportOptions
-  ): Promise<ExportedFile[]>;
+  exportAgent(agent: AgentDefinition, options: ExportOptions): Promise<ExportedFile[]>;
 
   /**
    * Export a tool
    */
-  exportTool(
-    tool: ToolDefinition,
-    options: ExportOptions
-  ): Promise<ExportedFile[]>;
+  exportTool(tool: ToolDefinition, options: ExportOptions): Promise<ExportedFile[]>;
 
   /**
    * Export multiple components

@@ -53,16 +53,16 @@ export class UpdateManager {
     let updates = checkResult.updates;
 
     if (options.packages && options.packages.length > 0) {
-      updates = updates.filter(u => options.packages!.includes(u.name));
+      updates = updates.filter((u) => options.packages!.includes(u.name));
     }
 
     if (skipBreaking) {
-      const breaking = updates.filter(u => u.isBreaking);
+      const breaking = updates.filter((u) => u.isBreaking);
       if (breaking.length > 0) {
         logger.warn(`Skipping ${breaking.length} breaking update(s)`);
         logger.info('Use --no-skip-breaking to include breaking changes');
       }
-      updates = updates.filter(u => !u.isBreaking);
+      updates = updates.filter((u) => !u.isBreaking);
     }
 
     if (updates.length === 0) {
@@ -71,7 +71,7 @@ export class UpdateManager {
         success: true,
         updated: [],
         failed: [],
-        skipped: checkResult.breakingChanges.map(u => ({
+        skipped: checkResult.breakingChanges.map((u) => ({
           name: u.name,
           type: u.type,
           currentVersion: u.currentVersion,
@@ -119,9 +119,8 @@ export class UpdateManager {
         const integrity = await calculateIntegrity(resolved.definition);
 
         // Update lockfile entry
-        const entry = update.type === 'agent'
-          ? lockfile.agents[update.name]
-          : lockfile.tools[update.name];
+        const entry =
+          update.type === 'agent' ? lockfile.agents[update.name] : lockfile.tools[update.name];
 
         if (entry) {
           entry.version = update.latestVersion;
@@ -222,8 +221,7 @@ export class UpdateManager {
     const integrity = await calculateIntegrity(resolved.definition);
 
     // Update lockfile entry
-    const entry =
-      manifest.type === 'agent' ? lockfile.agents[name] : lockfile.tools[name];
+    const entry = manifest.type === 'agent' ? lockfile.agents[name] : lockfile.tools[name];
 
     if (entry) {
       const previousVersion = entry.version;

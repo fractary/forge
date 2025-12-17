@@ -57,7 +57,9 @@ export class CodexSourceHandler {
       const client = new codex.CodexClient();
       return await client.fetch({ org, project, path });
     } catch (error) {
-      logger.warn(`Codex integration not available or failed: ${error instanceof Error ? error.message : String(error)}`);
+      logger.warn(
+        `Codex integration not available or failed: ${error instanceof Error ? error.message : String(error)}`
+      );
       throw new Error(`Codex integration not available for: ${uri}`);
     }
   }

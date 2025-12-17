@@ -24,7 +24,7 @@ export type ToolParameterType = z.infer<typeof ToolParameterTypeSchema>;
 export const ToolParameterSchema: z.ZodType<any> = z.lazy(() =>
   z.object({
     type: ToolParameterTypeSchema,
-    description: z.string(),
+    description: z.string().optional(),
     required: z.boolean(),
     default: z.any().optional(),
     enum: z.array(z.any()).optional(),
@@ -104,6 +104,9 @@ export const ToolDefinitionSchema = z.object({
 
   // Definition inheritance support
   extends: z.string().optional(),
+
+  // Extended description (optional, derived from Markdown body)
+  extended_description: z.string().optional(),
 
   // Parameters
   parameters: z.record(ToolParameterSchema),

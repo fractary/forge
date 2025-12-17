@@ -48,12 +48,7 @@ describe('ManifestCacheManager', () => {
 
     it('should return null for expired cache', async () => {
       // Cache with 0 TTL (immediately expired)
-      await cacheManager.set(
-        'test-registry',
-        'https://example.com/registry.json',
-        testManifest,
-        0
-      );
+      await cacheManager.set('test-registry', 'https://example.com/registry.json', testManifest, 0);
 
       // Wait a tiny bit
       await new Promise((resolve) => setTimeout(resolve, 10));

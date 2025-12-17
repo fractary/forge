@@ -20,21 +20,13 @@ import type {
 export class ClaudeExporter implements IExporter {
   readonly format = 'claude' as const;
 
-  async exportAgent(
-    agent: AgentDefinition,
-    options: ExportOptions
-  ): Promise<ExportedFile[]> {
+  async exportAgent(agent: AgentDefinition, options: ExportOptions): Promise<ExportedFile[]> {
     const files: ExportedFile[] = [];
     const formatOptions = (options.formatOptions || {}) as ClaudeExportOptions;
 
     // Generate agent markdown file
     const agentMarkdown = this.generateAgentMarkdown(agent);
-    const agentFilePath = path.join(
-      options.outputDir,
-      '.claude',
-      'agents',
-      `${agent.name}.md`
-    );
+    const agentFilePath = path.join(options.outputDir, '.claude', 'agents', `${agent.name}.md`);
 
     await fs.ensureDir(path.dirname(agentFilePath));
     await fs.writeFile(agentFilePath, agentMarkdown);
@@ -66,20 +58,12 @@ export class ClaudeExporter implements IExporter {
     return files;
   }
 
-  async exportTool(
-    tool: ToolDefinition,
-    options: ExportOptions
-  ): Promise<ExportedFile[]> {
+  async exportTool(tool: ToolDefinition, options: ExportOptions): Promise<ExportedFile[]> {
     const files: ExportedFile[] = [];
 
     // Generate tool definition file
     const toolMarkdown = this.generateToolMarkdown(tool);
-    const toolFilePath = path.join(
-      options.outputDir,
-      '.claude',
-      'tools',
-      `${tool.name}.md`
-    );
+    const toolFilePath = path.join(options.outputDir, '.claude', 'tools', `${tool.name}.md`);
 
     await fs.ensureDir(path.dirname(toolFilePath));
     await fs.writeFile(toolFilePath, toolMarkdown);
@@ -126,10 +110,7 @@ export class ClaudeExporter implements IExporter {
     // Generate .claude directory structure files if requested
     const formatOptions = (options.formatOptions || {}) as ClaudeExportOptions;
     if (formatOptions.includeDirectoryStructure !== false) {
-      const structureFiles = await this.generateClaudeStructure(
-        options.outputDir,
-        components
-      );
+      const structureFiles = await this.generateClaudeStructure(options.outputDir, components);
       files.push(...structureFiles);
     }
 
@@ -348,12 +329,7 @@ export class ClaudeExporter implements IExporter {
       }
     }
 
-    const commandFilePath = path.join(
-      options.outputDir,
-      '.claude',
-      'commands',
-      `${tool.name}.md`
-    );
+    const commandFilePath = path.join(options.outputDir, '.claude', 'commands', `${tool.name}.md`);
 
     await fs.ensureDir(path.dirname(commandFilePath));
     await fs.writeFile(commandFilePath, md);
@@ -443,7 +419,8 @@ export class ClaudeExporter implements IExporter {
 
     // Generate README.md
     let readme = '# Claude Code Export\n\n';
-    readme += 'This directory contains agents and tools exported from Fractary YAML format for use with Claude Code.\n\n';
+    readme +=
+      'This directory contains agents and tools exported from Fractary YAML format for use with Claude Code.\n\n';
 
     readme += '## Directory Structure\n\n';
     readme += '```\n';
@@ -471,7 +448,8 @@ export class ClaudeExporter implements IExporter {
     }
 
     readme += '## Usage\n\n';
-    readme += 'Copy the `.claude` directory to your project root to use these agents and tools with Claude Code.\n\n';
+    readme +=
+      'Copy the `.claude` directory to your project root to use these agents and tools with Claude Code.\n\n';
     readme += '```bash\n';
     readme += 'cp -r .claude /path/to/your/project/\n';
     readme += '```\n\n';

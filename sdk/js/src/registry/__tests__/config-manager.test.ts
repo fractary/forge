@@ -57,10 +57,7 @@ describe('ConfigManager', () => {
         ],
       };
 
-      vol.writeFileSync(
-        '/project/.fractary/config.json',
-        JSON.stringify(projectConfig)
-      );
+      vol.writeFileSync('/project/.fractary/config.json', JSON.stringify(projectConfig));
 
       const result = await configManager.loadConfig();
 
@@ -82,10 +79,7 @@ describe('ConfigManager', () => {
         ],
       };
 
-      vol.writeFileSync(
-        '/home/user/.fractary/config.json',
-        JSON.stringify(globalConfig)
-      );
+      vol.writeFileSync('/home/user/.fractary/config.json', JSON.stringify(globalConfig));
 
       const result = await configManager.loadConfig();
 
@@ -119,14 +113,8 @@ describe('ConfigManager', () => {
         ],
       };
 
-      vol.writeFileSync(
-        '/project/.fractary/config.json',
-        JSON.stringify(projectConfig)
-      );
-      vol.writeFileSync(
-        '/home/user/.fractary/config.json',
-        JSON.stringify(globalConfig)
-      );
+      vol.writeFileSync('/project/.fractary/config.json', JSON.stringify(projectConfig));
+      vol.writeFileSync('/home/user/.fractary/config.json', JSON.stringify(globalConfig));
 
       const result = await configManager.loadConfig();
 
@@ -160,14 +148,8 @@ describe('ConfigManager', () => {
         ],
       };
 
-      vol.writeFileSync(
-        '/project/.fractary/config.json',
-        JSON.stringify(projectConfig)
-      );
-      vol.writeFileSync(
-        '/home/user/.fractary/config.json',
-        JSON.stringify(globalConfig)
-      );
+      vol.writeFileSync('/project/.fractary/config.json', JSON.stringify(projectConfig));
+      vol.writeFileSync('/home/user/.fractary/config.json', JSON.stringify(globalConfig));
 
       const result = await configManager.loadConfig();
 
@@ -253,7 +235,9 @@ describe('ConfigManager', () => {
       await configManager.addRegistry(registry, 'local');
 
       const result = await configManager.loadConfig();
-      expect(result.config.registries).toContainEqual(expect.objectContaining({ name: 'new-registry' }));
+      expect(result.config.registries).toContainEqual(
+        expect.objectContaining({ name: 'new-registry' })
+      );
     });
 
     it('should add registry to global config', async () => {
@@ -350,9 +334,7 @@ describe('ConfigManager', () => {
     });
 
     it('should not fail if registry does not exist', async () => {
-      await expect(
-        configManager.removeRegistry('non-existent', 'local')
-      ).resolves.not.toThrow();
+      await expect(configManager.removeRegistry('non-existent', 'local')).resolves.not.toThrow();
     });
   });
 

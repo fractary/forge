@@ -296,9 +296,9 @@ describe('Installer', () => {
       // Return wrong content (will cause checksum mismatch)
       mockManifestResolver.fetchFile.mockResolvedValue('wrong content');
 
-      await expect(
-        installer.installPlugin('@test/plugin', { scope: 'local' })
-      ).rejects.toThrow('Checksum verification failed');
+      await expect(installer.installPlugin('@test/plugin', { scope: 'local' })).rejects.toThrow(
+        'Checksum verification failed'
+      );
     });
   });
 
@@ -310,10 +310,7 @@ describe('Installer', () => {
         '/project/.fractary/agents/@test/plugin/plugin.json',
         JSON.stringify(testPluginManifest)
       );
-      vol.writeFileSync(
-        '/project/.fractary/agents/@test/plugin/test-agent.yaml',
-        'agent content'
-      );
+      vol.writeFileSync('/project/.fractary/agents/@test/plugin/test-agent.yaml', 'agent content');
 
       const result = await installer.uninstallPlugin('@test/plugin', {
         scope: 'local',

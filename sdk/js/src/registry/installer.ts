@@ -119,9 +119,7 @@ export class Installer {
    * Get installation base directory
    */
   private getInstallBaseDir(scope: 'global' | 'local', cwd: string = process.cwd()): string {
-    return scope === 'global'
-      ? getGlobalFractaryDir()
-      : getProjectFractaryDir(cwd);
+    return scope === 'global' ? getGlobalFractaryDir() : getProjectFractaryDir(cwd);
   }
 
   /**
@@ -136,7 +134,7 @@ export class Installer {
     const itemPath = path.join(pluginDir, `${type}s`, `${item.name}.yaml`);
 
     // Check if already exists
-    if (!options.force && await fs.pathExists(itemPath)) {
+    if (!options.force && (await fs.pathExists(itemPath))) {
       console.warn(`  ⚠ ${item.name} already exists (use --force to overwrite)`);
       return 0;
     }
@@ -168,10 +166,7 @@ export class Installer {
   /**
    * Install plugin from resolved reference
    */
-  async installPlugin(
-    pluginName: string,
-    options: InstallOptions = {}
-  ): Promise<InstallResult> {
+  async installPlugin(pluginName: string, options: InstallOptions = {}): Promise<InstallResult> {
     const scope = options.scope || 'global';
     const result: InstallResult = {
       success: false,
@@ -211,7 +206,12 @@ export class Installer {
       }
 
       // Install agents
-      if (pluginManifest.agents && !options.toolsOnly && !options.workflowsOnly && !options.templatesOnly) {
+      if (
+        pluginManifest.agents &&
+        !options.toolsOnly &&
+        !options.workflowsOnly &&
+        !options.templatesOnly
+      ) {
         console.log('\nInstalling agents (Fractary YAML format)...');
         let count = 0;
         for (const agent of pluginManifest.agents) {
@@ -222,7 +222,12 @@ export class Installer {
       }
 
       // Install tools
-      if (pluginManifest.tools && !options.agentsOnly && !options.workflowsOnly && !options.templatesOnly) {
+      if (
+        pluginManifest.tools &&
+        !options.agentsOnly &&
+        !options.workflowsOnly &&
+        !options.templatesOnly
+      ) {
         console.log('\nInstalling tools (Fractary YAML format)...');
         let count = 0;
         for (const tool of pluginManifest.tools) {
@@ -233,7 +238,12 @@ export class Installer {
       }
 
       // Install workflows
-      if (pluginManifest.workflows && !options.agentsOnly && !options.toolsOnly && !options.templatesOnly) {
+      if (
+        pluginManifest.workflows &&
+        !options.agentsOnly &&
+        !options.toolsOnly &&
+        !options.templatesOnly
+      ) {
         console.log('\nInstalling workflows (Fractary YAML format)...');
         let count = 0;
         for (const workflow of pluginManifest.workflows) {
@@ -244,7 +254,12 @@ export class Installer {
       }
 
       // Install templates
-      if (pluginManifest.templates && !options.agentsOnly && !options.toolsOnly && !options.workflowsOnly) {
+      if (
+        pluginManifest.templates &&
+        !options.agentsOnly &&
+        !options.toolsOnly &&
+        !options.workflowsOnly
+      ) {
         console.log('\nInstalling templates (Fractary YAML format)...');
         let count = 0;
         for (const template of pluginManifest.templates) {
@@ -294,7 +309,9 @@ export class Installer {
             }
 
             await fs.writeFile(commandPath, content, 'utf-8');
-            console.log(`  ✓ ${command.name}@${command.version} (${(command.size / 1024).toFixed(1)} KB)`);
+            console.log(
+              `  ✓ ${command.name}@${command.version} (${(command.size / 1024).toFixed(1)} KB)`
+            );
           } else {
             console.log(`  [DRY RUN] Would install ${command.name}@${command.version}`);
           }
@@ -307,7 +324,9 @@ export class Installer {
       result.success = true;
 
       // Print summary
-      console.log(`\nSuccessfully installed ${pluginName}@${resolved.version} (Fractary YAML format)`);
+      console.log(
+        `\nSuccessfully installed ${pluginName}@${resolved.version} (Fractary YAML format)`
+      );
       const parts = [];
       if (result.installed.agents) parts.push(`${result.installed.agents} agents`);
       if (result.installed.tools) parts.push(`${result.installed.tools} tools`);
@@ -322,7 +341,6 @@ export class Installer {
         console.log(`\n  Run with FABER: forge faber run <issue-number>`);
         console.log(`  Export to other formats: forge export <langchain|claude|n8n> ${pluginName}`);
       }
-
     } catch (error) {
       result.error = error instanceof Error ? error.message : String(error);
       console.error(`\n❌ Installation failed: ${result.error}`);
@@ -342,7 +360,7 @@ export class Installer {
     const baseDir = this.getInstallBaseDir(scope, cwd);
     const pluginDir = path.join(baseDir, 'plugins', pluginName);
 
-    if (!await fs.pathExists(pluginDir)) {
+    if (!(await fs.pathExists(pluginDir))) {
       console.warn(`Plugin ${pluginName} is not installed in ${scope} scope`);
       return false;
     }

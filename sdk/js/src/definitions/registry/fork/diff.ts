@@ -65,7 +65,7 @@ function isDeepEqual(a: any, b: any): boolean {
 
   if (aKeys.length !== bKeys.length) return false;
 
-  return aKeys.every(key => bKeys.includes(key) && isDeepEqual(a[key], b[key]));
+  return aKeys.every((key) => bKeys.includes(key) && isDeepEqual(a[key], b[key]));
 }
 
 /**

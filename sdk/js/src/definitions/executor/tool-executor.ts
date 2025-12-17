@@ -34,7 +34,10 @@ export class ToolExecutor {
 
     // Get timeout with type narrowing
     let timeout = options?.timeout ?? this.defaultTimeout;
-    if (tool.implementation.type === 'bash' && tool.implementation.bash.sandbox?.max_execution_time) {
+    if (
+      tool.implementation.type === 'bash' &&
+      tool.implementation.bash.sandbox?.max_execution_time
+    ) {
       timeout = options?.timeout ?? tool.implementation.bash.sandbox.max_execution_time;
     }
 
@@ -87,10 +90,7 @@ export class ToolExecutor {
       let timedOut = false;
 
       const proc = spawn('bash', ['-c', command], {
-        env: this.buildEnv(
-          bashImpl.sandbox?.env_vars,
-          options?.env
-        ),
+        env: this.buildEnv(bashImpl.sandbox?.env_vars, options?.env),
       });
 
       // Set timeout

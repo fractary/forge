@@ -96,10 +96,7 @@ export {
 // Path Utilities
 // ============================================================================
 
-export {
-  getProjectConfigPath,
-  getGlobalConfigPath,
-} from './config-manager.js';
+export { getProjectConfigPath, getGlobalConfigPath } from './config-manager.js';
 
 // ============================================================================
 // Singleton Instances

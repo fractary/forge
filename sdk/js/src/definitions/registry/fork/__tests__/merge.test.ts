@@ -173,8 +173,8 @@ describe('performMerge', () => {
 
     expect(result.success).toBe(false);
     expect(result.conflicts).toHaveLength(2);
-    expect(result.conflicts.map(c => c.path)).toContain('description');
-    expect(result.conflicts.map(c => c.path)).toContain('timeout');
+    expect(result.conflicts.map((c) => c.path)).toContain('description');
+    expect(result.conflicts.map((c) => c.path)).toContain('timeout');
   });
 });
 

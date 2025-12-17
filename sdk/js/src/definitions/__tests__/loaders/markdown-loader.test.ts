@@ -208,7 +208,11 @@ tags: []
 `;
 
       expect(() => loader.loadAgentFromString(mdContent)).toThrow(ForgeError);
-      expect(() => loader.loadAgentFromString(mdContent)).toThrow(/EMPTY_SYSTEM_PROMPT/);
+      try {
+        loader.loadAgentFromString(mdContent);
+      } catch (error) {
+        expect(error).toMatchObject({ code: 'EMPTY_SYSTEM_PROMPT' });
+      }
     });
   });
 

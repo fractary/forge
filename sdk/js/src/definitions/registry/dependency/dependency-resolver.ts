@@ -183,10 +183,7 @@ export class DependencyResolver {
   /**
    * Get flattened list of all dependencies in order
    */
-  async getFlattenedDependencies(
-    name: string,
-    type: 'agent' | 'tool'
-  ): Promise<DependencyNode[]> {
+  async getFlattenedDependencies(name: string, type: 'agent' | 'tool'): Promise<DependencyNode[]> {
     const result =
       type === 'agent'
         ? await this.resolveAgentDependencies(name)

@@ -190,9 +190,9 @@ describe('ManifestManager', () => {
     });
 
     it('should throw error if source manifest does not exist', async () => {
-      await expect(
-        manager.trackFork('non-existent', 'forked-agent')
-      ).rejects.toThrow(/Source manifest not found/);
+      await expect(manager.trackFork('non-existent', 'forked-agent')).rejects.toThrow(
+        /Source manifest not found/
+      );
     });
 
     it('should append to existing forks list', async () => {

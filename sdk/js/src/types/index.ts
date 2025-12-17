@@ -3,13 +3,7 @@
  */
 
 // Asset types
-export type {
-  BundleManifest,
-  StarterManifest,
-  Bundle,
-  Starter,
-  ProjectManifest,
-} from './assets';
+export type { BundleManifest, StarterManifest, Bundle, Starter, ProjectManifest } from './assets';
 
 // Ownership types
 export type { OwnershipRule, MergeResult } from './ownership';
@@ -18,12 +12,7 @@ export type { OwnershipRule, MergeResult } from './ownership';
 export type { ValidationError, ValidationWarning, ValidationResult } from './validation';
 
 // Resolver types
-export type {
-  AssetIdentifier,
-  AssetLocation,
-  AssetPackage,
-  ResolverOptions,
-} from './resolvers';
+export type { AssetIdentifier, AssetLocation, AssetPackage, ResolverOptions } from './resolvers';
 
 // Configuration types
 export type {

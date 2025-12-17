@@ -56,9 +56,7 @@ export class AgentFactory {
       }
 
       // Convert custom tools to provider format
-      const tools = (definition.custom_tools || []).map((tool) =>
-        adapter.adaptTool(tool)
-      );
+      const tools = (definition.custom_tools || []).map((tool) => adapter.adaptTool(tool));
 
       return {
         name: definition.name,

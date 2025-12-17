@@ -69,7 +69,7 @@ export class ConfigManager {
   async loadProjectConfig(cwd: string = process.cwd()): Promise<ForgeConfig | null> {
     const configPath = getProjectConfigPath(cwd);
 
-    if (!await fs.pathExists(configPath)) {
+    if (!(await fs.pathExists(configPath))) {
       return null;
     }
 
@@ -89,7 +89,7 @@ export class ConfigManager {
   async loadGlobalConfig(): Promise<ForgeConfig | null> {
     const configPath = getGlobalConfigPath();
 
-    if (!await fs.pathExists(configPath)) {
+    if (!(await fs.pathExists(configPath))) {
       return null;
     }
 
@@ -140,10 +140,7 @@ export class ConfigManager {
   /**
    * Save project config
    */
-  async saveProjectConfig(
-    config: ForgeConfig,
-    cwd: string = process.cwd()
-  ): Promise<void> {
+  async saveProjectConfig(config: ForgeConfig, cwd: string = process.cwd()): Promise<void> {
     const configPath = getProjectConfigPath(cwd);
     const configDir = path.dirname(configPath);
 
@@ -186,7 +183,7 @@ export class ConfigManager {
     const config = result.config;
 
     // Check if registry with same name already exists
-    const existingIndex = config.registries.findIndex(r => r.name === registry.name);
+    const existingIndex = config.registries.findIndex((r) => r.name === registry.name);
 
     if (existingIndex >= 0) {
       // Update existing registry
@@ -216,7 +213,7 @@ export class ConfigManager {
     const config = result.config;
 
     const initialLength = config.registries.length;
-    config.registries = config.registries.filter(r => r.name !== registryName);
+    config.registries = config.registries.filter((r) => r.name !== registryName);
 
     const removed = config.registries.length < initialLength;
 
@@ -244,7 +241,7 @@ export class ConfigManager {
     const result = await this.loadConfig(cwd);
     const config = result.config;
 
-    const index = config.registries.findIndex(r => r.name === registryName);
+    const index = config.registries.findIndex((r) => r.name === registryName);
 
     if (index === -1) {
       return false;
@@ -274,7 +271,7 @@ export class ConfigManager {
     cwd: string = process.cwd()
   ): Promise<RegistryConfig | null> {
     const result = await this.loadConfig(cwd);
-    return result.config.registries.find(r => r.name === registryName) || null;
+    return result.config.registries.find((r) => r.name === registryName) || null;
   }
 
   /**

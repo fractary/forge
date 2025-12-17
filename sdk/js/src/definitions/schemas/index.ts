@@ -35,10 +35,7 @@ export {
 } from './tool';
 
 // Agent schemas
-export {
-  AgentDefinitionSchema,
-  type AgentDefinition,
-} from './agent';
+export { AgentDefinitionSchema, type AgentDefinition } from './agent';
 
 // Validation types
 export {

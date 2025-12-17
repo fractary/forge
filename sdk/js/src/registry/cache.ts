@@ -78,7 +78,7 @@ export class ManifestCacheManager {
     try {
       const cachePath = this.getCachePath(registryName);
 
-      if (!await fs.pathExists(cachePath)) {
+      if (!(await fs.pathExists(cachePath))) {
         return null;
       }
 
@@ -158,14 +158,12 @@ export class ManifestCacheManager {
    * List all cached registry names
    */
   async list(): Promise<string[]> {
-    if (!await fs.pathExists(this.cacheDir)) {
+    if (!(await fs.pathExists(this.cacheDir))) {
       return [];
     }
 
     const files = await fs.readdir(this.cacheDir);
-    return files
-      .filter(f => f.endsWith('.json'))
-      .map(f => f.replace('.json', ''));
+    return files.filter((f) => f.endsWith('.json')).map((f) => f.replace('.json', ''));
   }
 
   /**
@@ -175,7 +173,7 @@ export class ManifestCacheManager {
     try {
       const cachePath = this.getCachePath(registryName);
 
-      if (!await fs.pathExists(cachePath)) {
+      if (!(await fs.pathExists(cachePath))) {
         return null;
       }
 
@@ -197,7 +195,7 @@ export class ManifestCacheManager {
       cache_dir: this.cacheDir,
     };
 
-    if (!await fs.pathExists(this.cacheDir)) {
+    if (!(await fs.pathExists(this.cacheDir))) {
       return stats;
     }
 
@@ -236,7 +234,7 @@ export class ManifestCacheManager {
   async cleanup(): Promise<number> {
     let removed = 0;
 
-    if (!await fs.pathExists(this.cacheDir)) {
+    if (!(await fs.pathExists(this.cacheDir))) {
       return removed;
     }
 
