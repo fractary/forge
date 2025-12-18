@@ -1,6 +1,6 @@
 {
   "name": "@fractary/forge-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MCP server for Fractary Forge - Expose agent/tool/plugin queries via Model Context Protocol",
   "type": "module",
   "main": "dist/index.js",

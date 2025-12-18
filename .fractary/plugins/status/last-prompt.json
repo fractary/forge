@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-18T01:00:35Z",
-  "prompt": "{\"session_id\":\"62d1b943-92ec-414d-b452-b4966148535b\",\"transcript_path\":\"/home/jmcwilliam/.claude/projects/-mnt-c-GitHub-fractary-forge/62d1b943-92ec-414d-b452-b4966148535b.jsonl\",\"cwd\":\"/mnt/c/GitHub/fractary/forge\",\"permission_mode\":\"bypassPermissions\",\"hook_event_name\":\"UserPromptSubmit\",\"prompt\":\"/fractary-repo:commit-and-push \"} ",
+  "timestamp": "2025-12-18T01:33:27Z",
+  "prompt": "{\"session_id\":\"62d1b943-92ec-414d-b452-b4966148535b\",\"transcript_path\":\"/home/jmcwilliam/.claude/projects/-mnt-c-GitHub-fractary-forge/62d1b943-92ec-414d-b452-b4966148535b.jsonl\",\"cwd\":\"/mnt/c/GitHub/fractary/forge\",\"permission_mode\":\"bypassPermissions\",\"hook_event_name\":\"UserPromptSubmit\",\"prompt\":\"can you make sure you bump (patch) the versions on all 3 npm packages\"} ",
   "prompt_short": "{\"session_id\":\"62d1b943-92ec-414d-b45..."
 }
