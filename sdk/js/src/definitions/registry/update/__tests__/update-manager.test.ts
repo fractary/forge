@@ -36,8 +36,8 @@ describe('UpdateManager', () => {
 
   beforeEach(() => {
     mockResolver = {
-      resolveAgent: jest.fn(),
-      resolveTool: jest.fn(),
+      agentResolve: jest.fn(),
+      toolResolve: jest.fn(),
     } as any;
 
     mockLockfileManager = {
@@ -112,7 +112,7 @@ describe('UpdateManager', () => {
 
       mockLockfileManager.load.mockResolvedValue(lockfile);
       mockManifestManager.getManifest.mockResolvedValue(manifest);
-      mockResolver.resolveAgent.mockResolvedValue(resolvedAgent);
+      mockResolver.agentResolve.mockResolvedValue(resolvedAgent);
 
       const result = await updateManager.update();
 
@@ -218,7 +218,7 @@ describe('UpdateManager', () => {
 
       mockLockfileManager.load.mockResolvedValue(lockfile);
       mockManifestManager.getManifest.mockResolvedValue(manifest);
-      mockResolver.resolveAgent.mockResolvedValue(resolvedAgent);
+      mockResolver.agentResolve.mockResolvedValue(resolvedAgent);
 
       const result = await updateManager.update({ skipBreaking: false });
 
@@ -257,7 +257,7 @@ describe('UpdateManager', () => {
       });
 
       mockLockfileManager.load.mockResolvedValue(lockfile);
-      mockResolver.resolveAgent.mockRejectedValue(new Error('Network error'));
+      mockResolver.agentResolve.mockRejectedValue(new Error('Network error'));
 
       const result = await updateManager.update();
 
@@ -338,7 +338,7 @@ describe('UpdateManager', () => {
         update_available: true,
       });
 
-      mockResolver.resolveAgent.mockResolvedValue({
+      mockResolver.agentResolve.mockResolvedValue({
         definition: { name: 'agent1', version: '1.1.0' } as any,
         source: 'global',
         version: '1.1.0',
@@ -409,7 +409,7 @@ describe('UpdateManager', () => {
 
       mockLockfileManager.load.mockResolvedValue(lockfile);
       mockManifestManager.getManifest.mockResolvedValue(manifest);
-      mockResolver.resolveAgent.mockResolvedValue({
+      mockResolver.agentResolve.mockResolvedValue({
         definition: { name: 'test-agent', version: '1.1.0' } as any,
         source: 'global',
         version: '1.1.0',
@@ -453,7 +453,7 @@ describe('UpdateManager', () => {
 
       mockLockfileManager.load.mockResolvedValue(lockfile);
       mockManifestManager.getManifest.mockResolvedValue(manifest);
-      mockResolver.resolveAgent.mockResolvedValue({
+      mockResolver.agentResolve.mockResolvedValue({
         definition: { name: 'test-agent', version: '1.0.0' } as any,
         source: 'global',
         version: '1.0.0',

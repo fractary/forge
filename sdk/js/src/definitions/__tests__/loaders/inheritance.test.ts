@@ -51,8 +51,8 @@ describe('InheritanceResolver', () => {
       };
 
       const mockResolver: IDefinitionResolver = {
-        resolveAgent: jest.fn(),
-        resolveTool: jest.fn().mockResolvedValue({ definition: baseTool }),
+        agentResolve: jest.fn(),
+        toolResolve: jest.fn().mockResolvedValue({ definition: baseTool }),
       };
 
       const resolver = new InheritanceResolver(mockResolver);
@@ -96,8 +96,8 @@ describe('InheritanceResolver', () => {
 
       let callCount = 0;
       const mockResolver: IDefinitionResolver = {
-        resolveAgent: jest.fn(),
-        resolveTool: jest.fn().mockImplementation(async (name: string) => {
+        agentResolve: jest.fn(),
+        toolResolve: jest.fn().mockImplementation(async (name: string) => {
           callCount++;
           if (callCount > 5) throw new Error('Too many calls');
           return { definition: name === 'tool-a' ? toolA : toolB };
@@ -128,8 +128,8 @@ describe('InheritanceResolver', () => {
       };
 
       const mockResolver: IDefinitionResolver = {
-        resolveAgent: jest.fn(),
-        resolveTool: jest.fn().mockResolvedValue(null),
+        agentResolve: jest.fn(),
+        toolResolve: jest.fn().mockResolvedValue(null),
       };
 
       const resolver = new InheritanceResolver(mockResolver);
@@ -171,8 +171,8 @@ describe('InheritanceResolver', () => {
       };
 
       const mockResolver: IDefinitionResolver = {
-        resolveAgent: jest.fn(),
-        resolveTool: jest.fn().mockResolvedValue({ definition: baseTool }),
+        agentResolve: jest.fn(),
+        toolResolve: jest.fn().mockResolvedValue({ definition: baseTool }),
       };
 
       const resolver = new InheritanceResolver(mockResolver);
@@ -215,8 +215,8 @@ describe('InheritanceResolver', () => {
       };
 
       const mockResolver: IDefinitionResolver = {
-        resolveAgent: jest.fn().mockResolvedValue({ definition: baseAgent }),
-        resolveTool: jest.fn(),
+        agentResolve: jest.fn().mockResolvedValue({ definition: baseAgent }),
+        toolResolve: jest.fn(),
       };
 
       const resolver = new InheritanceResolver(mockResolver);
@@ -258,12 +258,12 @@ describe('InheritanceResolver', () => {
 
       let callCount = 0;
       const mockResolver: IDefinitionResolver = {
-        resolveAgent: jest.fn().mockImplementation(async (name: string) => {
+        agentResolve: jest.fn().mockImplementation(async (name: string) => {
           callCount++;
           if (callCount > 5) throw new Error('Too many calls');
           return { definition: name === 'agent-a' ? agentA : agentB };
         }),
-        resolveTool: jest.fn(),
+        toolResolve: jest.fn(),
       };
 
       const resolver = new InheritanceResolver(mockResolver);
@@ -307,8 +307,8 @@ describe('InheritanceResolver', () => {
       };
 
       const mockResolver: IDefinitionResolver = {
-        resolveAgent: jest.fn().mockResolvedValue({ definition: baseAgent }),
-        resolveTool: jest.fn(),
+        agentResolve: jest.fn().mockResolvedValue({ definition: baseAgent }),
+        toolResolve: jest.fn(),
       };
 
       const resolver = new InheritanceResolver(mockResolver);

@@ -19,23 +19,23 @@ describe.skip('AgentAPI', () => {
     });
   });
 
-  describe('hasAgent', () => {
+  describe('agentHas', () => {
     it('should return false for non-existent agent', async () => {
-      const exists = await api.hasAgent('nonexistent-agent');
+      const exists = await api.agentHas('nonexistent-agent');
       expect(exists).toBe(false);
     });
   });
 
-  describe('listAgents', () => {
+  describe('agentList', () => {
     it('should return empty array when no agents available', async () => {
-      const agents = await api.listAgents();
+      const agents = await api.agentList();
       expect(agents).toEqual([]);
     });
   });
 
-  describe('healthCheck', () => {
+  describe('agentHealthCheck', () => {
     it('should return unhealthy for non-existent agent', async () => {
-      const health = await api.healthCheck('nonexistent-agent');
+      const health = await api.agentHealthCheck('nonexistent-agent');
 
       expect(health.healthy).toBe(false);
       expect(health.agent).toBe('nonexistent-agent');

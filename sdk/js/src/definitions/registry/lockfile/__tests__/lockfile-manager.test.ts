@@ -43,8 +43,8 @@ describe('LockfileManager', () => {
 
     // Mock resolver
     mockResolver = {
-      resolveAgent: jest.fn(),
-      resolveTool: jest.fn(),
+      agentResolve: jest.fn(),
+      toolResolve: jest.fn(),
     } as any;
 
     manager = new LockfileManager(mockResolver, testDir);
@@ -94,14 +94,14 @@ describe('LockfileManager', () => {
         },
       };
 
-      mockResolver.resolveAgent.mockResolvedValue({
+      mockResolver.agentResolve.mockResolvedValue({
         definition: agentDef,
         version: '1.0.0',
         source: 'local' as const,
         path: '/test/path/agent.yaml',
       });
 
-      mockResolver.resolveTool.mockResolvedValue({
+      mockResolver.toolResolve.mockResolvedValue({
         definition: toolDef,
         version: '1.0.0',
         source: 'local' as const,
@@ -176,7 +176,7 @@ describe('LockfileManager', () => {
       mockDiscoverUsedAgents.mockResolvedValue(['missing-agent']);
       mockDiscoverUsedTools.mockResolvedValue([]);
 
-      mockResolver.resolveAgent.mockRejectedValue(new Error('Agent not found'));
+      mockResolver.agentResolve.mockRejectedValue(new Error('Agent not found'));
 
       await expect(manager.generate()).rejects.toThrow('Agent not found');
     });
@@ -276,7 +276,7 @@ describe('LockfileManager', () => {
         tags: [],
       };
 
-      mockResolver.resolveAgent.mockResolvedValue({
+      mockResolver.agentResolve.mockResolvedValue({
         definition: agentDef,
         version: '1.0.0',
         source: 'local',
@@ -319,7 +319,7 @@ describe('LockfileManager', () => {
         tags: [],
       };
 
-      mockResolver.resolveAgent.mockResolvedValue({
+      mockResolver.agentResolve.mockResolvedValue({
         definition: agentDef,
         version: '1.0.0',
         source: 'local',
@@ -354,7 +354,7 @@ describe('LockfileManager', () => {
     });
 
     it('should detect missing definitions', async () => {
-      mockResolver.resolveAgent.mockRejectedValue(new Error('Agent not found'));
+      mockResolver.agentResolve.mockRejectedValue(new Error('Agent not found'));
 
       const lockfile: Lockfile = {
         version: 1,

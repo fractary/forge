@@ -19,16 +19,16 @@ describe('ToolAPI', () => {
     });
   });
 
-  describe('hasTool', () => {
+  describe('toolHas', () => {
     it('should return false for non-existent tool', async () => {
-      const exists = await api.hasTool('nonexistent-tool');
+      const exists = await api.toolHas('nonexistent-tool');
       expect(exists).toBe(false);
     });
   });
 
-  describe('listTools', () => {
+  describe('toolList', () => {
     it('should return empty array when no tools available', async () => {
-      const tools = await api.listTools();
+      const tools = await api.toolList();
       expect(tools).toEqual([]);
     });
   });
