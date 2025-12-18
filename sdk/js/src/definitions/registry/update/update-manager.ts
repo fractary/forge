@@ -112,8 +112,8 @@ export class UpdateManager {
         // Resolve new version
         const resolved =
           update.type === 'agent'
-            ? await this.resolver.resolveAgent(`${update.name}@${update.latestVersion}`)
-            : await this.resolver.resolveTool(`${update.name}@${update.latestVersion}`);
+            ? await this.resolver.agentResolve(`${update.name}@${update.latestVersion}`)
+            : await this.resolver.toolResolve(`${update.name}@${update.latestVersion}`);
 
         // Calculate new integrity
         const integrity = await calculateIntegrity(resolved.definition);
@@ -214,8 +214,8 @@ export class UpdateManager {
     // Resolve the version
     const resolved =
       manifest.type === 'agent'
-        ? await this.resolver.resolveAgent(`${name}@${version}`)
-        : await this.resolver.resolveTool(`${name}@${version}`);
+        ? await this.resolver.agentResolve(`${name}@${version}`)
+        : await this.resolver.toolResolve(`${name}@${version}`);
 
     // Calculate integrity
     const integrity = await calculateIntegrity(resolved.definition);

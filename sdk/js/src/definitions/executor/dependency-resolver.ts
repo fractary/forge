@@ -39,7 +39,7 @@ export class DependencyResolver {
 
       try {
         // Resolve dependency tool
-        const depTool = await this.resolver.resolveTool(depName);
+        const depTool = await this.resolver.toolResolve(depName);
         if (!depTool) {
           throw new ForgeError(
             DefinitionErrorCode.TOOL_DEPENDENCY_NOT_FOUND,

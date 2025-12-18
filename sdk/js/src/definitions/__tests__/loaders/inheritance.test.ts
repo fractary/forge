@@ -56,7 +56,7 @@ describe('InheritanceResolver', () => {
       };
 
       const resolver = new InheritanceResolver(mockResolver);
-      const result = await resolver.resolveTool(childTool);
+      const result = await resolver.toolResolve(childTool);
 
       expect(result.extends).toBeUndefined();
       expect(result.parameters.input).toBeDefined();
@@ -106,8 +106,8 @@ describe('InheritanceResolver', () => {
 
       const resolver = new InheritanceResolver(mockResolver);
 
-      await expect(resolver.resolveTool(toolA)).rejects.toThrow(ForgeError);
-      await expect(resolver.resolveTool(toolA)).rejects.toMatchObject({
+      await expect(resolver.toolResolve(toolA)).rejects.toThrow(ForgeError);
+      await expect(resolver.toolResolve(toolA)).rejects.toMatchObject({
         code: 'INHERITANCE_CYCLE',
       });
     });
@@ -134,8 +134,8 @@ describe('InheritanceResolver', () => {
 
       const resolver = new InheritanceResolver(mockResolver);
 
-      await expect(resolver.resolveTool(childTool)).rejects.toThrow(ForgeError);
-      await expect(resolver.resolveTool(childTool)).rejects.toMatchObject({
+      await expect(resolver.toolResolve(childTool)).rejects.toThrow(ForgeError);
+      await expect(resolver.toolResolve(childTool)).rejects.toMatchObject({
         code: 'INHERITANCE_BASE_NOT_FOUND',
       });
     });
@@ -176,7 +176,7 @@ describe('InheritanceResolver', () => {
       };
 
       const resolver = new InheritanceResolver(mockResolver);
-      const result = await resolver.resolveTool(childTool);
+      const result = await resolver.toolResolve(childTool);
 
       expect(result.depends_on).toEqual(expect.arrayContaining(['dep1', 'dep2', 'dep3']));
       expect(result.depends_on).toHaveLength(3);
@@ -220,7 +220,7 @@ describe('InheritanceResolver', () => {
       };
 
       const resolver = new InheritanceResolver(mockResolver);
-      const result = await resolver.resolveAgent(childAgent);
+      const result = await resolver.agentResolve(childAgent);
 
       expect(result.extends).toBeUndefined();
       expect(result.llm.provider).toBe('openai');
@@ -268,8 +268,8 @@ describe('InheritanceResolver', () => {
 
       const resolver = new InheritanceResolver(mockResolver);
 
-      await expect(resolver.resolveAgent(agentA)).rejects.toThrow(ForgeError);
-      await expect(resolver.resolveAgent(agentA)).rejects.toMatchObject({
+      await expect(resolver.agentResolve(agentA)).rejects.toThrow(ForgeError);
+      await expect(resolver.agentResolve(agentA)).rejects.toMatchObject({
         code: 'INHERITANCE_CYCLE',
       });
     });
@@ -312,7 +312,7 @@ describe('InheritanceResolver', () => {
       };
 
       const resolver = new InheritanceResolver(mockResolver);
-      const result = await resolver.resolveAgent(childAgent);
+      const result = await resolver.agentResolve(childAgent);
 
       expect(result.config).toEqual({
         timeout: 30000,

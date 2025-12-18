@@ -54,7 +54,7 @@ export class LockfileManager {
     // Resolve each agent
     for (const agentName of usedAgents) {
       try {
-        const resolved = await this.resolver.resolveAgent(agentName);
+        const resolved = await this.resolver.agentResolve(agentName);
 
         lockfile.agents[agentName] = {
           version: resolved.version,
@@ -168,7 +168,7 @@ export class LockfileManager {
     // Validate agents
     for (const [name, entry] of Object.entries(lf.agents)) {
       try {
-        const resolved = await this.resolver.resolveAgent(`${name}@${entry.version}`);
+        const resolved = await this.resolver.agentResolve(`${name}@${entry.version}`);
 
         // Check integrity
         const currentIntegrity = await calculateIntegrity(resolved.definition);
@@ -193,7 +193,7 @@ export class LockfileManager {
     // Validate tools
     for (const [name, entry] of Object.entries(lf.tools)) {
       try {
-        const resolved = await this.resolver.resolveTool(`${name}@${entry.version}`);
+        const resolved = await this.resolver.toolResolve(`${name}@${entry.version}`);
 
         // Check integrity
         const currentIntegrity = await calculateIntegrity(resolved.definition);
@@ -237,7 +237,7 @@ export class LockfileManager {
    */
   private async addToolToLockfile(lockfile: Lockfile, toolName: string): Promise<void> {
     try {
-      const resolved = await this.resolver.resolveTool(toolName);
+      const resolved = await this.resolver.toolResolve(toolName);
 
       lockfile.tools[toolName] = {
         version: resolved.version,
@@ -262,7 +262,7 @@ export class LockfileManager {
       deps.tools = {};
       for (const toolRef of definition.tools) {
         try {
-          const resolved = await this.resolver.resolveTool(toolRef);
+          const resolved = await this.resolver.toolResolve(toolRef);
           deps.tools[toolRef] = resolved.version;
         } catch {
           // Tool not found, skip
@@ -275,7 +275,7 @@ export class LockfileManager {
     // if (definition.agents && definition.agents.length > 0) {
     //   deps.agents = {};
     //   for (const agentRef of definition.agents) {
-    //     const resolved = await this.resolver.resolveAgent(agentRef);
+    //     const resolved = await this.resolver.agentResolve(agentRef);
     //     deps.agents[agentRef] = resolved.version;
     //   }
     // }

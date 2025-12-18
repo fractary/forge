@@ -30,7 +30,7 @@ export class ForkManager {
     logger.info(`Forking agent: ${sourceName} → ${targetName}`);
 
     // 1. Resolve source agent
-    const source = await this.resolver.resolveAgent(sourceName);
+    const source = await this.resolver.agentResolve(sourceName);
 
     // 2. Create forked definition
     const forked: any = {
@@ -65,7 +65,7 @@ export class ForkManager {
     logger.info(`Forking tool: ${sourceName} → ${targetName}`);
 
     // 1. Resolve source tool
-    const source = await this.resolver.resolveTool(sourceName);
+    const source = await this.resolver.toolResolve(sourceName);
 
     // 2. Create forked definition
     const forked: any = {
@@ -111,7 +111,7 @@ export class ForkManager {
     }
 
     // Check upstream for updates
-    const upstream = await this.resolver.resolveAgent(forked.fork_of.name);
+    const upstream = await this.resolver.agentResolve(forked.fork_of.name);
     const hasUpdate = semver.gt(upstream.version, forked.fork_of.version);
 
     if (hasUpdate) {
@@ -147,7 +147,7 @@ export class ForkManager {
     }
 
     // Check upstream for updates
-    const upstream = await this.resolver.resolveTool(forked.fork_of.name);
+    const upstream = await this.resolver.toolResolve(forked.fork_of.name);
     const hasUpdate = semver.gt(upstream.version, forked.fork_of.version);
 
     if (hasUpdate) {
@@ -184,7 +184,7 @@ export class ForkManager {
     const base = await this.getBaseVersion(forked.fork_of.name, forked.fork_of.version);
 
     // Fetch latest upstream
-    const upstream = await this.resolver.resolveAgent(forked.fork_of.name);
+    const upstream = await this.resolver.agentResolve(forked.fork_of.name);
 
     // Perform 3-way merge
     let mergeResult = await performMerge({
@@ -240,7 +240,7 @@ export class ForkManager {
     const base = await this.getBaseVersion(forked.fork_of.name, forked.fork_of.version);
 
     // Fetch latest upstream
-    const upstream = await this.resolver.resolveTool(forked.fork_of.name);
+    const upstream = await this.resolver.toolResolve(forked.fork_of.name);
 
     // Perform 3-way merge
     let mergeResult = await performMerge({
@@ -282,12 +282,12 @@ export class ForkManager {
     // Try to resolve the specific version
     // This assumes the resolver can handle version-specific requests
     try {
-      const resolved = await this.resolver.resolveAgent(`${name}@${version}`);
+      const resolved = await this.resolver.agentResolve(`${name}@${version}`);
       return resolved.definition;
     } catch {
       // If specific version not found, try as tool
       try {
-        const resolved = await this.resolver.resolveTool(`${name}@${version}`);
+        const resolved = await this.resolver.toolResolve(`${name}@${version}`);
         return resolved.definition;
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);

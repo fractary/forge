@@ -122,8 +122,8 @@ export class DependencyResolver {
     // Resolve definition
     const resolved =
       type === 'agent'
-        ? await this.resolver.resolveAgent(name)
-        : await this.resolver.resolveTool(name);
+        ? await this.resolver.agentResolve(name)
+        : await this.resolver.toolResolve(name);
 
     // Extract dependencies
     const dependencies: string[] = [];
