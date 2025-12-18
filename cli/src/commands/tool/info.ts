@@ -25,9 +25,7 @@ export function toolInfoCommand(): Command {
         if (options.json) {
           console.log(JSON.stringify(info, null, 2));
         } else {
-          console.log(formatToolInfo(info, {
-            showSchema: options.showSchema,
-          }));
+          console.log(formatToolInfo(info));
         }
 
       } catch (error) {
