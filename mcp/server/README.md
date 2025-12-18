@@ -1,439 +1,487 @@
 # @fractary/forge-mcp
 
-MCP (Model Context Protocol) server for Fractary Forge, exposing read-focused operations for agents, tools, plugins, configuration, cache, and forks.
+> **Model Context Protocol server for Fractary Forge**
 
-## Overview
+Connect Claude Desktop to your Forge agents, tools, and plugins via MCP.
 
-This MCP server provides **18 read-focused tools** that allow AI clients to query the Forge ecosystem without requiring direct CLI access or project context. All operations are stateless and query-based, making them ideal for integration with AI assistants like Claude.
+[![npm version](https://img.shields.io/npm/v/@fractary/forge-mcp)](https://www.npmjs.com/package/@fractary/forge-mcp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-### Key Features
+---
 
-- **18 Query Tools** - Comprehensive read-only access to Forge ecosystem
-- **Stateless Design** - No project context required, works from anywhere
-- **3-Tier Resolution** - Query local, global, or remote (Stockyard) resources
-- **Type-Safe** - Full TypeScript support with Zod validation
-- **Fast** - 5-6x faster than CLI subprocess calls (per SPEC-00026 benchmarks)
-- **Standards-Compliant** - Follows MCP specification and SPEC-00026 conventions
+## ✨ Features
 
-## Installation
+- **18 MCP Tools** - Comprehensive access to Forge ecosystem
+- **Agent Management** - List, get, create, validate agents
+- **Tool Management** - Access tool definitions
+- **Plugin Management** - Search, install, manage plugins
+- **Cache Control** - View stats and clear cache
+- **Resolution** - Resolve components with dependencies
+- **Stateless Design** - Works from anywhere, no project context required
+- **Fast Performance** - 5-6x faster than CLI subprocess calls
 
-### Global Installation
+## 📦 Installation
+
+### Global Installation (Recommended)
 
 ```bash
 npm install -g @fractary/forge-mcp
 ```
 
-### Local Development
+### Verify Installation
 
 ```bash
-cd forge/mcp/server
-npm install
-npm run build
+forge-mcp --version
 ```
 
-## Usage
+## 🚀 Quick Start
 
-### With Claude Desktop
+### Claude Desktop Configuration
 
-Add to your Claude Desktop configuration:
+Add to your Claude Desktop configuration file:
 
-**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
-**Linux**: `~/.config/Claude/claude_desktop_config.json`
+**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+**Linux:** `~/.config/Claude/claude_desktop_config.json`
 
 ```json
 {
   "mcpServers": {
     "forge": {
-      "command": "fractary-forge-mcp",
-      "args": []
+      "command": "npx",
+      "args": ["-y", "@fractary/forge-mcp"],
+      "env": {
+        "FORGE_CONFIG_PATH": "/path/to/.fractary/forge.config.json",
+        "LOG_LEVEL": "info"
+      }
     }
   }
 }
 ```
 
-After configuration, restart Claude Desktop. The tools will be available automatically.
+### Restart Claude Desktop
 
-### With Other MCP Clients
+After configuration, restart Claude Desktop to load the MCP server.
 
-The server communicates via stdio and follows the MCP specification:
+### Verify Installation
+
+Ask Claude:
+```
+Can you list my Forge agents?
+```
+
+Claude will use the `forge_agent_list` tool to show your agents.
+
+## 🛠️ Available Tools
+
+### Agent Tools
+
+| Tool | Description |
+|------|-------------|
+| **forge_agent_list** | List all available agents |
+| **forge_agent_get** | Get detailed agent information |
+| **forge_agent_create** | Create new agent definition |
+| **forge_agent_validate** | Validate agent definition |
+
+### Tool Tools
+
+| Tool | Description |
+|------|-------------|
+| **forge_tool_list** | List all available tools |
+| **forge_tool_get** | Get detailed tool information |
+
+### Plugin Tools
+
+| Tool | Description |
+|------|-------------|
+| **forge_plugin_list** | List installed plugins |
+| **forge_plugin_search** | Search for plugins in registries |
+| **forge_plugin_install** | Install a plugin |
+
+### Cache Tools
+
+| Tool | Description |
+|------|-------------|
+| **forge_cache_stats** | Get cache statistics |
+| **forge_cache_clear** | Clear cache entries |
+
+### Resolution Tool
+
+| Tool | Description |
+|------|-------------|
+| **forge_resolve** | Resolve asset with dependencies |
+
+## 💡 Usage Examples
+
+### Example 1: List Agents
+
+**User:** "List all my local agents"
+
+**Claude uses:** `forge_agent_list` with `{ "source": "local" }`
+
+**Result:**
+```
+I found 3 local agents:
+
+1. my-assistant (v1.0.0)
+   - A helpful AI assistant
+   - Tools: web-search, file-reader
+
+2. code-reviewer (v1.0.0)
+   - Reviews code for quality
+   - Tools: code-analyzer
+
+3. data-analyst (v1.0.0)
+   - Analyzes data and generates insights
+   - Tools: data-processor, chart-generator
+```
+
+### Example 2: Get Agent Details
+
+**User:** "Show me details about my-assistant"
+
+**Claude uses:** `forge_agent_get` with `{ "name": "my-assistant", "includeTools": true }`
+
+**Result:**
+```
+my-assistant (v1.0.0)
+
+Description: A helpful AI assistant
+
+LLM Configuration:
+- Provider: anthropic
+- Model: claude-3-5-sonnet-20241022
+- Temperature: 0.7
+
+Tools:
+- web-search: Search the web for information
+- file-reader: Read and analyze files
+
+System Prompt:
+"You are a helpful AI assistant..."
+```
+
+### Example 3: Install Plugin
+
+**User:** "Install the FABER plugin"
+
+**Claude uses:**
+1. `forge_plugin_search` with `{ "query": "faber" }`
+2. `forge_plugin_install` with `{ "name": "@fractary/faber-plugin", "global": true }`
+
+**Result:**
+```
+I found and installed the FABER plugin!
+
+@fractary/faber-plugin (v1.0.0)
+
+Installed:
+- 5 agents
+- 12 tools
+- 3 workflows
+
+Location: ~/.fractary/registry/plugins/@fractary/faber-plugin
+```
+
+### Example 4: Create Agent
+
+**User:** "Create a research assistant agent"
+
+**Claude uses:** `forge_agent_create` with appropriate parameters
+
+**Result:**
+```
+Created research-assistant agent!
+
+Agent: research-assistant (v1.0.0)
+Description: A research assistant for finding and analyzing information
+Model: claude-3-5-sonnet-20241022
+Tools: web-search, file-reader
+
+Saved to: .fractary/agents/research-assistant.md
+```
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `FORGE_CONFIG_PATH` | Path to Forge config | `.fractary/forge.config.json` |
+| `FORGE_CACHE_DIR` | Cache directory | `~/.fractary/cache` |
+| `LOG_LEVEL` | Logging level | `info` |
+
+### Forge Configuration
+
+Create `.fractary/forge.config.json`:
+
+```json
+{
+  "version": "1.0.0",
+  "resolvers": {
+    "local": {
+      "enabled": true,
+      "paths": [".fractary/agents", ".fractary/tools"]
+    },
+    "global": {
+      "enabled": true,
+      "path": "~/.fractary/registry"
+    },
+    "remote": {
+      "enabled": true,
+      "registries": [
+        {
+          "name": "fractary-core",
+          "type": "manifest",
+          "url": "https://raw.githubusercontent.com/fractary/plugins/main/registry.json",
+          "priority": 1
+        }
+      ]
+    }
+  },
+  "cache": {
+    "enabled": true,
+    "ttl": 3600
+  }
+}
+```
+
+## 🔧 Advanced Usage
+
+### Multiple Registries
+
+```json
+{
+  "mcpServers": {
+    "forge": {
+      "command": "npx",
+      "args": ["-y", "@fractary/forge-mcp"],
+      "env": {
+        "FORGE_CONFIG_PATH": "/path/to/config.json"
+      }
+    }
+  }
+}
+```
+
+Then configure multiple registries in `forge.config.json`:
+
+```json
+{
+  "resolvers": {
+    "remote": {
+      "registries": [
+        {
+          "name": "company-internal",
+          "url": "https://internal.company.com/registry.json",
+          "priority": 1,
+          "auth": {
+            "type": "token",
+            "token": "${COMPANY_REGISTRY_TOKEN}"
+          }
+        },
+        {
+          "name": "fractary-core",
+          "url": "https://raw.githubusercontent.com/fractary/plugins/main/registry.json",
+          "priority": 2
+        }
+      ]
+    }
+  }
+}
+```
+
+### Custom Logging
+
+```json
+{
+  "mcpServers": {
+    "forge": {
+      "command": "npx",
+      "args": ["-y", "@fractary/forge-mcp"],
+      "env": {
+        "LOG_LEVEL": "debug"
+      }
+    }
+  }
+}
+```
+
+Levels: `error`, `warn`, `info`, `debug`
+
+## 🐛 Troubleshooting
+
+### MCP Server Not Starting
+
+**Symptom:** Claude shows "MCP server failed to start"
+
+**Solutions:**
+1. Check logs in Claude Desktop Developer Tools
+2. Verify installation:
+   ```bash
+   npx @fractary/forge-mcp --version
+   ```
+3. Check config file syntax in `claude_desktop_config.json`
+4. Ensure permissions on config files
+
+### Tools Not Appearing
+
+**Symptom:** Forge tools don't show in Claude
+
+**Solutions:**
+1. Restart Claude Desktop completely
+2. Verify MCP server configuration
+3. Check Claude Desktop logs
+4. Try using `forge-mcp` instead of `npx @fractary/forge-mcp` if globally installed
+
+### Permission Errors
+
+**Symptom:** "EACCES: permission denied"
+
+**Solutions:**
+```bash
+# Check permissions
+ls -la .fractary/
+
+# Fix permissions
+chmod -R 755 .fractary/
+```
+
+### Cache Issues
+
+**Symptom:** Stale data returned
+
+**Solutions:**
+- Ask Claude: "Clear the Forge cache"
+- Or manually: `rm -rf ~/.fractary/cache/`
+- Adjust TTL in configuration
+
+### Network Errors
+
+**Symptom:** "Failed to fetch from registry"
+
+**Solutions:**
+1. Check internet connection
+2. Verify registry URL in config
+3. Check firewall settings
+4. Try different registry
+
+## 📖 Documentation
+
+- **[Complete Documentation](../../docs/README.md)** - Full documentation index
+- **[MCP Server Guide](../../docs/MCP_SERVER.md)** - Detailed MCP guide
+- **[Getting Started](../../docs/guides/getting-started.md)** - Quick start guide
+- **[API Reference](../../docs/API.md)** - API documentation
+
+## 🛠️ Development
+
+### Building from Source
 
 ```bash
-fractary-forge-mcp
-```
-
-### Programmatic Usage
-
-```typescript
-import { createServer, startServer } from '@fractary/forge-mcp';
-
-// Start the MCP server
-await startServer();
-
-// Or create and configure manually
-const server = createServer();
-// ... configure transport
-```
-
-## Available Tools
-
-### Agent Tools (3)
-
-Query and validate agent definitions across local and global locations.
-
-#### `fractary_forge_agent_list`
-List available agents with optional filtering.
-
-**Parameters:**
-- `location`: `"local" | "global" | "all"` (default: `"all"`)
-- `tags`: `string[]` (optional) - Filter by tags
-- `limit`: `number` (optional) - Limit results
-
-**Example:**
-```typescript
-{
-  "location": "all",
-  "tags": ["llm", "chat"],
-  "limit": 10
-}
-```
-
-#### `fractary_forge_agent_info`
-Get detailed information about a specific agent.
-
-**Parameters:**
-- `name`: `string` - Agent name or reference (e.g., `"my-agent"` or `"@plugin/agent"`)
-
-**Example:**
-```typescript
-{
-  "name": "code-reviewer"
-}
-```
-
-#### `fractary_forge_agent_validate`
-Validate an agent definition file against the schema.
-
-**Parameters:**
-- `path`: `string` - Absolute path to agent YAML file
-
-**Example:**
-```typescript
-{
-  "path": "/path/to/agent.yaml"
-}
-```
-
-### Tool Tools (3)
-
-Query and validate tool definitions.
-
-#### `fractary_forge_tool_list`
-List available tools with optional filtering.
-
-**Parameters:**
-- `location`: `"local" | "global" | "all"` (default: `"all"`)
-- `tags`: `string[]` (optional)
-- `limit`: `number` (optional)
-
-#### `fractary_forge_tool_info`
-Get detailed information about a specific tool.
-
-**Parameters:**
-- `name`: `string` - Tool name or reference
-
-#### `fractary_forge_tool_validate`
-Validate a tool definition file.
-
-**Parameters:**
-- `path`: `string` - Absolute path to tool YAML file
-
-### Plugin Tools (3)
-
-Query installed plugins and search the Stockyard registry.
-
-#### `fractary_forge_plugin_list`
-List installed plugins.
-
-**Parameters:**
-- `location`: `"local" | "global" | "all"` (default: `"all"`)
-
-**Returns:** Plugin list with version, description, and component counts
-
-#### `fractary_forge_plugin_info`
-Get detailed information about a specific plugin.
-
-**Parameters:**
-- `name`: `string` - Plugin name
-
-**Returns:** Plugin manifest with agents, tools, commands, hooks counts
-
-#### `fractary_forge_plugin_search`
-Search the Stockyard registry for available plugins.
-
-**Parameters:**
-- `query`: `string` - Search query
-- `tags`: `string[]` (optional)
-- `limit`: `number` (default: 20)
-
-**Note:** Requires configured Stockyard registry access.
-
-### Config Tools (3)
-
-Query Forge configuration at local, global, or merged levels.
-
-#### `fractary_forge_config_get`
-Get a specific configuration value by key.
-
-**Parameters:**
-- `key`: `string` - Configuration key (dot notation supported, e.g., `"registries.0.url"`)
-
-**Example:**
-```typescript
-{
-  "key": "registries.0.name"
-}
-```
-
-#### `fractary_forge_config_show`
-Show full configuration.
-
-**Parameters:**
-- `scope`: `"local" | "global" | "merged"` (default: `"merged"`)
-
-#### `fractary_forge_config_registry_list`
-List all configured registries.
-
-**Returns:** Array of registries with name, url, priority, enabled status
-
-### Cache Tools (2)
-
-Manage the manifest cache.
-
-#### `fractary_forge_cache_stats`
-Get cache statistics.
-
-**Returns:**
-```typescript
-{
-  totalEntries: number;
-  freshEntries: number;
-  expiredEntries: number;
-  totalSize: number;
-  totalSizeReadable: string;  // e.g., "2.5 MB"
-  cacheDir: string;
-}
-```
-
-#### `fractary_forge_cache_clear`
-Clear cache entries.
-
-**Parameters:**
-- `all`: `boolean` (default: `false`) - Clear all entries
-- `pattern`: `string` (optional) - Registry name to clear
-
-**Examples:**
-```typescript
-// Clear all cache
-{ "all": true }
-
-// Clear specific registry
-{ "pattern": "stockyard-main" }
-```
-
-### Fork Tools (4)
-
-Query forked assets and their relationship to upstream sources.
-
-#### `fractary_forge_fork_list`
-List all forked assets.
-
-**Parameters:**
-- `location`: `"local" | "global" | "all"` (default: `"all"`)
-- `type`: `"agent" | "tool" | "plugin"` (optional)
-
-#### `fractary_forge_fork_info`
-Get detailed information about a forked asset.
-
-**Parameters:**
-- `name`: `string` - Asset name
-- `type`: `"agent" | "tool" | "plugin"`
-
-**Returns:** Fork metadata including upstream source, version, and local changes
-
-#### `fractary_forge_fork_diff`
-Show differences between local fork and upstream version.
-
-**Parameters:**
-- `name`: `string` - Asset name
-- `type`: `"agent" | "tool" | "plugin"`
-
-**Note:** Requires registry access to fetch upstream version.
-
-#### `fractary_forge_fork_check`
-Check if upstream version has updates available.
-
-**Parameters:**
-- `name`: `string` - Asset name
-- `type`: `"agent" | "tool" | "plugin"`
-
-**Note:** Requires registry access.
-
-## Architecture
-
-### Design Principles
-
-The server follows the distributed plugin architecture defined in [SPEC-00026](../../specs/SPEC-00026-distributed-plugin-architecture.md):
-
-1. **Read-Focused Operations Only**
-   - No mutations (install, uninstall, create, delete)
-   - Safe for concurrent access
-   - Mutations handled by CLI
-
-2. **Stateless Design**
-   - No session management
-   - No project context required
-   - Each request is independent
-
-3. **3-Tier Resolution**
-   - **Local**: `.fractary/` in project directory
-   - **Global**: `~/.fractary/registry/`
-   - **Stockyard**: Remote registry (when configured)
-
-4. **Input Validation**
-   - Zod schemas for all tool parameters
-   - Type-safe operations
-   - Clear error messages
-
-5. **Error Handling**
-   - Standardized error formatting
-   - Graceful degradation
-   - Helpful error messages
-
-### Performance
-
-Based on SPEC-00026 benchmarks:
-- **5-6x faster** than CLI subprocess calls
-- **Persistent process** - no startup overhead per request
-- **Shared cache** - efficient manifest caching
-
-### Tool Naming Convention
-
-All tools follow the pattern: `fractary_forge_{category}_{action}`
-
-- `fractary` - Namespace
-- `forge` - Product name
-- `{category}` - Resource type (agent, tool, plugin, config, cache, fork)
-- `{action}` - Operation (list, info, validate, get, show, stats, clear, diff, check)
-
-## Development
-
-### Prerequisites
-
-- Node.js >= 18.0.0
-- TypeScript >= 5.3.3
-- @fractary/forge SDK
-
-### Setup
-
-```bash
+# Clone repository
+git clone https://github.com/fractary/forge.git
 cd forge/mcp/server
+
+# Install dependencies
 npm install
-```
 
-### Build
+# Build
+npm run build
 
-```bash
-npm run build        # Production build
-npm run dev          # Watch mode
-npm run clean        # Clean build artifacts
+# Link globally for testing
+npm link
+
+# Test
+forge-mcp --version
 ```
 
 ### Testing
 
 ```bash
-npm test             # Run tests
-npm run test:watch   # Watch mode
-npm run test:coverage # With coverage
+npm test
 ```
 
-### Code Quality
+See [Developer Guide](../../docs/DEVELOPER.md) for contribution guidelines.
 
-```bash
-npm run lint         # Check linting
-npm run lint:fix     # Fix linting issues
-npm run format       # Format code
-npm run typecheck    # Type checking
+## 📊 Performance
+
+Based on SPEC-00026 benchmarks:
+
+- **5-6x faster** than CLI subprocess calls
+- **Stateless** - no context switching overhead
+- **Efficient** - direct SDK access
+- **Cached** - TTL-based caching for registries
+
+## 🏗️ Architecture
+
+```
+Claude Desktop
+      │
+      ▼
+MCP Protocol
+      │
+      ▼
+@fractary/forge-mcp
+      │
+      ▼
+@fractary/forge (SDK)
+      │
+      ▼
+Resolution Manager
+├── Local (.fractary/)
+├── Global (~/.fractary/registry/)
+└── Remote (registries)
 ```
 
-### Project Structure
+## 📄 License
 
+MIT © [Fractary](https://fractary.com)
+
+## 🔗 Links
+
+- **[GitHub](https://github.com/fractary/forge)** - Source code
+- **[NPM](https://www.npmjs.com/package/@fractary/forge-mcp)** - Package registry
+- **[Documentation](../../docs/README.md)** - Full documentation
+- **[SDK Package](../../sdk/js/)** - Core SDK
+- **[CLI Tool](../../cli/)** - Command-line interface
+- **[Issues](https://github.com/fractary/forge/issues)** - Bug reports
+
+## 🤝 Related Packages
+
+- **[@fractary/forge](../../sdk/js/)** - Core SDK
+- **[@fractary/forge-cli](../../cli/)** - Command-line interface
+
+## 🌟 Using with Other MCP Clients
+
+While designed for Claude Desktop, the server works with any MCP-compatible client:
+
+```javascript
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+
+const transport = new StdioClientTransport({
+  command: 'npx',
+  args: ['-y', '@fractary/forge-mcp']
+});
+
+const client = new Client({
+  name: 'my-client',
+  version: '1.0.0'
+}, {
+  capabilities: {}
+});
+
+await client.connect(transport);
+
+// List tools
+const tools = await client.listTools();
+
+// Use tool
+const result = await client.callTool('forge_agent_list', {
+  source: 'local'
+});
 ```
-mcp/server/
-├── src/
-│   ├── tools/              # Tool implementations
-│   │   ├── agent.ts        # Agent query tools (3)
-│   │   ├── tool.ts         # Tool query tools (3)
-│   │   ├── plugin.ts       # Plugin query tools (3)
-│   │   ├── config.ts       # Config tools (3)
-│   │   ├── cache.ts        # Cache tools (2)
-│   │   ├── fork.ts         # Fork tools (4)
-│   │   └── index.ts        # Tool registry
-│   ├── server.ts           # MCP server core
-│   ├── types.ts            # Shared type definitions
-│   └── index.ts            # Main entry point
-├── bin/
-│   └── fractary-forge-mcp.js  # Executable
-├── dist/                   # Compiled output
-├── package.json
-├── tsconfig.json
-├── README.md
-├── CHANGELOG.md
-└── CONTRIBUTING.md
-```
 
-## Troubleshooting
+---
 
-### Server Won't Start
-
-1. Check Node.js version: `node --version` (must be >= 18.0.0)
-2. Rebuild: `npm run build`
-3. Check logs in Claude Desktop console
-
-### Tools Not Appearing
-
-1. Restart Claude Desktop after configuration
-2. Verify config file location and format
-3. Check that `fractary-forge-mcp` is in PATH
-
-### Tools Returning Errors
-
-1. Ensure @fractary/forge SDK is installed
-2. Check that Forge configuration exists
-3. Verify file paths are absolute
-
-### Cache Issues
-
-Use `fractary_forge_cache_clear` with `{"all": true}` to reset cache.
-
-## Related Packages
-
-- **[@fractary/forge](../../../sdk/js)** - Core SDK for Forge operations
-- **[@fractary/forge-cli](../../../cli)** - Command-line interface (includes mutations)
-- **@modelcontextprotocol/sdk** - MCP SDK for TypeScript
-
-## Contributing
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for development guidelines.
-
-## License
-
-MIT
-
-## Links
-
-- [GitHub Repository](https://github.com/fractary/forge)
-- [MCP Specification](https://modelcontextprotocol.io)
-- [SPEC-00026: Distributed Plugin Architecture](../../specs/SPEC-00026-distributed-plugin-architecture.md)
-- [SPEC-20251217: Forge MCP Server](../../specs/SPEC-20251217-forge-mcp-server.md)
-- [Issue #15: Implementation Tracking](https://github.com/fractary/forge/issues/15)
+**Made with ❤️ by the Fractary team**

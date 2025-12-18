@@ -1,449 +1,530 @@
 # @fractary/forge-cli
 
-Command-line interface for Fractary Forge - Create, manage, and publish AI agent definitions.
+> **Command-line interface for Fractary Forge**
 
-## Installation
+Create, manage, and publish AI agent definitions from the command line.
+
+[![npm version](https://img.shields.io/npm/v/@fractary/forge-cli)](https://www.npmjs.com/package/@fractary/forge-cli)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+---
+
+## ✨ Features
+
+- **Agent Management**: Create, list, validate, and manage AI agents
+- **Tool Management**: Define and manage tools for your agents
+- **Plugin System**: Install and manage plugin collections
+- **Registry Support**: Access local, global, and remote registries
+- **Fork Workflows**: Fork and customize components
+- **Cache Management**: Control caching for performance
+- **Export Support**: Export to LangChain, Claude Code, n8n
+
+## 📦 Installation
+
+### Global Installation (Recommended)
 
 ```bash
 npm install -g @fractary/forge-cli
 ```
 
-## Quick Start
+### Local Installation
 
 ```bash
-# Initialize forge configuration
-fractary-forge init
-
-# Create a new agent
-fractary-forge agent-create my-agent --description "My helpful agent"
-
-# List available agents
-fractary-forge agent-list
-
-# Get agent information
-fractary-forge agent-info my-agent
+npm install --save-dev @fractary/forge-cli
 ```
 
-## Commands
+### Verify Installation
+
+```bash
+fractary-forge --version
+```
+
+## 🚀 Quick Start
+
+### Initialize Project
+
+```bash
+# Initialize Forge configuration
+fractary-forge init
+
+# Initialize with options
+fractary-forge init --org my-org --global
+```
+
+### Create Your First Agent
+
+```bash
+# Create a new agent
+fractary-forge agent-create my-assistant
+
+# This creates: .fractary/agents/my-assistant.md
+```
+
+Edit the agent definition:
+
+```yaml
+---
+name: my-assistant
+version: 1.0.0
+type: agent
+description: A helpful AI assistant
+llm:
+  provider: anthropic
+  model: claude-3-5-sonnet-20241022
+  temperature: 0.7
+tools:
+  - web-search
+  - file-reader
+---
+
+# System Prompt
+
+You are a helpful assistant.
+```
+
+### Validate and List
+
+```bash
+# Validate agent
+fractary-forge agent-validate my-assistant
+
+# List all agents
+fractary-forge agent-list
+
+# Get agent info
+fractary-forge agent-info my-assistant
+```
+
+## 📖 Command Reference
 
 ### Configuration
 
 #### `init`
-Initialize Forge configuration for agent/tool management.
+
+Initialize Forge configuration.
 
 ```bash
 fractary-forge init [options]
 
 Options:
-  --org <slug>    Organization slug (e.g., "fractary")
-  --global        Also initialize global registry (~/.fractary/registry)
-  --force         Overwrite existing configuration
+  --org <slug>     Organization slug
+  --global         Initialize global registry
+  --force          Overwrite existing config
 ```
 
 ### Agent Management
 
 #### `agent-create`
+
 Create a new agent definition.
 
 ```bash
 fractary-forge agent-create <name> [options]
 
-Arguments:
-  name                    Agent name (lowercase-with-hyphens)
-
 Options:
-  --description <text>    Agent description
-  --model <provider>      LLM provider (anthropic|openai|google)
-  --model-name <name>     Model name (e.g., claude-sonnet-4)
-  --tools <tools>         Tool references (comma-separated)
-  --prompt <text>         System prompt
-  --extends <agent>       Extend existing agent
-  --interactive           Interactive creation mode
-```
-
-#### `agent-info`
-Show agent information.
-
-```bash
-fractary-forge agent-info <name> [options]
-
-Arguments:
-  name               Agent name (with optional version, e.g., agent@1.0.0)
-
-Options:
-  --json             Output as JSON
-  --show-tools       Show detailed tool information
-  --show-prompt      Include full system prompt
+  --description <text>   Agent description
+  --model <model>        LLM model to use
+  --provider <provider>  LLM provider (anthropic/openai/google)
+  --tools <tools>        Comma-separated tool list
 ```
 
 #### `agent-list`
+
 List available agents.
 
 ```bash
 fractary-forge agent-list [options]
 
 Options:
-  --tags <tags>    Filter by tags (comma-separated)
-  --json           Output as JSON
-```
-
-#### `agent-validate`
-Validate agent definition.
-
-```bash
-fractary-forge agent-validate <name> [options]
-
-Arguments:
-  name                Agent name (with optional version)
-
-Options:
-  --strict            Enable strict validation
-  --check-tools       Verify all tool references exist
+  --source <source>   Filter by source (local/global/remote)
+  --tag <tag>         Filter by tag
   --json              Output as JSON
 ```
 
-### Registry Management
+#### `agent-info`
+
+Show agent details.
+
+```bash
+fractary-forge agent-info <name> [options]
+
+Options:
+  --version <version>  Specific version
+  --include-tools      Include tool definitions
+```
+
+#### `agent-validate`
+
+Validate agent definition.
+
+```bash
+fractary-forge agent-validate <name>
+```
+
+### Plugin Management
 
 #### `install`
-Install plugin from registry.
+
+Install a plugin.
 
 ```bash
 fractary-forge install <plugin> [options]
 
-Arguments:
-  plugin              Plugin name or URL
-
 Options:
-  --version <ver>     Specific version to install
-  --dev               Install as dev dependency
-  --global            Install globally
+  --global           Install globally
+  --version <ver>    Specific version
+  --force            Force reinstall
+  --agents-only      Install agents only
+  --tools-only       Install tools only
 ```
 
 #### `uninstall`
-Uninstall plugin.
+
+Uninstall a plugin.
 
 ```bash
 fractary-forge uninstall <plugin> [options]
 
-Arguments:
-  plugin              Plugin name
-
 Options:
-  --global            Uninstall from global registry
+  --global    Uninstall from global registry
 ```
 
 #### `list`
+
 List installed plugins.
 
 ```bash
 fractary-forge list [options]
 
 Options:
-  --type <type>       Filter by type (agent|tool)
-  --scope <scope>     Filter by scope (local|global|project)
-  --json              Output as JSON
-```
-
-#### `info`
-Show plugin information.
-
-```bash
-fractary-forge info <plugin> [options]
-
-Arguments:
-  plugin              Plugin name
-
-Options:
-  --json              Output as JSON
+  --global    List global plugins
+  --local     List local plugins only
+  --json      Output as JSON
 ```
 
 #### `search`
-Search registry for plugins.
+
+Search for plugins.
 
 ```bash
 fractary-forge search <query> [options]
 
-Arguments:
-  query               Search query
-
 Options:
-  --type <type>       Filter by type (agent|tool)
-  --tags <tags>       Filter by tags (comma-separated)
-  --limit <n>         Limit results
-  --json              Output as JSON
+  --tag <tag>      Filter by tag
+  --limit <num>    Max results (default: 20)
 ```
 
-#### `lock`
-Lock plugin versions.
+#### `info`
+
+Show plugin information.
 
 ```bash
-fractary-forge lock [options]
-
-Options:
-  --update            Update lockfile with current versions
+fractary-forge info <plugin>
 ```
 
-#### `update`
-Update plugins.
-
-```bash
-fractary-forge update [plugin] [options]
-
-Arguments:
-  plugin              Specific plugin to update (optional)
-
-Options:
-  --major             Allow major version updates
-  --dry-run           Show what would be updated without updating
-```
-
-### Fork and Merge
+### Fork & Merge
 
 #### `fork`
+
 Fork a component for customization.
 
 ```bash
-fractary-forge fork <source> [options]
-
-Arguments:
-  source              Component to fork
+fractary-forge fork <source> <target> [options]
 
 Options:
-  --name <name>       Custom name for fork
-  --local             Fork to local registry
+  --type <type>    Component type (agent/tool)
+  --description    Custom description
 ```
 
 #### `merge`
-Merge upstream changes into forked component.
+
+Merge upstream changes.
 
 ```bash
-fractary-forge merge [options]
+fractary-forge merge <name> [options]
 
 Options:
-  --strategy <type>   Merge strategy (auto|manual|local|upstream)
-  --dry-run           Show changes without applying
-```
-
-### Registry Configuration
-
-#### `registry add`
-Add a registry source.
-
-```bash
-fractary-forge registry add <url> [options]
-
-Arguments:
-  url                 Registry URL
-
-Options:
-  --name <name>       Registry name
-  --priority <n>      Priority order
-```
-
-#### `registry list`
-List configured registries.
-
-```bash
-fractary-forge registry list [options]
-
-Options:
-  --json              Output as JSON
-```
-
-#### `registry remove`
-Remove a registry source.
-
-```bash
-fractary-forge registry remove <name>
-
-Arguments:
-  name                Registry name
+  --strategy <strategy>  Merge strategy (auto/manual)
+  --dry-run             Show changes without applying
 ```
 
 ### Cache Management
 
-#### `cache clear`
-Clear registry cache.
+#### `cache-clear`
+
+Clear cache entries.
 
 ```bash
-fractary-forge cache clear [options]
+fractary-forge cache-clear [options]
 
 Options:
-  --all               Clear all cache
-  --expired           Clear only expired entries
-  --pattern <glob>    Clear matching pattern
+  --pattern <pattern>  Clear matching entries
+  --stale-only         Clear stale entries only
 ```
 
-#### `cache stats`
+#### `cache-stats`
+
 Show cache statistics.
 
 ```bash
-fractary-forge cache stats [options]
+fractary-forge cache-stats
+```
+
+### Registry Configuration
+
+#### `registry-add`
+
+Add a registry source.
+
+```bash
+fractary-forge registry-add <name> <url> [options]
 
 Options:
-  --json              Output as JSON
+  --priority <num>  Registry priority (1 = highest)
+  --auth <token>    Authentication token
+```
+
+#### `registry-list`
+
+List configured registries.
+
+```bash
+fractary-forge registry-list
+```
+
+#### `registry-remove`
+
+Remove a registry source.
+
+```bash
+fractary-forge registry-remove <name>
 ```
 
 ### Authentication
 
 #### `login`
-Authenticate with registry.
+
+Authenticate with a registry.
 
 ```bash
-fractary-forge login [options]
-
-Options:
-  --registry <url>    Registry URL
-  --token <token>     Authentication token
+fractary-forge login [registry]
 ```
 
 #### `logout`
+
 Clear authentication.
 
 ```bash
-fractary-forge logout [options]
-
-Options:
-  --registry <url>    Registry URL (logout from specific registry)
-  --all               Logout from all registries
+fractary-forge logout [registry]
 ```
 
 #### `whoami`
+
 Show current user.
 
 ```bash
-fractary-forge whoami [options]
-
-Options:
-  --registry <url>    Check specific registry
-  --json              Output as JSON
+fractary-forge whoami
 ```
 
-## Configuration
+## 📚 Documentation
 
-Forge uses a YAML configuration file at `.fractary/forge/config.yaml`:
+- **[Complete Documentation](../docs/README.md)** - Full documentation index
+- **[Getting Started Guide](../docs/guides/getting-started.md)** - Quick start
+- **[Command Reference](../docs/guides/command-reference.md)** - All commands
+- **[Configuration Guide](../docs/guides/configuration.md)** - Configuration
+- **[Workflow Guides](../docs/guides/workflow-guides.md)** - Common workflows
 
-```yaml
-organization: my-org
+## 💡 Common Workflows
 
-registry:
-  local:
-    enabled: true
-    agents_path: .fractary/agents
-    tools_path: .fractary/tools
-  global:
-    enabled: true
-    path: ~/.fractary/registry
-  stockyard:
-    enabled: false
-    url: https://stockyard.fractary.dev
+### Installing and Using a Plugin
 
-lockfile:
-  path: .fractary/forge/lockfile.json
-  auto_generate: true
-  validate_on_install: true
+```bash
+# Search for plugins
+fractary-forge search faber
 
-updates:
-  check_frequency: daily
-  auto_update: false
-  breaking_changes_policy: prompt
+# Install plugin globally
+fractary-forge install @fractary/faber-plugin --global
 
-defaults:
-  agent:
-    model:
-      provider: anthropic
-      name: claude-sonnet-4
-    config:
-      temperature: 0.7
-      max_tokens: 4096
-  tool:
-    implementation:
-      type: function
+# List what was installed
+fractary-forge list --global
+
+# Get plugin info
+fractary-forge info @fractary/faber-plugin
 ```
 
-## Agent Definition Format
+### Fork and Customize
 
-Agents are defined in YAML format:
+```bash
+# Fork an agent
+fractary-forge fork faber-planner my-custom-planner
 
-```yaml
-name: my-agent
-type: agent
-description: My helpful agent
-version: 1.0.0
-tags:
-  - helper
-  - assistant
+# Edit the customization
+# .fractary/agents/my-custom-planner.md
 
-llm:
-  provider: anthropic
-  model: claude-sonnet-4
-  temperature: 0.7
-  max_tokens: 4096
+# Later, check for upstream updates
+fractary-forge fork-check-updates my-custom-planner
 
-system_prompt: |
-  You are a helpful agent that assists with tasks.
-
-tools:
-  - file-reader
-  - web-search
+# Merge upstream changes
+fractary-forge merge my-custom-planner
 ```
 
-## Directory Structure
+### Working with Multiple Registries
 
+```bash
+# Add company registry
+fractary-forge registry-add company-internal \
+  https://registry.company.com/forge.json \
+  --priority 1
+
+# Add community registry
+fractary-forge registry-add community \
+  https://community-forge.dev/registry.json \
+  --priority 2
+
+# List registries
+fractary-forge registry-list
+
+# Search across all registries
+fractary-forge search "data analysis"
 ```
-.fractary/
-├── forge/
-│   ├── config.yaml       # Forge configuration
-│   └── lockfile.json     # Version lockfile
-├── agents/               # Local agent definitions
-│   └── my-agent.yaml
-└── tools/                # Local tool definitions
-    └── my-tool.yaml
+
+## 🔧 Configuration
+
+### Project Configuration
+
+File: `.fractary/forge.config.json`
+
+```json
+{
+  "version": "1.0.0",
+  "resolvers": {
+    "local": {
+      "enabled": true,
+      "paths": [
+        ".fractary/agents",
+        ".fractary/tools"
+      ]
+    },
+    "global": {
+      "enabled": true,
+      "path": "~/.fractary/registry"
+    },
+    "remote": {
+      "enabled": true,
+      "registries": [
+        {
+          "name": "fractary-core",
+          "url": "https://raw.githubusercontent.com/fractary/plugins/main/registry.json",
+          "priority": 1
+        }
+      ]
+    }
+  },
+  "cache": {
+    "enabled": true,
+    "ttl": 3600
+  }
+}
 ```
 
-## Development
+### Global Configuration
 
-This CLI is part of the [Fractary Forge](https://github.com/fractary/forge) monorepo.
+File: `~/.fractary/config.json`
+
+```json
+{
+  "registries": [
+    {
+      "name": "fractary-core",
+      "url": "https://raw.githubusercontent.com/fractary/plugins/main/registry.json",
+      "enabled": true
+    }
+  ],
+  "auth": {
+    "tokens": {}
+  }
+}
+```
+
+## 🛠️ Development
 
 ### Building from Source
 
 ```bash
+# Clone repository
+git clone https://github.com/fractary/forge.git
+cd forge/cli
+
 # Install dependencies
 npm install
 
 # Build
 npm run build
 
-# Run locally
-node bin/fractary-forge.js --help
+# Link globally for testing
+npm link
+
+# Test
+fractary-forge --version
 ```
 
-### Project Structure
+### Running Tests
 
-```
-/cli/
-├── package.json
-├── tsconfig.json
-├── bin/
-│   └── fractary-forge.js     # Binary entry point
-├── src/
-│   ├── index.ts              # Main CLI program
-│   ├── client/               # SDK client wrapper
-│   ├── commands/             # CLI commands
-│   │   ├── init.ts
-│   │   ├── agent/            # Agent commands
-│   │   └── registry/         # Registry commands
-│   ├── utils/                # Utility modules
-│   └── config/               # Configuration management
-└── dist/                     # Compiled output
+```bash
+npm test
 ```
 
-## License
+See [Developer Guide](../docs/DEVELOPER.md) for contribution guidelines.
 
-MIT - See [LICENSE](../LICENSE) for details.
+## 🐛 Troubleshooting
 
-## Related
+### Command Not Found
 
-- [Forge SDK](../sdk/js/) - JavaScript SDK for Forge
-- [Forge Agents](../.fractary/agents/) - Agent definitions
-- [Forge Tools](../.fractary/tools/) - Tool definitions
+```bash
+# Ensure global installation
+npm install -g @fractary/forge-cli
+
+# Or use npx
+npx @fractary/forge-cli --version
+```
+
+### Permission Errors
+
+```bash
+# On macOS/Linux, may need sudo for global install
+sudo npm install -g @fractary/forge-cli
+
+# Or use nvm to avoid sudo
+```
+
+### Cache Issues
+
+```bash
+# Clear cache
+fractary-forge cache-clear
+
+# Or manually
+rm -rf ~/.fractary/cache
+```
+
+## 📄 License
+
+MIT © [Fractary](https://fractary.com)
+
+## 🔗 Links
+
+- **[GitHub](https://github.com/fractary/forge)** - Source code
+- **[NPM](https://www.npmjs.com/package/@fractary/forge-cli)** - Package registry
+- **[Documentation](../docs/README.md)** - Full documentation
+- **[SDK Package](../sdk/js/)** - JavaScript/TypeScript SDK
+- **[MCP Server](../mcp/server/)** - Model Context Protocol server
+- **[Issues](https://github.com/fractary/forge/issues)** - Bug reports
+
+## 🤝 Related Packages
+
+- **[@fractary/forge](../sdk/js/)** - Core SDK
+- **[@fractary/forge-mcp](../mcp/server/)** - MCP server for Claude Desktop
+
+---
+
+**Made with ❤️ by the Fractary team**
