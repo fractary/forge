@@ -1,0 +1,11 @@
+# ===== fractary-core (managed) =====
+backups/
+# ===== end fractary-core =====
+
+# ===== fractary-logs (managed) =====
+logs/
+# ===== end fractary-logs =====
+
+# ===== fractary-codex (managed) =====
+codex/cache/
+# ===== end fractary-codex =====

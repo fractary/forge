@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "fractary-codex": {
+      "command": "node",
+      "args": [
+        "plugins/codex/dist/mcp-server.js"
+      ],
+      "env": {
+        "FRACTARY_CONFIG": ".fractary/config.yaml"
+      }
+    }
+  }
+}
