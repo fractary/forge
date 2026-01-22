@@ -1,13 +1,14 @@
 {
   "mcpServers": {
     "fractary-codex": {
-      "command": "node",
+      "command": "npx",
       "args": [
-        "plugins/codex/dist/mcp-server.js"
+        "-y",
+        "@fractary/codex-mcp",
+        "--config",
+        ".fractary/config.yaml"
       ],
-      "env": {
-        "FRACTARY_CONFIG": ".fractary/config.yaml"
-      }
+      "env": {}
     }
   }
 }
