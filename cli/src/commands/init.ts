@@ -1,121 +1,125 @@
 /**
- * Initialize Forge Configuration Command
+ * Initialize Forge Configuration Command (DEPRECATED)
  *
- * Creates .fractary/forge/config.yaml with:
- * - Organization detection from git remote
- * - Registry configuration (local, global, stockyard)
- * - Lockfile configuration
- * - Update settings
- * - Default agent/tool settings
+ * This command is deprecated. Use `fractary-forge configure` instead.
+ *
+ * This file is kept for backward compatibility. It delegates to the
+ * configure command with a deprecation warning.
  */
 
 import { Command } from 'commander';
 import chalk from 'chalk';
-import * as path from 'path';
-import * as fs from 'fs/promises';
 
 /**
- * Extract organization from git remote URL
+ * @deprecated Use configureCommand() instead
  */
-async function getOrgFromGitRemote(): Promise<string | null> {
-  try {
-    const { execSync } = require('child_process');
-    const remote = execSync('git remote get-url origin 2>/dev/null', { encoding: 'utf-8' }).trim();
-
-    // Parse GitHub URL: git@github.com:org/repo.git or https://github.com/org/repo.git
-    const sshMatch = remote.match(/git@github\.com:([^/]+)\//);
-    const httpsMatch = remote.match(/github\.com\/([^/]+)\//);
-
-    return sshMatch?.[1] || httpsMatch?.[1] || null;
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Ensure directory exists
- */
-async function ensureDir(dirPath: string): Promise<void> {
-  try {
-    await fs.mkdir(dirPath, { recursive: true });
-  } catch (error) {
-    throw new Error(`Failed to create directory ${dirPath}: ${(error as Error).message}`);
-  }
-}
-
 export function initCommand(): Command {
   const cmd = new Command('init');
 
   cmd
-    .description('Initialize Forge configuration for agent/tool management')
+    .description('[DEPRECATED] Use "configure" instead. Initialize Forge configuration.')
     .option('--org <slug>', 'Organization slug (e.g., "fractary")')
     .option('--global', 'Also initialize global registry (~/.fractary/registry)')
     .option('--force', 'Overwrite existing configuration')
     .action(async (options) => {
-      try {
-        // Dynamic import to avoid loading js-yaml at module time
-        const { createDefaultConfig, configExists } = await import('../config/migrate-config.js');
+      // Show deprecation warning
+      console.log(chalk.yellow('⚠ Warning: "fractary-forge init" is deprecated.'));
+      console.log(chalk.yellow('  Please use "fractary-forge configure" instead.\n'));
 
-        console.log(chalk.blue('Initializing Forge configuration...\n'));
+      try {
+        // Delegate to configure command functionality
+        const {
+          findProjectRoot,
+          forgeConfigExists,
+          needsMigration,
+          migrateOldForgeConfig,
+          initializeForgeConfig,
+          loadForgeSection,
+        } = await import('@fractary/forge');
+
+        const path = await import('path');
+
+        console.log(chalk.blue('Configuring Forge...\n'));
+
+        // Find project root
+        const projectRoot = await findProjectRoot() || process.cwd();
 
         // Resolve organization
         let org = options.org;
 
         if (!org) {
           // Try git remote first
-          org = await getOrgFromGitRemote();
+          try {
+            const { execSync } = require('child_process');
+            const remote = execSync('git remote get-url origin 2>/dev/null', { encoding: 'utf-8' }).trim();
+            const sshMatch = remote.match(/git@github\.com:([^/]+)\//);
+            const httpsMatch = remote.match(/github\.com\/([^/]+)\//);
+            org = sshMatch?.[1] || httpsMatch?.[1] || null;
+          } catch {
+            org = null;
+          }
         }
 
         if (!org) {
-          // Default fallback
-          org = path.basename(process.cwd()).split('-')[0] || 'default';
+          org = path.basename(projectRoot).split('-')[0] || 'default';
           console.log(chalk.yellow(`⚠ Could not detect organization, using: ${org}`));
           console.log(chalk.dim('  Use --org <slug> to specify explicitly\n'));
         } else {
           console.log(chalk.dim(`Organization: ${chalk.cyan(org)}\n`));
         }
 
-        // Config paths
-        const configDir = path.join(process.cwd(), '.fractary/forge');
-        const configPath = path.join(configDir, 'config.yaml');
-        const exists = await configExists(configPath);
+        // Check for existing config
+        const exists = await forgeConfigExists(projectRoot);
 
         if (exists && !options.force) {
-          console.log(chalk.yellow('⚠ Configuration already exists at .fractary/forge/config.yaml'));
-          console.log(chalk.dim('Use --force to overwrite'));
+          console.log(chalk.yellow('⚠ Forge configuration already exists in .fractary/config.yaml'));
+          console.log(chalk.dim('  Use --force to overwrite'));
+          console.log(chalk.dim('  Use "fractary-forge configure --validate-only" to check current configuration'));
           process.exit(1);
         }
 
-        // Create directory structure
-        console.log(chalk.dim('Creating directory structure...'));
-        await ensureDir(configDir);
-        await ensureDir(path.join(process.cwd(), '.fractary/agents'));
-        await ensureDir(path.join(process.cwd(), '.fractary/tools'));
-        console.log(chalk.green('✓'), chalk.dim('.fractary/forge/'));
-        console.log(chalk.green('✓'), chalk.dim('.fractary/agents/'));
-        console.log(chalk.green('✓'), chalk.dim('.fractary/tools/'));
+        // Check for migration from old config
+        const needsMigrationCheck = await needsMigration(projectRoot);
+        if (needsMigrationCheck) {
+          console.log(chalk.blue('Found old configuration at .fractary/forge/config.yaml'));
+          console.log(chalk.dim('Migrating to unified config...\n'));
 
-        // Create global registry if requested
-        if (options.global) {
-          const globalDir = path.join(require('os').homedir(), '.fractary/registry');
-          await ensureDir(path.join(globalDir, 'agents'));
-          await ensureDir(path.join(globalDir, 'tools'));
-          console.log(chalk.green('✓'), chalk.dim('~/.fractary/registry/'));
+          const migrationResult = await migrateOldForgeConfig(projectRoot);
+          if (migrationResult.migrated) {
+            console.log(chalk.green('✓'), 'Configuration migrated successfully');
+            console.log(chalk.dim('  Backup created at:'), migrationResult.backupPath);
+            console.log();
+          }
+        } else {
+          // Initialize new configuration
+          console.log(chalk.dim('Creating directory structure...'));
+
+          await initializeForgeConfig(projectRoot, org, {
+            force: options.force,
+            initGlobal: options.global,
+          });
+
+          console.log(chalk.green('✓'), chalk.dim('.fractary/config.yaml (forge section)'));
+          console.log(chalk.green('✓'), chalk.dim('.fractary/agents/'));
+          console.log(chalk.green('✓'), chalk.dim('.fractary/tools/'));
+          console.log(chalk.green('✓'), chalk.dim('.fractary/forge/'));
+
+          if (options.global) {
+            console.log(chalk.green('✓'), chalk.dim('~/.fractary/registry/'));
+          }
         }
 
-        // Create configuration
-        console.log(chalk.dim('\nGenerating configuration...'));
-        await createDefaultConfig(configPath, org);
-        console.log(chalk.green('✓'), chalk.dim('config.yaml created'));
+        // Load and display final config
+        const config = await loadForgeSection(projectRoot);
 
         // Success message
-        console.log(chalk.green('\n✨ Forge initialized successfully!\n'));
+        console.log(chalk.green('\n✨ Forge configured successfully!\n'));
 
         console.log(chalk.bold('Configuration:'));
-        console.log(chalk.dim('  File: .fractary/forge/config.yaml'));
-        console.log(chalk.dim('  Organization:'), chalk.cyan(org));
-        console.log(chalk.dim('  Agents:'), '.fractary/agents/');
-        console.log(chalk.dim('  Tools:'), '.fractary/tools/');
+        console.log(chalk.dim('  File: .fractary/config.yaml (forge section)'));
+        console.log(chalk.dim('  Organization:'), chalk.cyan(config.organization));
+        console.log(chalk.dim('  Agents:'), config.registry.local.agents_path);
+        console.log(chalk.dim('  Tools:'), config.registry.local.tools_path);
 
         console.log(chalk.bold('\nNext steps:'));
         console.log(chalk.dim('  1. Create an agent:'), chalk.cyan('fractary-forge agent-create <name>'));

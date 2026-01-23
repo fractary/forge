@@ -8,8 +8,9 @@ import { Command } from 'commander';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
-// Agent/Tool commands
-import { initCommand } from './commands/init.js';
+// Configuration commands
+import { configureCommand } from './commands/configure.js';
+import { initCommand } from './commands/init.js'; // Deprecated alias
 import { agentCreateCommand } from './commands/agent/create.js';
 import { agentInfoCommand } from './commands/agent/info.js';
 import { agentListCommand } from './commands/agent/list.js';
@@ -65,7 +66,8 @@ export function createProgram(): Command {
     .version(getVersion());
 
   // Configuration commands
-  program.addCommand(initCommand());
+  program.addCommand(configureCommand());
+  program.addCommand(initCommand()); // Deprecated alias for configure
 
   // Agent management commands
   program.addCommand(agentCreateCommand());
