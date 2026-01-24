@@ -7,6 +7,13 @@
 import { z } from 'zod';
 
 // ============================================================================
+// Constants
+// ============================================================================
+
+/** Current forge config schema version */
+export const FORGE_CONFIG_SCHEMA_VERSION = '2.0';
+
+// ============================================================================
 // Zod Schemas
 // ============================================================================
 
@@ -125,7 +132,7 @@ export const FeaturesConfigSchema = z.object({
  * Complete Forge section configuration schema
  */
 export const ForgeSectionConfigSchema = z.object({
-  schema_version: z.string().default('2.0'),
+  schema_version: z.string().default(FORGE_CONFIG_SCHEMA_VERSION),
   organization: z.string(),
   registry: RegistryConfigSchema.default({}),
   lockfile: LockfileConfigSchema.default({}),
@@ -166,7 +173,7 @@ export type ForgeSectionConfig = z.infer<typeof ForgeSectionConfigSchema>;
  */
 export function getDefaultForgeConfig(organization: string): ForgeSectionConfig {
   return {
-    schema_version: '2.0',
+    schema_version: FORGE_CONFIG_SCHEMA_VERSION,
     organization,
     registry: {
       local: {

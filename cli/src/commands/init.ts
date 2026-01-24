@@ -9,6 +9,12 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
+import {
+  getOrgFromGitRemote,
+  getOrgFromProjectPath,
+  isValidOrgSlug,
+  normalizeOrgSlug,
+} from '../utils/git-utils.js';
 
 /**
  * @deprecated Use configureCommand() instead
@@ -37,8 +43,6 @@ export function initCommand(): Command {
           loadForgeSection,
         } = await import('@fractary/forge');
 
-        const path = await import('path');
-
         console.log(chalk.blue('Configuring Forge...\n'));
 
         // Find project root
@@ -47,21 +51,21 @@ export function initCommand(): Command {
         // Resolve organization
         let org = options.org;
 
-        if (!org) {
-          // Try git remote first
-          try {
-            const { execSync } = require('child_process');
-            const remote = execSync('git remote get-url origin 2>/dev/null', { encoding: 'utf-8' }).trim();
-            const sshMatch = remote.match(/git@github\.com:([^/]+)\//);
-            const httpsMatch = remote.match(/github\.com\/([^/]+)\//);
-            org = sshMatch?.[1] || httpsMatch?.[1] || null;
-          } catch {
-            org = null;
-          }
+        // Validate user-provided org
+        if (org && !isValidOrgSlug(org)) {
+          const normalized = normalizeOrgSlug(org);
+          console.log(chalk.yellow(`⚠ Organization "${org}" is not a valid slug, normalizing to: ${normalized}`));
+          org = normalized;
         }
 
         if (!org) {
-          org = path.basename(projectRoot).split('-')[0] || 'default';
+          // Try git remote first
+          org = getOrgFromGitRemote();
+        }
+
+        if (!org) {
+          // Fall back to project path
+          org = getOrgFromProjectPath(projectRoot);
           console.log(chalk.yellow(`⚠ Could not detect organization, using: ${org}`));
           console.log(chalk.dim('  Use --org <slug> to specify explicitly\n'));
         } else {

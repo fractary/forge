@@ -24,6 +24,8 @@ export {
   type DefaultsConfig,
   type FeaturesConfig,
   type ForgeConfigValidationResult,
+  // Constants
+  FORGE_CONFIG_SCHEMA_VERSION,
   // Schemas
   ForgeSectionConfigSchema,
   LocalRegistryConfigSchema,
@@ -50,6 +52,7 @@ export {
   type UnifiedConfig,
   type LoadConfigResult,
   type MigrationResult,
+  type ResolveEnvVarsOptions,
   // Functions
   findProjectRoot,
   getUnifiedConfigPath,

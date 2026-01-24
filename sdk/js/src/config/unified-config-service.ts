@@ -10,6 +10,7 @@ import * as path from 'path';
 import * as yaml from 'js-yaml';
 import type { ForgeSectionConfig } from './forge-section';
 import {
+  FORGE_CONFIG_SCHEMA_VERSION,
   getDefaultForgeConfig,
   validateForgeConfig,
   safeValidateForgeConfig,
@@ -28,6 +29,9 @@ const CONFIG_FILE = 'config.yaml';
 
 /** Old forge config path (for migration) */
 const OLD_FORGE_CONFIG_PATH = '.fractary/forge/config.yaml';
+
+// Re-export the schema version constant from forge-section
+export { FORGE_CONFIG_SCHEMA_VERSION } from './forge-section';
 
 // ============================================================================
 // Types
@@ -72,31 +76,65 @@ export interface MigrationResult {
 // ============================================================================
 
 /**
+ * Options for environment variable resolution
+ */
+export interface ResolveEnvVarsOptions {
+  /** Log a warning when an environment variable is not set */
+  warnOnMissing?: boolean;
+  /** Throw an error when an environment variable is not set */
+  throwOnMissing?: boolean;
+  /** Custom logger for warnings */
+  logger?: { warn: (message: string) => void };
+}
+
+/**
  * Resolve environment variables in a string
  * Supports ${VAR_NAME} syntax
+ *
+ * @param value - String containing ${VAR_NAME} placeholders
+ * @param options - Resolution options
+ * @returns String with environment variables resolved
  */
-export function resolveEnvVars(value: string): string {
-  return value.replace(/\$\{([^}]+)\}/g, (_, varName) => {
-    return process.env[varName] || '';
+export function resolveEnvVars(value: string, options?: ResolveEnvVarsOptions): string {
+  const { warnOnMissing = false, throwOnMissing = false, logger = console } = options || {};
+
+  return value.replace(/\$\{([^}]+)\}/g, (match, varName) => {
+    const resolved = process.env[varName];
+
+    if (resolved === undefined) {
+      if (throwOnMissing) {
+        throw new Error(`Environment variable ${varName} is not set`);
+      }
+      if (warnOnMissing) {
+        logger.warn(`Environment variable ${varName} is not set, using empty string`);
+      }
+      return '';
+    }
+
+    return resolved;
   });
 }
 
 /**
  * Resolve environment variables recursively in a config object
+ *
+ * @param config - Config object with potential ${VAR_NAME} placeholders
+ * @param options - Resolution options
+ * @returns Config object with environment variables resolved
  */
-export function resolveEnvVarsInConfig<T>(config: T): T {
+export function resolveEnvVarsInConfig<T>(config: T, options?: ResolveEnvVarsOptions): T {
   if (typeof config === 'string') {
-    return resolveEnvVars(config) as unknown as T;
+    return resolveEnvVars(config, options) as unknown as T;
   }
 
   if (Array.isArray(config)) {
-    return config.map((item) => resolveEnvVarsInConfig(item)) as unknown as T;
+    return config.map((item) => resolveEnvVarsInConfig(item, options)) as unknown as T;
   }
 
   if (config !== null && typeof config === 'object') {
     const resolved: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(config)) {
-      resolved[key] = resolveEnvVarsInConfig(value);
+      resolved[key] = resolveEnvVarsInConfig(value, options);
     }
     return resolved as T;
   }
@@ -339,7 +377,7 @@ export async function saveForgeSection(
   } catch {
     // Config doesn't exist, create new one
     config = {
-      version: '2.0',
+      version: FORGE_CONFIG_SCHEMA_VERSION,
     };
   }
 

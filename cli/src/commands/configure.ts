@@ -13,38 +13,13 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
-import * as path from 'path';
-import * as fs from 'fs/promises';
 import * as yaml from 'js-yaml';
-
-/**
- * Extract organization from git remote URL
- */
-async function getOrgFromGitRemote(): Promise<string | null> {
-  try {
-    const { execSync } = require('child_process');
-    const remote = execSync('git remote get-url origin 2>/dev/null', { encoding: 'utf-8' }).trim();
-
-    // Parse GitHub URL: git@github.com:org/repo.git or https://github.com/org/repo.git
-    const sshMatch = remote.match(/git@github\.com:([^/]+)\//);
-    const httpsMatch = remote.match(/github\.com\/([^/]+)\//);
-
-    return sshMatch?.[1] || httpsMatch?.[1] || null;
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Ensure directory exists
- */
-async function ensureDir(dirPath: string): Promise<void> {
-  try {
-    await fs.mkdir(dirPath, { recursive: true });
-  } catch (error) {
-    throw new Error(`Failed to create directory ${dirPath}: ${(error as Error).message}`);
-  }
-}
+import {
+  getOrgFromGitRemote,
+  getOrgFromProjectPath,
+  isValidOrgSlug,
+  normalizeOrgSlug,
+} from '../utils/git-utils.js';
 
 export function configureCommand(): Command {
   const cmd = new Command('configure');
@@ -107,14 +82,21 @@ export function configureCommand(): Command {
         // Resolve organization
         let org = options.org;
 
-        if (!org) {
-          // Try git remote first
-          org = await getOrgFromGitRemote();
+        // Validate user-provided org
+        if (org && !isValidOrgSlug(org)) {
+          const normalized = normalizeOrgSlug(org);
+          console.log(chalk.yellow(`⚠ Organization "${org}" is not a valid slug, normalizing to: ${normalized}`));
+          org = normalized;
         }
 
         if (!org) {
-          // Default fallback
-          org = path.basename(projectRoot).split('-')[0] || 'default';
+          // Try git remote first
+          org = getOrgFromGitRemote();
+        }
+
+        if (!org) {
+          // Fall back to project path
+          org = getOrgFromProjectPath(projectRoot);
           console.log(chalk.yellow(`⚠ Could not detect organization, using: ${org}`));
           console.log(chalk.dim('  Use --org <slug> to specify explicitly\n'));
         } else {

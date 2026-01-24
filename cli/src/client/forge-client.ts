@@ -141,11 +141,11 @@ export class ForgeClient {
     config: ForgeSectionConfig,
     projectRoot: string
   ): RegistryConfig {
-    // Resolve token from environment variable if specified
-    let stockyardApiKey: string | undefined;
-    if (config.registry.stockyard.token_env) {
-      stockyardApiKey = process.env[config.registry.stockyard.token_env];
-    }
+    // Resolve token from environment variable
+    // Note: token_env has a default value ('FRACTARY_TOKEN'), so we check
+    // if the environment variable itself is set, not just if token_env exists
+    const tokenEnvName = config.registry.stockyard.token_env;
+    const stockyardApiKey = tokenEnvName ? process.env[tokenEnvName] : undefined;
 
     return {
       local: {
