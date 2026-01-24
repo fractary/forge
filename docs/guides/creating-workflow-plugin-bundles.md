@@ -1,6 +1,6 @@
 # Creating Workflow Plugin Bundles
 
-This guide describes how to create a workflow-specific plugin bundle repository (like `fractary/faber-engineering`) that packages agents, commands, skills, and workflow configurations for a specific type of work.
+This guide describes how to create a workflow-specific plugin bundle repository (like `fractary/faber-software`) that packages agents, commands, skills, and workflow configurations for a specific type of work.
 
 ## Overview
 
@@ -8,7 +8,7 @@ Workflow plugin bundles follow the `fractary/faber-{asset}` naming pattern where
 
 | Repository | Domain |
 |------------|--------|
-| `fractary/faber-engineering` | Software engineering |
+| `fractary/faber-software` | Software development |
 | `fractary/faber-content` | Article/content creation |
 | `fractary/faber-video` | Video production |
 | `fractary/faber-data` | Data pipelines/ETL |
@@ -333,7 +333,7 @@ Once ready:
 
 ## Examples
 
-- [fractary/faber-engineering](https://github.com/fractary/faber-engineering) - Software engineering workflows
+- [fractary/faber-software](https://github.com/fractary/faber-software) - Software development workflows
 
 ## Related Documentation
 
