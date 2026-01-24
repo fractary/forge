@@ -3,6 +3,8 @@
  *
  * Wraps AgentAPI, ToolAPI, DefinitionResolver, and other SDK managers
  * to provide a clean interface for CLI commands.
+ *
+ * Now uses unified config (.fractary/config.yaml) with the forge: section.
  */
 
 // Type-only imports
@@ -15,9 +17,8 @@ import type {
   AgentInfo,
   ToolInfo,
   DefinitionRegistryConfig as RegistryConfig,
+  ForgeSectionConfig,
 } from '@fractary/forge';
-// Dynamic imports to avoid loading SDK and js-yaml at module time
-import type { ForgeYamlConfig } from '../config/config-types.js';
 import * as path from 'path';
 import * as os from 'os';
 
@@ -33,6 +34,8 @@ export interface ForgeClientOptions {
  * - Agent resolution and management
  * - Tool resolution and execution
  * - Registry operations
+ *
+ * Uses unified config (.fractary/config.yaml) forge: section.
  */
 export class ForgeClient {
   private resolver: DefinitionResolver;
@@ -40,7 +43,7 @@ export class ForgeClient {
   private toolAPI: ToolAPI;
   private organization: string;
   private projectRoot: string;
-  private config: ForgeYamlConfig;
+  private config: ForgeSectionConfig;
 
   /**
    * Private constructor - use ForgeClient.create() instead
@@ -49,7 +52,7 @@ export class ForgeClient {
     resolver: DefinitionResolver,
     agentAPI: AgentAPI,
     toolAPI: ToolAPI,
-    config: ForgeYamlConfig,
+    config: ForgeSectionConfig,
     projectRoot: string
   ) {
     this.resolver = resolver;
@@ -62,28 +65,55 @@ export class ForgeClient {
 
   /**
    * Create ForgeClient instance
+   *
+   * Loads configuration from unified config (.fractary/config.yaml) forge: section.
+   * Falls back to old config location (.fractary/forge/config.yaml) for migration.
    */
   static async create(options?: ForgeClientOptions): Promise<ForgeClient> {
-    // Dynamic imports to avoid loading SDK and js-yaml at module time
-    const { DefinitionResolver, AgentAPI, ToolAPI } = await import('@fractary/forge');
-    const { readYamlConfig } = await import('../config/migrate-config.js');
+    // Dynamic imports to avoid loading SDK at module time
+    const {
+      DefinitionResolver,
+      AgentAPI,
+      ToolAPI,
+      findProjectRoot,
+      loadForgeSection,
+      needsMigration,
+      safeLoadForgeSection,
+    } = await import('@fractary/forge');
 
-    const projectRoot = options?.projectRoot || process.cwd();
-    const configPath = path.join(projectRoot, '.fractary/forge/config.yaml');
+    // Find project root
+    const projectRoot = options?.projectRoot || await findProjectRoot() || process.cwd();
 
-    // Load configuration
-    let config: ForgeYamlConfig;
+    // Load configuration from unified config
+    let config: ForgeSectionConfig;
     try {
-      config = await readYamlConfig(configPath);
+      // First try unified config
+      const loadedConfig = await safeLoadForgeSection(projectRoot);
+
+      if (loadedConfig) {
+        config = loadedConfig;
+      } else {
+        // Check if migration is needed
+        const migrationNeeded = await needsMigration(projectRoot);
+        if (migrationNeeded) {
+          throw new Error(
+            'Old configuration found at .fractary/forge/config.yaml. ' +
+            'Run "fractary-forge configure" to migrate to unified config.'
+          );
+        }
+        throw new Error(
+          'Forge configuration not found. Run "fractary-forge configure" to create one.'
+        );
+      }
     } catch (error) {
       throw new Error(
-        `Failed to load forge configuration. Run "fractary-forge init" to create one.\nError: ${(error as Error).message}`
+        `Failed to load forge configuration. Run "fractary-forge configure" to create one.\nError: ${(error as Error).message}`
       );
     }
 
     // Override organization if provided
     if (options?.organization) {
-      config.organization = options.organization;
+      config = { ...config, organization: options.organization };
     }
 
     // Build resolver config
@@ -105,12 +135,18 @@ export class ForgeClient {
   }
 
   /**
-   * Build resolver configuration from YAML config
+   * Build resolver configuration from forge section config
    */
   private static buildResolverConfig(
-    config: ForgeYamlConfig,
+    config: ForgeSectionConfig,
     projectRoot: string
   ): RegistryConfig {
+    // Resolve token from environment variable
+    // Note: token_env has a default value ('FRACTARY_TOKEN'), so we check
+    // if the environment variable itself is set, not just if token_env exists
+    const tokenEnvName = config.registry.stockyard.token_env;
+    const stockyardApiKey = tokenEnvName ? process.env[tokenEnvName] : undefined;
+
     return {
       local: {
         enabled: config.registry.local.enabled,
@@ -128,7 +164,7 @@ export class ForgeClient {
       stockyard: {
         enabled: config.registry.stockyard.enabled,
         url: config.registry.stockyard.url,
-        apiKey: config.registry.stockyard.api_key,
+        apiKey: stockyardApiKey,
       },
     };
   }
@@ -228,7 +264,7 @@ export class ForgeClient {
     return this.projectRoot;
   }
 
-  getConfig(): ForgeYamlConfig {
+  getConfig(): ForgeSectionConfig {
     return this.config;
   }
 

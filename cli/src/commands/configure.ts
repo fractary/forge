@@ -1,14 +1,19 @@
 /**
- * Initialize Forge Configuration Command (DEPRECATED)
+ * Configure Forge Command
  *
- * This command is deprecated. Use `fractary-forge configure` instead.
+ * Manages forge configuration in the unified config file (.fractary/config.yaml).
  *
- * This file is kept for backward compatibility. It delegates to the
- * configure command with a deprecation warning.
+ * Options:
+ *   --org <slug>       Organization slug
+ *   --global           Also init global registry
+ *   --force            Overwrite existing config
+ *   --dry-run          Preview changes without applying
+ *   --validate-only    Validate existing config
  */
 
 import { Command } from 'commander';
 import chalk from 'chalk';
+import * as yaml from 'js-yaml';
 import {
   getOrgFromGitRemote,
   getOrgFromProjectPath,
@@ -16,32 +21,58 @@ import {
   normalizeOrgSlug,
 } from '../utils/git-utils.js';
 
-/**
- * @deprecated Use configureCommand() instead
- */
-export function initCommand(): Command {
-  const cmd = new Command('init');
+export function configureCommand(): Command {
+  const cmd = new Command('configure');
 
   cmd
-    .description('[DEPRECATED] Use "configure" instead. Initialize Forge configuration.')
+    .description('Configure Forge in the unified config file (.fractary/config.yaml)')
     .option('--org <slug>', 'Organization slug (e.g., "fractary")')
     .option('--global', 'Also initialize global registry (~/.fractary/registry)')
     .option('--force', 'Overwrite existing configuration')
+    .option('--dry-run', 'Preview changes without applying')
+    .option('--validate-only', 'Validate existing configuration')
     .action(async (options) => {
-      // Show deprecation warning
-      console.log(chalk.yellow('⚠ Warning: "fractary-forge init" is deprecated.'));
-      console.log(chalk.yellow('  Please use "fractary-forge configure" instead.\n'));
-
       try {
-        // Delegate to configure command functionality
+        // Dynamic import to avoid loading SDK at module time
         const {
           findProjectRoot,
           forgeConfigExists,
           needsMigration,
           migrateOldForgeConfig,
           initializeForgeConfig,
+          validateForgeConfiguration,
+          previewForgeConfig,
           loadForgeSection,
         } = await import('@fractary/forge');
+
+        // Handle --validate-only
+        if (options.validateOnly) {
+          console.log(chalk.blue('Validating Forge configuration...\n'));
+
+          const projectRoot = await findProjectRoot();
+          if (!projectRoot) {
+            console.log(chalk.red('Error: Not in a Fractary project (no .fractary or .git directory found)'));
+            process.exit(1);
+          }
+
+          const result = await validateForgeConfiguration(projectRoot);
+
+          if (result.valid) {
+            console.log(chalk.green('✓'), 'Configuration is valid\n');
+            console.log(chalk.dim('Organization:'), chalk.cyan(result.config?.organization));
+            console.log(chalk.dim('Schema version:'), chalk.cyan(result.config?.schema_version));
+            console.log(chalk.dim('Local registry:'), result.config?.registry?.local?.enabled ? chalk.green('enabled') : chalk.yellow('disabled'));
+            console.log(chalk.dim('Global registry:'), result.config?.registry?.global?.enabled ? chalk.green('enabled') : chalk.yellow('disabled'));
+            console.log(chalk.dim('Stockyard:'), result.config?.registry?.stockyard?.enabled ? chalk.green('enabled') : chalk.yellow('disabled'));
+          } else {
+            console.log(chalk.red('✗'), 'Configuration has errors:\n');
+            for (const error of result.errors || []) {
+              console.log(chalk.red('  •'), `${error.path}: ${error.message}`);
+            }
+            process.exit(1);
+          }
+          return;
+        }
 
         console.log(chalk.blue('Configuring Forge...\n'));
 
@@ -72,13 +103,35 @@ export function initCommand(): Command {
           console.log(chalk.dim(`Organization: ${chalk.cyan(org)}\n`));
         }
 
+        // Handle --dry-run
+        if (options.dryRun) {
+          console.log(chalk.blue('Dry run mode - showing what would be created:\n'));
+
+          const preview = previewForgeConfig(projectRoot, org);
+
+          console.log(chalk.bold('Configuration file:'));
+          console.log(chalk.dim('  Path:'), preview.configPath);
+          console.log();
+
+          console.log(chalk.bold('Forge section:'));
+          console.log(chalk.dim(yaml.dump(preview.forgeConfig, { indent: 2 })));
+
+          console.log(chalk.bold('Directories to create:'));
+          for (const dir of preview.directories) {
+            console.log(chalk.dim('  •'), dir);
+          }
+
+          console.log(chalk.yellow('\nNo changes made (dry run).'));
+          return;
+        }
+
         // Check for existing config
         const exists = await forgeConfigExists(projectRoot);
 
         if (exists && !options.force) {
           console.log(chalk.yellow('⚠ Forge configuration already exists in .fractary/config.yaml'));
           console.log(chalk.dim('  Use --force to overwrite'));
-          console.log(chalk.dim('  Use "fractary-forge configure --validate-only" to check current configuration'));
+          console.log(chalk.dim('  Use --validate-only to check current configuration'));
           process.exit(1);
         }
 
@@ -122,6 +175,7 @@ export function initCommand(): Command {
         console.log(chalk.bold('Configuration:'));
         console.log(chalk.dim('  File: .fractary/config.yaml (forge section)'));
         console.log(chalk.dim('  Organization:'), chalk.cyan(config.organization));
+        console.log(chalk.dim('  Schema version:'), chalk.cyan(config.schema_version));
         console.log(chalk.dim('  Agents:'), config.registry.local.agents_path);
         console.log(chalk.dim('  Tools:'), config.registry.local.tools_path);
 
@@ -129,6 +183,7 @@ export function initCommand(): Command {
         console.log(chalk.dim('  1. Create an agent:'), chalk.cyan('fractary-forge agent-create <name>'));
         console.log(chalk.dim('  2. Create a tool:'), chalk.cyan('fractary-forge tool-create <name>'));
         console.log(chalk.dim('  3. List agents:'), chalk.cyan('fractary-forge agent-list'));
+        console.log(chalk.dim('  4. Validate config:'), chalk.cyan('fractary-forge configure --validate-only'));
 
       } catch (error) {
         console.error(chalk.red('Error:'), (error as Error).message);

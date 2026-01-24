@@ -61,6 +61,33 @@ export type {
 // Configuration exports
 export { ConfigManager, configManager, loadConfig, getDefaultGlobalConfig } from './config';
 
+// Unified config exports (forge section in .fractary/config.yaml)
+export {
+  // Types
+  type ForgeSectionConfig,
+  type UnifiedConfig,
+  type ForgeConfigValidationResult,
+  type MigrationResult,
+  // Schemas
+  ForgeSectionConfigSchema,
+  // Functions
+  findProjectRoot,
+  loadUnifiedConfig,
+  loadForgeSection,
+  safeLoadForgeSection,
+  saveForgeSection,
+  updateForgeSection,
+  forgeConfigExists,
+  initializeForgeConfig,
+  validateForgeConfiguration,
+  previewForgeConfig,
+  migrateOldForgeConfig,
+  needsMigration,
+  getDefaultForgeConfig,
+  validateForgeConfig,
+  safeValidateForgeConfig,
+} from './config';
+
 // Cache exports
 export { CacheManager } from './cache';
 
