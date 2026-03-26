@@ -7,7 +7,8 @@
     "./agents/agent-creator.md",
     "./agents/skill-creator.md",
     "./agents/command-creator.md",
-    "./agents/plugin-creator.md"
+    "./agents/plugin-creator.md",
+    "./agents/plugin-to-pi-converter.md"
   ],
   "skills": "./skills/"
 }

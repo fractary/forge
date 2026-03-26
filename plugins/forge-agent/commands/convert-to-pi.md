@@ -1,7 +1,7 @@
 ---
-name: fractary-pi:convert-plugin
+name: fractary-forge-agent:convert-to-pi
 description: Convert a Claude Code plugin to a pi.dev coding-agent package
-allowed-tools: Task(fractary-pi:plugin-to-pi-converter)
+allowed-tools: Task(fractary-forge-agent:plugin-to-pi-converter)
 model: claude-haiku-4-5
 argument-hint: '<plugin-path> [--output <dir>] [--dry-run]'
 ---
@@ -53,7 +53,7 @@ Your role is to parse user input and invoke the plugin-to-pi-converter agent wit
 ## Command Syntax
 
 ```
-/fractary-pi:convert-plugin <plugin-path> [--output <dir>] [--dry-run]
+/fractary-forge-agent:convert-to-pi <plugin-path> [--output <dir>] [--dry-run]
 ```
 
 **Required Arguments:**
@@ -84,7 +84,7 @@ Your role is to parse user input and invoke the plugin-to-pi-converter agent wit
 **Missing plugin-path:**
 ```
 Error: plugin-path is required
-Usage: /fractary-pi:convert-plugin <plugin-path> [--output <dir>] [--dry-run]
+Usage: /fractary-forge-agent:convert-to-pi <plugin-path> [--output <dir>] [--dry-run]
 ```
 
 **Invalid path (does not look like a directory path):**
@@ -100,15 +100,15 @@ Examples:
 <EXAMPLES>
 ```bash
 # Convert the fractary-core file plugin to a pi package
-/fractary-pi:convert-plugin /mnt/c/GitHub/fractary/core/plugins/file
+/fractary-forge-agent:convert-to-pi /mnt/c/GitHub/fractary/core/plugins/file
 
 # Convert with explicit output directory
-/fractary-pi:convert-plugin /mnt/c/GitHub/fractary/core/plugins/file --output /tmp/pi-packages
+/fractary-forge-agent:convert-to-pi /mnt/c/GitHub/fractary/core/plugins/file --output /tmp/pi-packages
 
 # Dry run - show plan without writing files
-/fractary-pi:convert-plugin plugins/docs --dry-run
+/fractary-forge-agent:convert-to-pi plugins/docs --dry-run
 
 # Convert a local plugin
-/fractary-pi:convert-plugin plugins/forge-agent --output /tmp/pi-test
+/fractary-forge-agent:convert-to-pi plugins/forge-agent --output /tmp/pi-test
 ```
 </EXAMPLES>
