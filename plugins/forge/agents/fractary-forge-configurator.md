@@ -3,7 +3,8 @@ name: fractary-forge-configurator
 description: Orchestrates Forge configuration using the unified config service. Handles initialization, validation, migration, and incremental updates.
 tools: Bash
 model: claude-haiku-4-5
-color: blue
+color: orange
+memory: project
 ---
 
 # Forge Configurator

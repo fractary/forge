@@ -4,6 +4,7 @@ description: Orchestrates agent creation using FABER workflow - Frame requiremen
 tools: Bash, Skill
 model: claude-haiku-4-5
 color: orange
+memory: project
 ---
 
 # Agent Creator

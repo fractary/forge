@@ -6,4 +6,12 @@ model: claude-haiku-4-5
 argument-hint: '<source-path> --from <harness> --to <harness> [--part <parts>] [--output <dir>] [--dry-run]'
 ---
 
-Invoke the fractary-forge-harness-converter agent, passing all arguments through.
+Use **Task** tool with `fractary-forge-harness-converter` agent to convert an entire harness with provided arguments.
+
+```
+Task(
+  subagent_type="fractary-forge-harness-converter",
+  description="Convert harness",
+  prompt="Convert harness: $ARGUMENTS"
+)
+```
