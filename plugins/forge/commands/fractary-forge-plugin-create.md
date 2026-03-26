@@ -1,5 +1,5 @@
 ---
-name: fractary-forge:plugin-create
+name: fractary-forge-plugin-create
 description: Create a new plugin with complete directory structure following Fractary plugin standards
 model: claude-haiku-4-5
 argument-hint: <name> --type <workflow|primitive|utility> [--requires <plugins>]
@@ -114,7 +114,7 @@ Your role is to parse user input and invoke the plugin-creator agent with the ap
 
 After parsing arguments, invoke the agent using **declarative syntax**:
 
-**Agent**: plugin-creator (or @agent-fractary-forge:plugin-creator)
+**Agent**: fractary-forge-plugin-creator (or @agent-fractary-forge-plugin-creator)
 
 **Request structure**:
 ```json

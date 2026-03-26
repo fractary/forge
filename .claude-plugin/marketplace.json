@@ -7,7 +7,7 @@
     },
     "metadata": {
       "description": "Agent / Team Building Plugins for Claude Code",
-      "version": "2.0.3",
+      "version": "2.0.4",
       "pluginRoot": "./plugins"
     },
     "plugins": [
@@ -15,7 +15,7 @@
         "name": "fractary-forge",
         "source": "./plugins/forge",
         "description": "Meta-plugin for configuring Forge and creating Claude Code agents, skills, commands, and plugins with automated standards compliance. Includes multi-framework harness conversion.",
-        "version": "2.0.3",
+        "version": "2.0.4",
         "author": {
           "name": "The Fractary",
           "url": "https://github.com/fractary"
@@ -37,26 +37,26 @@
         "category": "development",
         "strict": true,
         "commands": [
-          "./commands/configure.md",
-          "./commands/agent-create.md",
-          "./commands/skill-create.md",
-          "./commands/command-create.md",
-          "./commands/plugin-create.md",
-          "./commands/project-audit.md",
-          "./commands/harness-convert.md",
-          "./commands/agents-convert.md",
-          "./commands/skills-convert.md",
-          "./commands/commands-convert.md",
-          "./commands/plugins-convert.md"
+          "./commands/fractary-forge-configure.md",
+          "./commands/fractary-forge-agent-create.md",
+          "./commands/fractary-forge-skill-create.md",
+          "./commands/fractary-forge-command-create.md",
+          "./commands/fractary-forge-plugin-create.md",
+          "./commands/fractary-forge-project-audit.md",
+          "./commands/fractary-forge-harness-convert.md",
+          "./commands/fractary-forge-agents-convert.md",
+          "./commands/fractary-forge-skills-convert.md",
+          "./commands/fractary-forge-commands-convert.md",
+          "./commands/fractary-forge-plugins-convert.md"
         ],
         "agents": [
-          "./agents/configurator.md",
-          "./agents/agent-creator.md",
-          "./agents/skill-creator.md",
-          "./agents/command-creator.md",
-          "./agents/plugin-creator.md",
-          "./agents/project-auditor.md",
-          "./agents/harness-converter.md"
+          "./agents/fractary-forge-configurator.md",
+          "./agents/fractary-forge-agent-creator.md",
+          "./agents/fractary-forge-skill-creator.md",
+          "./agents/fractary-forge-command-creator.md",
+          "./agents/fractary-forge-plugin-creator.md",
+          "./agents/fractary-forge-project-auditor.md",
+          "./agents/fractary-forge-harness-converter.md"
         ]
       }
     ]

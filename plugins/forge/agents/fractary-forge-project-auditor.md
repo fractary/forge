@@ -1,5 +1,5 @@
 ---
-name: project-auditor
+name: fractary-forge-project-auditor
 description: Lightweight wrapper that coordinates the project-analyzer skill to audit Claude Code projects
 tools: Skill
 model: claude-haiku-4-5

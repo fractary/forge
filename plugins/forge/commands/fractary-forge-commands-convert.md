@@ -1,7 +1,7 @@
 ---
-name: fractary-forge:commands-convert
+name: fractary-forge-commands-convert
 description: Convert commands/prompts from one agentic framework to another. Optionally target a single command with --item.
-allowed-tools: Task(fractary-forge:harness-converter)
+allowed-tools: Task(fractary-forge-harness-converter)
 model: claude-haiku-4-5
 argument-hint: '<source-path> --from <harness> --to <harness> [--item <name>] [--output <dir>] [--dry-run]'
 ---
@@ -15,12 +15,12 @@ Converts command/prompt files from one agentic framework to another.
 
 <CRITICAL_RULES>
 **THIS COMMAND IS ONLY A ROUTER.**
-Delegates to harness-converter with `parts: ["commands"]`.
+Delegates to fractary-forge-harness-converter with `parts: ["commands"]`.
 </CRITICAL_RULES>
 
 <WORKFLOW>
 1. Parse arguments
-2. Invoke harness-converter with `parts: ["commands"]` and optional `item` filter
+2. Invoke fractary-forge-harness-converter with `parts: ["commands"]` and optional `item` filter
 3. Return response
 </WORKFLOW>
 

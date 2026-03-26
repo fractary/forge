@@ -1,16 +1,16 @@
 {
   "name": "fractary-forge",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Meta-plugin for configuring Forge and creating Claude Code agents, skills, commands, and plugins with automated standards compliance. Includes multi-framework harness conversion.",
   "commands": "./commands/",
   "agents": [
-    "./agents/configurator.md",
-    "./agents/agent-creator.md",
-    "./agents/skill-creator.md",
-    "./agents/command-creator.md",
-    "./agents/plugin-creator.md",
-    "./agents/harness-converter.md",
-    "./agents/project-auditor.md"
+    "./agents/fractary-forge-configurator.md",
+    "./agents/fractary-forge-agent-creator.md",
+    "./agents/fractary-forge-skill-creator.md",
+    "./agents/fractary-forge-command-creator.md",
+    "./agents/fractary-forge-plugin-creator.md",
+    "./agents/fractary-forge-harness-converter.md",
+    "./agents/fractary-forge-project-auditor.md"
   ],
   "skills": "./skills/"
 }

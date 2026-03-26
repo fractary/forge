@@ -1,5 +1,5 @@
 ---
-name: fractary-forge:agent-create
+name: fractary-forge-agent-create
 description: Create a new agent following Fractary plugin standards
 model: claude-haiku-4-5
 argument-hint: <name> --type <manager|handler> [--plugin <plugin-name>]
@@ -99,7 +99,7 @@ Your role is to parse user input and invoke the agent-creator agent with the app
 
 After parsing arguments, invoke the agent using **declarative syntax**:
 
-**Agent**: agent-creator (or @agent-fractary-forge:agent-creator)
+**Agent**: fractary-forge-agent-creator (or @agent-fractary-forge-agent-creator)
 
 **Request structure**:
 ```json

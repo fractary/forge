@@ -9,7 +9,7 @@ This file defines all rules for converting a Claude Code command file (`commands
 - **Location**: `commands/*.md`
 - **Required frontmatter fields**: `name`, `description`
 - **Optional frontmatter fields**: `model`, `allowed-tools`, `argument-hint`, `color`, `memory`
-- **Name convention**: `{namespace}:{command}` (e.g., `fractary-file:upload`)
+- **Name convention**: `{namespace}-{command}` (e.g., `fractary-file-upload`)
 - **Body**: Markdown prose describing what the command does
 
 ---
@@ -27,7 +27,7 @@ This file defines all rules for converting a Claude Code command file (`commands
 
 | Source Field | Disposition | Notes |
 |---|---|---|
-| `name` | **Transform → filename** | Replace `:` with `-`, append `.md` → `{ns}-{cmd}.md` |
+| `name` | **Transform → filename** | Append `.md` → `{ns}-{cmd}.md` (name is already hyphen-formatted) |
 | `description` | **Keep** | Trim to 1024 chars if needed; truncate at 1021 + `...` |
 | `model` | **Drop** | Pi does not support per-prompt model config |
 | `allowed-tools` | **Drop** | Pi prompts do not restrict tools |
@@ -46,11 +46,11 @@ description: <original description, max 1024 chars>
 
 ## Naming Convention Transforms
 
-**Colon → Hyphen rule:**
-Replace all `:` with `-` in the `name` field to derive the pi prompt filename.
+**Name → filename rule:**
+Use the `name` field as-is to derive the pi prompt filename (names use hyphens throughout, no colon namespace separator).
 
 ```
-Claude name:      fractary-file:upload
+Claude name:      fractary-file-upload
 Pi filename:      fractary-file-upload.md
 Pi invocation:    /fractary-file-upload
 ```

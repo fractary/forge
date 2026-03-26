@@ -1,7 +1,7 @@
 ---
-name: fractary-forge:plugins-convert
+name: fractary-forge-plugins-convert
 description: Convert a plugin manifest from one agentic framework to another (e.g., plugin.json to package.json)
-allowed-tools: Task(fractary-forge:harness-converter)
+allowed-tools: Task(fractary-forge-harness-converter)
 model: claude-haiku-4-5
 argument-hint: '<source-path> --from <harness> --to <harness> [--output <dir>] [--dry-run]'
 ---
@@ -15,12 +15,12 @@ Converts the plugin manifest from one agentic framework to another.
 
 <CRITICAL_RULES>
 **THIS COMMAND IS ONLY A ROUTER.**
-Delegates to harness-converter with `parts: ["plugins"]`.
+Delegates to fractary-forge-harness-converter with `parts: ["plugins"]`.
 </CRITICAL_RULES>
 
 <WORKFLOW>
 1. Parse arguments
-2. Invoke harness-converter with `parts: ["plugins"]`
+2. Invoke fractary-forge-harness-converter with `parts: ["plugins"]`
 3. Return response
 </WORKFLOW>
 

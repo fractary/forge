@@ -1,5 +1,5 @@
 ---
-name: skill-creator
+name: fractary-forge-skill-creator
 description: Orchestrates skill creation using FABER workflow - Frame requirements, Architect structure, Build from template, Evaluate compliance, Release artifact
 tools: Bash, Skill
 model: claude-haiku-4-5

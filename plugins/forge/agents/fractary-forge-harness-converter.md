@@ -1,5 +1,5 @@
 ---
-name: harness-converter
+name: fractary-forge-harness-converter
 description: Orchestrates conversion of a plugin/package from one agentic orchestration framework to another — discovers components, verifies mapping support, plans conversion, confirms with user, converts using framework-aware skills, and reports results
 tools: Read, Write, Bash, Skill, AskUserQuestion
 model: claude-sonnet-4-6
