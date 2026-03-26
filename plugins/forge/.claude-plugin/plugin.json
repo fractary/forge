@@ -10,9 +10,7 @@
     "./agents/command-creator.md",
     "./agents/plugin-creator.md",
     "./agents/harness-converter.md",
-    "./agents/conversion-spec-generator.md",
-    "./agents/project-auditor.md",
-    "./agents/workflow-creator.md"
+    "./agents/project-auditor.md"
   ],
   "skills": "./skills/"
 }
