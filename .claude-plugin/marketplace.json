@@ -12,16 +12,16 @@
     },
     "plugins": [
       {
-        "name": "fractary-forge-agent",
-        "source": "./plugins/forge-agent",
-        "description": "Meta-plugin for creating Claude Code agents, skills, commands, and plugins with automated standards compliance",
+        "name": "fractary-forge",
+        "source": "./plugins/forge",
+        "description": "Meta-plugin for configuring Forge and creating Claude Code agents, skills, commands, and plugins with automated standards compliance. Includes multi-framework harness conversion.",
         "version": "2.0.2",
         "author": {
           "name": "The Fractary",
           "url": "https://github.com/fractary"
         },
-        "homepage": "https://github.com/fractary/forge/tree/main/plugins/faber-agent",
-        "repository": "https://github.com/fractary/forge/tree/main/plugins/faber-agent",
+        "homepage": "https://github.com/fractary/forge/tree/main/plugins/forge",
+        "repository": "https://github.com/fractary/forge/tree/main/plugins/forge",
         "license": "MIT",
         "keywords": [
           "meta",
@@ -30,21 +30,33 @@
           "agent-creation",
           "scaffolding",
           "development-tools",
-          "standards-compliance"
+          "standards-compliance",
+          "harness-conversion",
+          "framework-conversion"
         ],
         "category": "development",
         "strict": true,
         "commands": [
-          "./commands/create-agent.md",
-          "./commands/create-skill.md",
-          "./commands/create-command.md",
-          "./commands/create-plugin.md"
+          "./commands/configure.md",
+          "./commands/agent-create.md",
+          "./commands/skill-create.md",
+          "./commands/command-create.md",
+          "./commands/plugin-create.md",
+          "./commands/project-audit.md",
+          "./commands/harness-convert.md",
+          "./commands/agents-convert.md",
+          "./commands/skills-convert.md",
+          "./commands/commands-convert.md",
+          "./commands/plugins-convert.md"
         ],
         "agents": [
+          "./agents/configurator.md",
           "./agents/agent-creator.md",
           "./agents/skill-creator.md",
           "./agents/command-creator.md",
-          "./agents/plugin-creator.md"
+          "./agents/plugin-creator.md",
+          "./agents/project-auditor.md",
+          "./agents/harness-converter.md"
         ]
       }
     ]
