@@ -8,7 +8,7 @@ import type { ToolDefinition } from '../definitions/schemas/tool.js';
 /**
  * Supported export formats
  */
-export type ExportFormat = 'langchain' | 'claude' | 'n8n';
+export type ExportFormat = 'langchain' | 'claude' | 'n8n' | 'pi';
 
 /**
  * Export options
@@ -27,7 +27,7 @@ export interface ExportOptions {
   overwrite?: boolean;
 
   /** Format-specific options */
-  formatOptions?: LangChainExportOptions | ClaudeExportOptions | N8nExportOptions;
+  formatOptions?: LangChainExportOptions | ClaudeExportOptions | N8nExportOptions | PiExportOptions;
 }
 
 /**
@@ -62,6 +62,17 @@ export interface ClaudeExportOptions {
 
   /** Include .claude directory structure */
   includeDirectoryStructure?: boolean;
+}
+
+/**
+ * Pi coding-agent export options
+ */
+export interface PiExportOptions {
+  /** Package name override (defaults to agent/tool name with -pi suffix) */
+  packageName?: string;
+
+  /** Generate TypeScript extension stubs for hooks */
+  includeExtensionStubs?: boolean;
 }
 
 /**

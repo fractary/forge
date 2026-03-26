@@ -6,10 +6,12 @@ export * from './types.js';
 export { LangChainExporter } from './langchain-exporter.js';
 export { ClaudeExporter } from './claude-exporter.js';
 export { N8nExporter } from './n8n-exporter.js';
+export { PiExporter } from './pi-exporter.js';
 
 import { LangChainExporter } from './langchain-exporter.js';
 import { ClaudeExporter } from './claude-exporter.js';
 import { N8nExporter } from './n8n-exporter.js';
+import { PiExporter } from './pi-exporter.js';
 import type { IExporter, ExportFormat, ExportOptions, ExportResult } from './types.js';
 import type { AgentDefinition } from '../definitions/schemas/agent.js';
 import type { ToolDefinition } from '../definitions/schemas/tool.js';
@@ -25,6 +27,7 @@ export class Exporter {
       ['langchain', new LangChainExporter()],
       ['claude', new ClaudeExporter()],
       ['n8n', new N8nExporter()],
+      ['pi', new PiExporter()],
     ]);
   }
 
