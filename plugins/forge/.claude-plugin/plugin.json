@@ -9,7 +9,7 @@
     "./agents/skill-creator.md",
     "./agents/command-creator.md",
     "./agents/plugin-creator.md",
-    "./agents/plugin-to-pi-converter.md",
+    "./agents/harness-converter.md",
     "./agents/conversion-spec-generator.md",
     "./agents/project-auditor.md",
     "./agents/workflow-creator.md"
