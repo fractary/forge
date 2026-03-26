@@ -1,5 +1,5 @@
 ---
-name: fractary-forge:create-agent
+name: fractary-forge:agent-create
 description: Create a new agent following Fractary plugin standards
 model: claude-haiku-4-5
 argument-hint: <name> --type <manager|handler> [--plugin <plugin-name>]
