@@ -1,0 +1,18 @@
+{
+  "name": "fractary-forge",
+  "version": "0.1.1",
+  "description": "Meta-plugin for configuring Forge and creating Claude Code agents, skills, commands, and plugins with automated standards compliance. Includes pi.dev package conversion.",
+  "commands": "./commands/",
+  "agents": [
+    "./agents/configurator.md",
+    "./agents/agent-creator.md",
+    "./agents/skill-creator.md",
+    "./agents/command-creator.md",
+    "./agents/plugin-creator.md",
+    "./agents/plugin-to-pi-converter.md",
+    "./agents/conversion-spec-generator.md",
+    "./agents/project-auditor.md",
+    "./agents/workflow-creator.md"
+  ],
+  "skills": "./skills/"
+}
