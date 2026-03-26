@@ -1,5 +1,5 @@
 ---
-name: fractary-forge:command-create
+name: fractary-forge-command-create
 description: Create a new command following Fractary plugin standards
 model: claude-haiku-4-5
 argument-hint: <name> --invokes <agent> [--plugin <plugin-name>]
@@ -100,7 +100,7 @@ Your role is to parse user input and invoke the command-creator agent with the a
 
 After parsing arguments, invoke the agent using **declarative syntax**:
 
-**Agent**: command-creator (or @agent-fractary-forge:command-creator)
+**Agent**: fractary-forge-command-creator (or @agent-fractary-forge-command-creator)
 
 **Request structure**:
 ```json

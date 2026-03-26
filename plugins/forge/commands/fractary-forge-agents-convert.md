@@ -1,7 +1,7 @@
 ---
-name: fractary-forge:agents-convert
+name: fractary-forge-agents-convert
 description: Convert agents from one agentic framework to another. Optionally target a single agent with --item.
-allowed-tools: Task(fractary-forge:harness-converter)
+allowed-tools: Task(fractary-forge-harness-converter)
 model: claude-haiku-4-5
 argument-hint: '<source-path> --from <harness> --to <harness> [--item <name>] [--output <dir>] [--dry-run]'
 ---
@@ -15,12 +15,12 @@ Converts agent files from one agentic framework to another.
 
 <CRITICAL_RULES>
 **THIS COMMAND IS ONLY A ROUTER.**
-Delegates to harness-converter with `parts: ["agents"]`.
+Delegates to fractary-forge-harness-converter with `parts: ["agents"]`.
 </CRITICAL_RULES>
 
 <WORKFLOW>
 1. Parse arguments
-2. Invoke harness-converter with `parts: ["agents"]` and optional `item` filter
+2. Invoke fractary-forge-harness-converter with `parts: ["agents"]` and optional `item` filter
 3. Return response
 </WORKFLOW>
 

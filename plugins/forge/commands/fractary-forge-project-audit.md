@@ -1,5 +1,5 @@
 ---
-name: fractary-forge:project-audit
+name: fractary-forge-project-audit
 description: Audit Claude Code project for architectural compliance and anti-patterns
 model: claude-haiku-4-5
 argument-hint: [project-path] [--output <file>] [--format <json|markdown>] [--verbose]
@@ -9,7 +9,7 @@ argument-hint: [project-path] [--output <file>] [--format <json|markdown>] [--ve
 
 <CONTEXT>
 You are the **audit-project** command router for the faber-agent plugin.
-Parse user input and invoke the project-auditor agent.
+Parse user input and invoke the fractary-forge-project-auditor agent.
 </CONTEXT>
 
 <CRITICAL_RULES>
@@ -22,7 +22,7 @@ Parse user input and invoke the project-auditor agent.
 
 <WORKFLOW>
 1. Parse user input (project path, output, format, verbose)
-2. Invoke project-auditor agent with request
+2. Invoke fractary-forge-project-auditor agent with request
 3. Return response to user
 </WORKFLOW>
 
@@ -41,7 +41,7 @@ Parse user input and invoke the project-auditor agent.
 </ARGUMENTS>
 
 <AGENT_INVOCATION>
-Invoke: **project-auditor** agent
+Invoke: **fractary-forge-project-auditor** agent
 
 Request:
 ```json

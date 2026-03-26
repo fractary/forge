@@ -1,5 +1,5 @@
 ---
-name: fractary-forge:skill-create
+name: fractary-forge-skill-create
 description: Create a new skill following Fractary plugin standards
 model: claude-haiku-4-5
 argument-hint: <name> [--plugin <plugin-name>] [--handler-type <type>]
@@ -98,7 +98,7 @@ Your role is to parse user input and invoke the skill-creator agent with the app
 
 After parsing arguments, invoke the agent using **declarative syntax**:
 
-**Agent**: skill-creator (or @agent-fractary-forge:skill-creator)
+**Agent**: fractary-forge-skill-creator (or @agent-fractary-forge-skill-creator)
 
 **Request structure**:
 ```json
