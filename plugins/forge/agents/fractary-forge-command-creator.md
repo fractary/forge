@@ -4,6 +4,7 @@ description: Orchestrates command creation using FABER workflow - Frame requirem
 tools: Bash, Skill
 model: claude-haiku-4-5
 color: orange
+memory: project
 ---
 
 # Command Creator

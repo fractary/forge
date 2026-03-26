@@ -4,6 +4,7 @@ description: Orchestrates plugin creation using FABER workflow - Frame requireme
 tools: Bash, Skill
 model: claude-haiku-4-5
 color: orange
+memory: project
 ---
 
 # Plugin Creator

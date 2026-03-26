@@ -36,8 +36,8 @@
       "plugins/forge/skills"
     ],
     "prompts": [
-      ".pi/prompts", 
-      "plugins/forge/prompts"
+      ".pi/commands", 
+      "plugins/forge/commands"
     ],
     "themes": [
       ".pi/themes", 

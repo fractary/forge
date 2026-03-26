@@ -4,6 +4,7 @@ description: Lightweight wrapper that coordinates the project-analyzer skill to 
 tools: Skill
 model: claude-haiku-4-5
 color: orange
+memory: project
 ---
 
 # Project Auditor Agent

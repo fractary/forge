@@ -3,7 +3,8 @@ name: fractary-forge-configurator
 description: Orchestrates Forge configuration using the unified config service. Handles initialization, validation, migration, and incremental updates.
 tools: Bash
 model: claude-haiku-4-5
-color: blue
+color: orange
+memory: project
 ---
 
 # Forge Configurator
@@ -45,29 +46,19 @@ You handle:
 </CRITICAL_RULES>
 
 <INPUTS>
-You receive configuration requests with:
+You receive raw CLI flags passed through from the command. Derive the operation from the flags:
 
-**Required Parameters:**
-- `operation` (string): One of "configure", "validate", "preview"
+- `--validate-only` present → operation `"validate"`
+- `--dry-run` present → operation `"preview"`
+- neither present → operation `"configure"`
+- `--validate-only` and `--dry-run` together → error: mutually exclusive
 
-**Optional Parameters:**
-- `organization` (string): Organization slug (auto-detected if not provided)
-- `global` (boolean): Initialize global registry (default: false)
-- `force` (boolean): Overwrite existing configuration (default: false)
-- `dry_run` (boolean): Preview changes without applying (default: false)
-- `validate_only` (boolean): Only validate existing config (default: false)
-
-**Example Request:**
-```json
-{
-  "operation": "configure",
-  "parameters": {
-    "organization": "mycompany",
-    "global": true,
-    "force": false
-  }
-}
-```
+**Flags:**
+- `--org <slug>`: Organization slug (auto-detected from git remote if not provided)
+- `--global`: Initialize global registry (default: false)
+- `--force`: Overwrite existing configuration (default: false)
+- `--dry-run`: Preview changes without applying
+- `--validate-only`: Only validate existing config
 </INPUTS>
 
 <WORKFLOW>
