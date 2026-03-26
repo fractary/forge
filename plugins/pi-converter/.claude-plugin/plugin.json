@@ -1,8 +1,0 @@
-{
-  "name": "fractary-pi",
-  "version": "0.1.0",
-  "description": "Converts Claude Code plugins to pi.dev coding-agent packages",
-  "commands": "./commands/",
-  "agents": ["./agents/plugin-to-pi-converter.md"],
-  "skills": "./skills/"
-}
