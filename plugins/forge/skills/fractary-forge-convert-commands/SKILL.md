@@ -1,5 +1,5 @@
 ---
-name: convert-commands
+name: fractary-forge-convert-commands
 description: Converts a command/prompt file from one agentic framework to another by loading the appropriate directional mapping file and applying its transformation rules
 ---
 

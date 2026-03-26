@@ -1,5 +1,5 @@
 ---
-name: script-extractor
+name: fractary-forge-script-extractor
 description: Detects inline logic anti-pattern in prompts and identifies opportunities to extract deterministic operations to scripts
 model: claude-haiku-4-5
 ---

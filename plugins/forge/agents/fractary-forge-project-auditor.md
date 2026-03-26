@@ -49,7 +49,7 @@ You receive audit requests from the audit-project command and delegate ALL work 
 Invoke the project-analyzer skill:
 
 ```
-@skill-fractary-forge:project-analyzer
+@skill-fractary-forge-project-analyzer
 
 Operation: run-full-audit
 Parameters: { "project_path": "{project_path}" }

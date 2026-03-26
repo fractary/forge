@@ -112,7 +112,7 @@ Plugin: {plugin_name}
 **Purpose:** Collect all information needed to create the agent
 
 **Execute:**
-Use the @skill-fractary-forge:gather-requirements skill with:
+Use the @skill-fractary-forge-gather-requirements skill with:
 ```json
 {
   "artifact_type": "agent",
@@ -199,7 +199,7 @@ Output phase complete:
 **Purpose:** Generate the agent file from template with variable substitution
 
 **Execute:**
-Use the @skill-fractary-forge:generate-from-template skill with:
+Use the @skill-fractary-forge-generate-from-template skill with:
 ```json
 {
   "template_file": "{template_path}",

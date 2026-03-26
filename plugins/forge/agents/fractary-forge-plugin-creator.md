@@ -89,7 +89,7 @@ Dependencies: {requires or "none"}
 **Purpose:** Collect all information needed to create the plugin
 
 **Execute:**
-Use the @skill-fractary-forge:gather-requirements skill with:
+Use the @skill-fractary-forge-gather-requirements skill with:
 ```json
 {
   "artifact_type": "plugin",
@@ -202,7 +202,7 @@ echo "✅ Created directory structure"
 
 ### 3.2: Generate plugin.json
 
-Use the @skill-fractary-forge:generate-from-template skill with:
+Use the @skill-fractary-forge-generate-from-template skill with:
 ```json
 {
   "template_file": "plugins/forge/templates/plugin/plugin.json.template",
@@ -222,7 +222,7 @@ Use the @skill-fractary-forge:generate-from-template skill with:
 
 ### 3.3: Generate README.md
 
-Use the @skill-fractary-forge:generate-from-template skill with:
+Use the @skill-fractary-forge-generate-from-template skill with:
 ```json
 {
   "template_file": "plugins/forge/templates/plugin/README.md.template",

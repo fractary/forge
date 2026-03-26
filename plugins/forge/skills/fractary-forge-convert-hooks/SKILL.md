@@ -1,5 +1,5 @@
 ---
-name: convert-hooks
+name: fractary-forge-convert-hooks
 description: Converts hooks/extensions from one agentic framework to another — typically generates stubs where full automation is not possible (e.g., shell scripts to TypeScript)
 ---
 

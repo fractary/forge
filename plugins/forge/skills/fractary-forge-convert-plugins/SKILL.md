@@ -1,5 +1,5 @@
 ---
-name: convert-plugins
+name: fractary-forge-convert-plugins
 description: Converts a plugin/package manifest from one agentic framework to another by loading the appropriate directional mapping file
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: generate-from-template
+name: fractary-forge-generate-from-template
 model: claude-haiku-4-5
 description: |
   Generates artifacts from templates by substituting {{VARIABLE}} placeholders with actual values.

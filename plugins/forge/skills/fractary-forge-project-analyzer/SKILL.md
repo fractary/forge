@@ -1,5 +1,5 @@
 ---
-name: project-analyzer
+name: fractary-forge-project-analyzer
 description: Analyzes Claude Code project structure detecting architectural patterns and anti-patterns by executing detection scripts
 model: claude-haiku-4-5
 ---
@@ -31,7 +31,7 @@ Run all detection scripts and return comprehensive audit results.
 
 **Execute:**
 ```
-bash plugins/forge/skills/project-analyzer/scripts/run-all-detections.sh {project_path}
+bash plugins/forge/skills/fractary-forge-project-analyzer/scripts/run-all-detections.sh {project_path}
 ```
 
 **Output:** JSON from script containing:
@@ -52,7 +52,7 @@ Detect project-specific director skills - these are anti-patterns and BLOCK work
 
 **Execute:**
 ```
-bash plugins/forge/skills/project-analyzer/scripts/detect-project-specific-director.sh {project_path}
+bash plugins/forge/skills/fractary-forge-project-analyzer/scripts/detect-project-specific-director.sh {project_path}
 ```
 
 **Detection Logic:**
@@ -94,7 +94,7 @@ Detect project-specific manager agents - these are anti-patterns and BLOCK workf
 
 **Execute:**
 ```
-bash plugins/forge/skills/project-analyzer/scripts/detect-project-specific-manager.sh {project_path}
+bash plugins/forge/skills/fractary-forge-project-analyzer/scripts/detect-project-specific-manager.sh {project_path}
 ```
 
 **Detection Logic:**
@@ -140,7 +140,7 @@ Scan project and collect structural information.
 
 **Execute:**
 ```
-bash plugins/forge/skills/project-analyzer/scripts/inspect-structure.sh {project_path}
+bash plugins/forge/skills/fractary-forge-project-analyzer/scripts/inspect-structure.sh {project_path}
 ```
 
 **Output:** JSON with agents, skills, commands counts and locations.
@@ -156,7 +156,7 @@ Detect Manager-as-Skill anti-pattern.
 
 **Execute:**
 ```
-bash plugins/forge/skills/project-analyzer/scripts/detect-manager-as-skill.sh {project_path}
+bash plugins/forge/skills/fractary-forge-project-analyzer/scripts/detect-manager-as-skill.sh {project_path}
 ```
 
 **Output:** JSON with detection results.
@@ -172,7 +172,7 @@ Detect Director-as-Agent anti-pattern.
 
 **Execute:**
 ```
-bash plugins/forge/skills/project-analyzer/scripts/detect-director-as-agent.sh {project_path}
+bash plugins/forge/skills/fractary-forge-project-analyzer/scripts/detect-director-as-agent.sh {project_path}
 ```
 
 **Output:** JSON with detection results.
@@ -188,7 +188,7 @@ Detect missing workflow event logging in manager agents (AGT-005).
 
 **Execute:**
 ```
-bash plugins/forge/skills/project-analyzer/scripts/detect-workflow-logging.sh {project_path}
+bash plugins/forge/skills/fractary-forge-project-analyzer/scripts/detect-workflow-logging.sh {project_path}
 ```
 
 **Output:** JSON with detection results.
@@ -204,7 +204,7 @@ Detect commands that invoke skills directly instead of routing through manager (
 
 **Execute:**
 ```
-bash plugins/forge/skills/project-analyzer/scripts/detect-direct-skill-commands.sh {project_path}
+bash plugins/forge/skills/fractary-forge-project-analyzer/scripts/detect-direct-skill-commands.sh {project_path}
 ```
 
 **Output:** JSON with detection results.
@@ -220,7 +220,7 @@ Detect missing director argument patterns (ARC-004).
 
 **Execute:**
 ```
-bash plugins/forge/skills/project-analyzer/scripts/detect-director-patterns.sh {project_path}
+bash plugins/forge/skills/fractary-forge-project-analyzer/scripts/detect-director-patterns.sh {project_path}
 ```
 
 **Output:** JSON with detection results.
@@ -236,7 +236,7 @@ Calculate context token load and optimization opportunities.
 
 **Execute:**
 ```
-bash plugins/forge/skills/project-analyzer/scripts/calculate-context-load.sh {project_path}
+bash plugins/forge/skills/fractary-forge-project-analyzer/scripts/calculate-context-load.sh {project_path}
 ```
 
 **Output:** JSON with context load analysis.

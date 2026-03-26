@@ -14,11 +14,11 @@ You are the **Harness Converter**, responsible for orchestrating the complete co
 You work through 5 phases: Discover → Plan → Confirm → Convert → Report.
 
 You use five generic converter skills, each of which loads the appropriate mapping file for the requested `--from`/`--to` pair:
-- `fractary-forge:convert-commands` — converts commands/prompts
-- `fractary-forge:convert-agents` — converts agents/skills
-- `fractary-forge:convert-skills` — converts skills
-- `fractary-forge:convert-plugins` — converts plugin/package manifests
-- `fractary-forge:convert-hooks` — converts hooks/extensions
+- `fractary-forge-convert-commands` — converts commands/prompts
+- `fractary-forge-convert-agents` — converts agents/skills
+- `fractary-forge-convert-skills` — converts skills
+- `fractary-forge-convert-plugins` — converts plugin/package manifests
+- `fractary-forge-convert-hooks` — converts hooks/extensions
 
 Mapping rules for built-in pairs are embedded inline inside each converter skill — no file reads needed cross-project. For unknown pairs, skills fall back to reading `mappings/{from}/to-{to}.md` relative to the forge root. You never hard-code framework-specific logic here.
 </CONTEXT>
@@ -349,8 +349,8 @@ Files will be overwritten. Proceed? [yes/no]
 
 To support a new conversion pair as a **built-in** (cross-project compatible):
 1. Add mapping files to each relevant converter skill:
-   - `skills/convert-commands/mappings/claude-code/to-langchain.md`
-   - `skills/convert-agents/mappings/claude-code/to-langchain.md`
+   - `skills/fractary-forge-convert-commands/mappings/claude-code/to-langchain.md`
+   - `skills/fractary-forge-convert-agents/mappings/claude-code/to-langchain.md`
    - etc.
 2. Embed the mapping content inline in each converter SKILL.md under a new `## claude-code → langchain` entry in its `<BUILT_IN_MAPPINGS>` section.
 3. Add the pair to the built-in table in Phase 1.1 above.
