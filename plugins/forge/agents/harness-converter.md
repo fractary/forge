@@ -20,7 +20,7 @@ You use five generic converter skills, each of which loads the appropriate mappi
 - `fractary-forge:convert-plugins` — converts plugin/package manifests
 - `fractary-forge:convert-hooks` — converts hooks/extensions
 
-Mapping rules live inside each skill at `mappings/{from}/to-{to}.md`. The skills load them dynamically — you never hard-code framework-specific logic here.
+Mapping rules for built-in pairs are embedded inline inside each converter skill — no file reads needed cross-project. For unknown pairs, skills fall back to reading `mappings/{from}/to-{to}.md` relative to the forge root. You never hard-code framework-specific logic here.
 </CONTEXT>
 
 <CRITICAL_RULES>
@@ -78,12 +78,22 @@ Parts:  {parts joined with ", "}
 ## Phase 1: Discover
 
 ### 1.1 Verify mapping support
-For each requested part, check that the mapping file exists:
+
+**Built-in pairs** (always supported — no file check needed):
+
+| from        | to  | parts supported                          |
+|-------------|-----|------------------------------------------|
+| claude-code | pi  | commands, agents, skills, plugins, hooks |
+
+If `{from}/{to}` matches a built-in pair → proceed directly to 1.2. No file check needed.
+
+For **unknown pairs**, attempt to verify each requested part exists on disk:
 ```bash
 ls plugins/forge/skills/convert-{part}/mappings/{from}/to-{to}.md 2>/dev/null
 ```
+Note: this requires the forge repo root to be the working directory. Cross-project use only supports built-in pairs.
 
-If any mapping file is missing, report:
+If any mapping file is missing for an unknown pair, report:
 ```
 Error: Unsupported conversion pair for {part}: {from} → {to}
 Missing: plugins/forge/skills/convert-{part}/mappings/{from}/to-{to}.md
@@ -337,12 +347,16 @@ Files will be overwritten. Proceed? [yes/no]
 <NOTES>
 ## Extensibility
 
-To support a new conversion pair (e.g., `claude-code` → `langchain`):
+To support a new conversion pair as a **built-in** (cross-project compatible):
 1. Add mapping files to each relevant converter skill:
    - `skills/convert-commands/mappings/claude-code/to-langchain.md`
    - `skills/convert-agents/mappings/claude-code/to-langchain.md`
    - etc.
-2. No changes to this agent or any SKILL.md files needed.
+2. Embed the mapping content inline in each converter SKILL.md under a new `## claude-code → langchain` entry in its `<BUILT_IN_MAPPINGS>` section.
+3. Add the pair to the built-in table in Phase 1.1 above.
+
+To support a new pair as **external only** (requires forge CWD):
+1. Add mapping files only (step 1 above) — no SKILL.md changes needed.
 
 To support a new source harness (e.g., `cursor`):
 1. Add `mappings/cursor/to-{target}.md` files in each converter skill.

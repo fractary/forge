@@ -26,6 +26,24 @@
     "agents",
     "tools"
   ],
+  "pi": {
+    "extensions": [
+      ".pi/extensions", 
+      "plugins/forge/extensions"
+    ], 
+    "skills": [
+      ".pi/skills", 
+      "plugins/forge/skills"
+    ],
+    "prompts": [
+      ".pi/prompts", 
+      "plugins/forge/prompts"
+    ],
+    "themes": [
+      ".pi/themes", 
+      "plugins/forge/themes"
+    ]
+  },  
   "author": "Fractary",
   "license": "MIT"
 }
