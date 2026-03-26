@@ -29,6 +29,17 @@ yarn-error.log*
 .env.local
 .env.*.local
 
+# Claude Code worktrees (ephemeral, machine-local)
+.claude/worktrees/
+
+# ===== fractary-logs (managed) =====
+logs/_archive/
+# ===== end fractary-logs =====
+
+# ===== fractary-docs (managed) =====
+docs/_archive/
+# ===== end fractary-docs =====
+
 # Temp
 .temp/
 temp/

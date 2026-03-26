@@ -1,6 +1,30 @@
-version: "2.0"
-
-# Work tracking configuration
+version: '2.0'
+repo:
+  active_handler: github
+  handlers:
+    github:
+      owner: fractary
+      repo: forge
+      token: ${GITHUB_TOKEN}
+      api_url: https://api.github.com
+  worktree:
+    location: .claude/worktrees
+    naming:
+      with_work_id: work-id-{id}
+      default: random-words
+  defaults:
+    environments:
+      prod:
+        branch: main
+        protected: true
+      test:
+        branch: test
+        protected: false
+    default_environment: test
+    pr:
+      merge:
+        strategy: squash
+        delete_branch: true
 work:
   active_handler: github
   handlers:
@@ -9,233 +33,53 @@ work:
       repo: forge
       token: ${GITHUB_TOKEN}
       api_url: https://api.github.com
-      classification:
-        feature: [feature, enhancement, story, user-story]
-        bug: [bug, fix, defect, error]
-        chore: [chore, maintenance, docs, documentation, test, refactor]
-        patch: [hotfix, patch, urgent, critical, security]
-      states:
-        open: OPEN
-        in_progress: OPEN
-        in_review: OPEN
-        done: CLOSED
-        closed: CLOSED
-      labels:
-        prefix: faber-
-        in_progress: in-progress
-        in_review: in-review
-        completed: completed
-        error: faber-error
-  defaults:
-    auto_assign: false
-    auto_label: true
-    close_on_merge: true
-    comment_on_state_change: true
-    link_pr_to_issue: true
-  hooks:
-    auto_comment:
-      enabled: true
-      throttle_minutes: 0
-      async: false
-      detailed_analysis: false
-
-# Repository management configuration
-repo:
-  active_handler: github
-  handlers:
-    github:
-      token: ${GITHUB_TOKEN}
-      api_url: https://api.github.com
-  defaults:
-    default_branch: main
-    protected_branches: [main, master, production, staging]
-    branch_naming:
-      pattern: "{prefix}/{issue_id}-{slug}"
-      allowed_prefixes: [feat, fix, chore, hotfix, docs, test, refactor, style, perf]
-    commit_format: faber
-    require_signed_commits: false
-    merge_strategy: no-ff
-    auto_delete_merged_branches: false
-    remote:
-      name: origin
-      auto_set_upstream: true
-    push_sync_strategy: auto-merge
-    pull_sync_strategy: auto-merge-prefer-remote
-    pr:
-      template: standard
-      require_work_id: true
-      auto_link_issues: true
-      ci_polling:
-        enabled: true
-        interval_seconds: 60
-        timeout_seconds: 900
-        initial_delay_seconds: 10
-      merge:
-        strategy: squash
-        delete_branch: true
-  faber_integration:
-    enabled: true
-    branch_creation:
-      auto_create: true
-      use_work_id: true
-    commit_metadata:
-      include_author_context: true
-      include_phase: true
-      include_work_id: true
-    pr_creation:
-      auto_create: true
-      include_metadata: true
-      draft_until_approved: false
-  hooks:
-    auto_commit:
-      enabled: true
-      throttle_minutes: 0
-
-# Logs management configuration
-logs:
-  schema_version: "2.0"
-  custom_templates_path: .fractary/logs/templates/manifest.yaml
-  storage:
-    local_path: .fractary/logs
-    cloud_archive_path: archive/logs/{year}/{month}/{issue_number}
-  retention:
-    default:
-      local_days: 30
-      cloud_days: forever
-      priority: medium
-      auto_archive: true
-      cleanup_after_archive: true
-    paths:
-      - pattern: sessions/*
-        log_type: session
-        local_days: 7
-        cloud_days: forever
-        priority: high
-        auto_archive: true
-        cleanup_after_archive: false
-  session_logging:
-    enabled: true
-    auto_capture: true
-    format: markdown
-    include_timestamps: true
-    redact_sensitive: true
-    auto_name_by_issue: true
-    redaction_patterns:
-      api_keys: true
-      jwt_tokens: true
-      passwords: true
-      credit_cards: true
-      email_addresses: false
-  auto_backup:
-    enabled: true
-    trigger_on_init: true
-    trigger_on_session_start: true
-    backup_older_than_days: 7
-    generate_summaries: true
-
-# File storage configuration
 file:
-  schema_version: "2.0"
-  sources:
-    specs:
+  schema_version: '2.0'
+  active_handler: local
+  handlers:
+    local:
       type: local
-      base_path: .fractary/specs
-    logs:
+      local:
+        base_path: .
+    logs-write:
       type: local
-      base_path: .fractary/logs
-  global_settings:
-    retry_attempts: 3
-    retry_delay_ms: 1000
-    timeout_seconds: 300
-    verify_checksums: true
-    parallel_uploads: 4
-
-# Specification management configuration
-spec:
-  schema_version: "1.0"
-  storage:
-    local_path: .fractary/specs
-    cloud_archive_path: archive/specs/{year}/{spec_id}.md
-  naming:
-    issue_specs:
-      prefix: WORK
-      digits: 5
-      phase_format: numeric
-      phase_separator: "-"
-    standalone_specs:
-      prefix: SPEC
-      digits: 4
-      auto_increment: true
-  archive:
-    strategy: lifecycle
-    auto_archive_on:
-      issue_close: true
-      pr_merge: true
-      faber_release: true
-  integration:
-    work_plugin: fractary-work
-    file_plugin: fractary-file
-    link_to_issue: true
-    update_issue_on_create: true
-
-# Documentation management configuration
+      local:
+        base_path: logs
+    logs-archive:
+      type: local
+      local:
+        base_path: logs/_archive
+    docs-write:
+      type: local
+      local:
+        base_path: docs
+    docs-archive:
+      type: local
+      local:
+        base_path: docs/_archive
 docs:
-  schema_version: "1.1"
-  custom_templates_path: .fractary/docs/templates/manifest.yaml
-  doc_types:
-    adr:
-      enabled: true
-      path: docs/architecture/ADR
-      auto_number: true
-      number_format: "%05d"
-      generate_on_architectural_decision: true
-      enforce_immutability: true
-    architecture:
-      enabled: true
-      path: docs/architecture
-      auto_update_index: true
-      types: [overview, component, diagram]
-    guide:
-      enabled: true
-      path: docs/guides
-      auto_update_index: true
-      audiences: [developer, user, admin, contributor]
-    schema:
-      enabled: true
-      path: docs/schema
-      dual_format: true
-      auto_update_index: true
-      generate_json: true
-    api:
-      enabled: true
-      path: docs/api
-      dual_format: true
-      auto_update_index: true
-      generate_openapi: true
-  output_paths:
-    documentation: docs
-    adrs: docs/architecture/ADR
-    architecture: docs/architecture
-    designs: docs/architecture/designs
-    guides: docs/guides
-    schemas: docs/schema
-    api_docs: docs/api
-    standards: docs/standards
-    runbooks: docs/operations/runbooks
-  validation:
-    lint_on_generate: true
-    check_links_on_generate: false
-    required_sections:
-      adr: [Status, Context, Decision, Consequences]
-      architecture: [Overview, Components, Patterns]
-      guide: [Purpose, Prerequisites, Steps]
-
-# Codex plugin configuration
+  schema_version: '1.1'
+  custom_templates_path: docs/templates/manifest.yaml
+  storage:
+    file_handlers:
+      - name: default
+        write: docs-write
+        archive: docs-archive
+logs:
+  schema_version: '2.0'
+  storage:
+    file_handlers:
+      - name: default
+        write: logs-write
+        archive: logs-archive
 codex:
-  schema_version: "2.0"
+  schema_version: '2.0'
   organization: fractary
   project: forge
   codex_repo: codex.fractary.com
+  remotes:
+    fractary/codex.fractary.com:
+      token: ${GITHUB_TOKEN}
   sync:
     to_codex:
       include:
@@ -243,9 +87,21 @@ codex:
         - README.md
         - CLAUDE.md
       exclude:
-        - docs/conversations/**
-        - "*.tmp"
+        - '*.tmp'
+        - _archive/**
     from_codex:
       include:
-        - "codex://{org}/{codex_repo}/docs/**"
-  dependencies: {}
+        - codex://fractary/codex.fractary.com/docs/**
+      exclude:
+        - _archive/**
+faber:
+  workflows:
+    path: .fractary/faber/workflows
+    default: default
+    autonomy: guarded
+  runs:
+    path: .fractary/faber/runs
+  changelog:
+    path: .fractary/changelog.ndjson
+  worktree:
+    enabled: false
