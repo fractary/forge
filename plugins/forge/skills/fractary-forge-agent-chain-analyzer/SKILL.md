@@ -1,5 +1,5 @@
 ---
-name: agent-chain-analyzer
+name: fractary-forge-agent-chain-analyzer
 description: Detects and analyzes agent chain anti-patterns where agents invoke other agents sequentially causing massive context load
 model: claude-haiku-4-5
 ---

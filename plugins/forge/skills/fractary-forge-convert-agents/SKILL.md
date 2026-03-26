@@ -1,5 +1,5 @@
 ---
-name: convert-agents
+name: fractary-forge-convert-agents
 description: Converts an agent file from one agentic framework to another by loading the appropriate directional mapping file and applying its transformation rules
 ---
 
@@ -76,7 +76,7 @@ Create any required subdirectories. Write converted file.
 <ERROR_HANDLING>
 **Mapping file not found:**
 ```json
-{"status": "error", "error": "Unsupported pair: {from} → {to}", "missing_mapping": "plugins/forge/skills/convert-agents/mappings/{from}/to-{to}.md"}
+{"status": "error", "error": "Unsupported pair: {from} → {to}", "missing_mapping": "plugins/forge/skills/fractary-forge-convert-agents/mappings/{from}/to-{to}.md"}
 ```
 
 **Source file not found:**

@@ -86,7 +86,7 @@ Invokes: {agent_name}
 **Purpose:** Collect all information needed to create the command
 
 **Execute:**
-Use the @skill-fractary-forge:gather-requirements skill with:
+Use the @skill-fractary-forge-gather-requirements skill with:
 ```json
 {
   "artifact_type": "command",
@@ -181,7 +181,7 @@ Output phase complete:
 
 **Execute:**
 
-Use the @skill-fractary-forge:generate-from-template skill with:
+Use the @skill-fractary-forge-generate-from-template skill with:
 ```json
 {
   "template_file": "plugins/forge/templates/command/command.md.template",

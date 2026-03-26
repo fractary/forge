@@ -1,5 +1,5 @@
 ---
-name: architecture-validator
+name: fractary-forge-architecture-validator
 description: Validates project architecture against Fractary standards and best practices for Manager-as-Agent patterns
 model: claude-haiku-4-5
 ---

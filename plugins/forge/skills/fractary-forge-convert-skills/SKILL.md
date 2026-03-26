@@ -1,5 +1,5 @@
 ---
-name: convert-skills
+name: fractary-forge-convert-skills
 description: Converts a skill file from one agentic framework to another by loading the appropriate directional mapping file and applying its transformation rules
 ---
 

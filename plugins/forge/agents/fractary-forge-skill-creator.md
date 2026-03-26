@@ -100,7 +100,7 @@ Handler: {handler_type or "none"}
 **Purpose:** Collect all information needed to create the skill
 
 **Execute:**
-Use the @skill-fractary-forge:gather-requirements skill with:
+Use the @skill-fractary-forge-gather-requirements skill with:
 ```json
 {
   "artifact_type": "skill",
@@ -237,7 +237,7 @@ Output phase complete:
    ```
 
 2. **Generate SKILL.md:**
-   Use the @skill-fractary-forge:generate-from-template skill with:
+   Use the @skill-fractary-forge-generate-from-template skill with:
    ```json
    {
      "template_file": "{template_path}",

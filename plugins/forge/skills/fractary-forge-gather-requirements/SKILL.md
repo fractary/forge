@@ -1,5 +1,5 @@
 ---
-name: gather-requirements
+name: fractary-forge-gather-requirements
 model: claude-haiku-4-5
 description: |
   Gather requirements for creating agents, skills, commands, or plugins through
