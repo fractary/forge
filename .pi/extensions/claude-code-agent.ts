@@ -23,9 +23,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 // Re-use pi-subagents internals — same process, same node_modules
-import { runSync } from "pi-subagents/execution.js";
-import { discoverAgents } from "pi-subagents/agents.js";
-import { getArtifactsDir, ensureArtifactsDir } from "pi-subagents/artifacts.js";
+// NOTE: use .ts extension (not .js) — pi-subagents ships only TypeScript sources;
+// jiti resolves .js→.ts for relative imports but NOT for package subpath imports.
+import { runSync } from "pi-subagents/execution.ts";
+import { discoverAgents } from "pi-subagents/agents.ts";
+import { getArtifactsDir, ensureArtifactsDir } from "pi-subagents/artifacts.ts";
 
 // ─── Parameter schema (Claude Code Agent() format) ───────────────────────────
 
