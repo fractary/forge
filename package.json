@@ -28,19 +28,15 @@
   ],
   "pi": {
     "extensions": [
-      ".pi/extensions",
       "plugins/forge/extensions"
-    ], 
+    ],
     "skills": [
-      ".pi/skills", 
       "plugins/forge/skills"
     ],
     "prompts": [
-      ".pi/commands", 
       "plugins/forge/commands"
     ],
     "themes": [
-      ".pi/themes", 
       "plugins/forge/themes"
     ]
   },  
