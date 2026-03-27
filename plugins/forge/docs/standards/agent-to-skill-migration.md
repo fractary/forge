@@ -506,7 +506,7 @@ cat .claude/agents/project/*director*.md
 1. Parse pattern (*, dataset/*, a,b,c)
 2. Expand to entity list
 3. FOR EACH entity:
-     Invoke Manager via Task tool (SEQUENTIAL)
+     Invoke Manager via Agent tool (SEQUENTIAL)
 4. Aggregate results
 5. Return to user
 ```
@@ -652,9 +652,9 @@ After Director skill returns entity list, Core Claude Agent:
 1. Receives entity list from Director skill
 2. Invokes Manager agent for each entity in parallel (max 5 concurrent):
    ```
-   Task(myproject-manager, entity="dataset/users")
-   Task(myproject-manager, entity="dataset/orders")
-   Task(myproject-manager, entity="dataset/products")
+   Agent(myproject-manager, entity="dataset/users")
+   Agent(myproject-manager, entity="dataset/orders")
+   Agent(myproject-manager, entity="dataset/products")
    ```
 3. Waits for all to complete
 4. Aggregates results
@@ -745,7 +745,7 @@ ls .claude/skills/myproject-director/
 **Symptoms:**
 - No `.claude/skills/` directory
 - Workflow implemented as Agent1 → Agent2 → Agent3 → Agent4
-- Each agent invokes next agent via Task tool
+- Each agent invokes next agent via Agent tool
 - Heavy context usage (4+ agents × 45K tokens each)
 - No script abstraction
 
@@ -766,7 +766,7 @@ ls -la .claude/agents/
 # 2. Build dependency graph
 for agent in .claude/agents/*.md; do
   echo "=== $agent ==="
-  grep -n "Task tool" "$agent" || echo "No Task calls"
+  grep -n "Agent tool" "$agent" || echo "No Agent calls"
 done
 
 # 3. Identify chain start (entry point from command)
@@ -1405,7 +1405,7 @@ curl -X POST "https://api.example.com/$ENDPOINT" \
 - [ ] Manager has `allowed_tools: [Read, Write, Skill, AskUserQuestion, Bash, Edit, Grep, Glob]`
 - [ ] Director (if exists) is SKILL in `.claude/skills/`
 - [ ] Specialists are SKILLS in `.claude/skills/`
-- [ ] No agent chains (Agent → Agent via Task tool)
+- [ ] No agent chains (Agent → Agent via Agent tool)
 - [ ] No hybrid agents (orchestration + execution separated)
 
 **Implementation:**

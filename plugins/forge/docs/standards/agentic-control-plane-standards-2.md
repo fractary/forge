@@ -6029,7 +6029,7 @@ allowed_tools: [Read, Write, Skill, AskUserQuestion, Bash, Edit, Grep, Glob]
 Location: .claude/agents/project/director.md
 - Director as agent doing orchestration
 - Loops over datasets sequentially
-- Invokes Managers via Task tool
+- Invokes Managers via Agent tool
 - Prevents parallelism
 ```
 
@@ -7072,11 +7072,11 @@ This pattern provides:
 ```
 Command: /myproject-process
   ↓
-Agent: step1-agent.md → Task tool → step2-agent.md
+Agent: step1-agent.md → Agent tool → step2-agent.md
   ↓
-Agent: step2-agent.md → Task tool → step3-agent.md
+Agent: step2-agent.md → Agent tool → step3-agent.md
   ↓
-Agent: step3-agent.md → Task tool → step4-agent.md
+Agent: step3-agent.md → Agent tool → step4-agent.md
   ↓
 Results
 

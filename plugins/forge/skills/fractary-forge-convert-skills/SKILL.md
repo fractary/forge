@@ -138,7 +138,7 @@ allowed-tools: <filtered tools, omit if empty>
 ## Tool Filter Rules
 
 **Remove from list:**
-- `Task(...)` — pi skills do not use the Task tool
+- `Agent(...)` — pi skills do not use the Agent tool
 - `Skill(...)` — pi skills reference other skills via body prose
 
 **Keep:**
@@ -200,7 +200,7 @@ If the source skill directory contains additional files (e.g., `scripts/*.sh`, w
 - [ ] `description` field present, ≤ 1024 chars
 - [ ] No `model` or `color` in frontmatter
 - [ ] `tools` renamed to `allowed-tools` if applicable
-- [ ] `Task(x)` and `Skill(x)` entries removed from `allowed-tools`
+- [ ] `Agent(x)` and `Skill(x)` entries removed from `allowed-tools`
 - [ ] Body content is verbatim (no changes)
 - [ ] Output at `skills/{name}/SKILL.md`
 
