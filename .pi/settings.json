@@ -1,5 +1,6 @@
 {
   "extensions": [
-    ".pi/extensions/todo.ts"
+    ".pi/extensions/todo.ts",
+    ".pi/extensions/claude-code-tools.ts"
   ]
 }
