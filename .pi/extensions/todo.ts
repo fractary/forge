@@ -2,20 +2,48 @@
  * Todo Extension - Demonstrates state management via session entries
  *
  * Derived from: @mariozechner/pi-coding-agent@0.63.1 examples/extensions/todo.ts
- * Changes: Added TodoWrite and TodoRead Claude Code shim tools (shared state).
+ * Changes:
+ *   - Added TodoWrite and TodoRead Claude Code shim tools (shared state).
+ *   - Added TaskCreate, TaskUpdate, TaskList, TaskGet, TaskStop Claude Code shim tools.
  * On pi update: diff against updated example and re-apply shim additions.
  *
  * This extension:
  * - Registers a `todo` tool for the LLM to manage todos (pi-native)
- * - Registers `TodoWrite` and `TodoRead` tools (Claude Code shim)
- * - Registers a `/todos` command for users to view the list
+ * - Registers `TodoWrite` and `TodoRead` tools (Claude Code non-interactive shim)
+ * - Registers `TaskCreate`, `TaskUpdate`, `TaskList`, `TaskGet`, `TaskStop` tools
+ *   (Claude Code interactive-mode task management shim — used by FABER workflow commands)
+ * - Registers `/todos` and `/tasks` commands for users to view the list
  *
- * All three tools share the same in-memory state and session persistence,
- * so pi-native agents and Claude Code-style agents see the same todo list.
+ * All tools share the same in-memory state and session persistence,
+ * so pi-native agents and Claude Code-style agents see the same task list.
  *
  * State is stored in tool result details (not external files), which allows
  * proper branching - when you branch, the todo state is automatically
  * correct for that point in history.
+ *
+ * ─── Task* API contract (matches Claude Code interactive mode) ────────────────
+ *
+ *   TaskCreate({ subject, description?, activeForm?, metadata? })
+ *     → { taskId: string }      (callers do: const task = await TaskCreate({...}); task.taskId)
+ *
+ *   TaskUpdate({ taskId, status?, subject? })
+ *     → ack string
+ *
+ *   TaskList()
+ *     → Array<{ id, subject, description, status, metadata }>
+ *       Note: TaskList items use `.id` (same value as the taskId from TaskCreate)
+ *
+ *   TaskGet({ taskId })
+ *     → { id, subject, description, status, activeForm, metadata }
+ *
+ *   TaskStop({ taskId })
+ *     → ack string  (marks task completed; no true "kill" in pi)
+ *
+ * ─── Task ID generation ───────────────────────────────────────────────────────
+ *
+ *   Task*-created todos get ccId = "task-{n}" where n is the pi integer id.
+ *   TodoWrite-created todos keep whatever id string came from the input.
+ *   TaskList/.id === TaskCreate/.taskId for round-trip correctness.
  */
 
 import { StringEnum } from "@mariozechner/pi-ai";
@@ -23,15 +51,25 @@ import type { ExtensionAPI, ExtensionContext, Theme } from "@mariozechner/pi-cod
 import { matchesKey, Text, truncateToWidth } from "@mariozechner/pi-tui";
 import { Type } from "@sinclair/typebox";
 
+// ─── Shared data model ────────────────────────────────────────────────────────
+
 interface Todo {
 	id: number;
-	text: string;
+	text: string;   // subject / display label
 	done: boolean;
-	// Claude Code compatibility fields (preserved through TodoWrite/TodoRead round-trips)
+
+	// Claude Code shared fields (TodoWrite + Task*)
 	ccId?: string;
 	priority?: "high" | "medium" | "low";
 	ccStatus?: "pending" | "in_progress" | "completed";
+
+	// Task*-specific fields
+	description?: string;  // longer description (separate from subject)
+	activeForm?: string;   // "in progress" label stored per task
+	metadata?: Record<string, unknown>;  // arbitrary bag, e.g. { faberKey: "frame:core-fetch-issue" }
 }
+
+// ─── Details types (stored in tool results for session reconstruction) ────────
 
 interface TodoDetails {
 	action: "list" | "add" | "toggle" | "clear";
@@ -40,12 +78,22 @@ interface TodoDetails {
 	error?: string;
 }
 
-// Snapshot stored in TodoWrite/TodoRead tool results for session reconstruction
+// Snapshot stored in TodoWrite/TodoRead tool results
 interface CcDetails {
 	tool: "TodoWrite" | "TodoRead";
 	todos: Todo[];
 	nextId: number;
 }
+
+// Snapshot stored in Task* tool results
+interface TaskShimDetails {
+	tool: "TaskCreate" | "TaskUpdate" | "TaskList" | "TaskGet" | "TaskStop";
+	todos: Todo[];
+	nextId: number;
+	taskId?: string;  // TaskCreate only — echoed here for renderResult
+}
+
+// ─── Parameter schemas ────────────────────────────────────────────────────────
 
 const TodoParams = Type.Object({
 	action: StringEnum(["list", "add", "toggle", "clear"] as const),
@@ -65,12 +113,35 @@ const TodoWriteParams = Type.Object({
 	todos: Type.Array(CcTodoItem, { description: "The complete updated todo list to replace the current list" }),
 });
 
-// Claude Code TodoRead takes no parameters
 const TodoReadParams = Type.Object({});
 
-/**
- * UI component for the /todos command
- */
+// Claude Code Task* schemas
+const TaskCreateParams = Type.Object({
+	subject: Type.String({ description: "Task title / subject line" }),
+	description: Type.Optional(Type.String({ description: "Detailed description of the task" })),
+	activeForm: Type.Optional(Type.String({ description: "Label shown while the task is in progress" })),
+	metadata: Type.Optional(Type.Object({}, { description: "Arbitrary metadata bag (e.g. { faberKey: 'phase:step-id' })", additionalProperties: true })),
+});
+
+const TaskUpdateParams = Type.Object({
+	taskId: Type.String({ description: "Task ID returned by TaskCreate" }),
+	status: Type.Optional(StringEnum(["pending", "in_progress", "completed"] as const, { description: "New status" })),
+	subject: Type.Optional(Type.String({ description: "Updated subject/title" })),
+	description: Type.Optional(Type.String({ description: "Updated description" })),
+});
+
+const TaskListParams = Type.Object({});
+
+const TaskGetParams = Type.Object({
+	taskId: Type.String({ description: "Task ID to retrieve full details for" }),
+});
+
+const TaskStopParams = Type.Object({
+	taskId: Type.String({ description: "Task ID to stop/cancel" }),
+});
+
+// ─── UI component (shared by /todos and /tasks commands) ─────────────────────
+
 class TodoListComponent {
 	private todos: Todo[];
 	private theme: Theme;
@@ -99,29 +170,59 @@ class TodoListComponent {
 		const th = this.theme;
 
 		lines.push("");
-		const title = th.fg("accent", " Todos ");
+		const title = th.fg("accent", " Tasks ");
 		const headerLine =
 			th.fg("borderMuted", "─".repeat(3)) + title + th.fg("borderMuted", "─".repeat(Math.max(0, width - 10)));
 		lines.push(truncateToWidth(headerLine, width));
 		lines.push("");
 
 		if (this.todos.length === 0) {
-			lines.push(truncateToWidth(`  ${th.fg("dim", "No todos yet. Ask the agent to add some!")}`, width));
+			lines.push(truncateToWidth(`  ${th.fg("dim", "No tasks yet. Ask the agent to add some!")}`, width));
 		} else {
 			const done = this.todos.filter((t) => t.done).length;
+			const inProgress = this.todos.filter((t) => t.ccStatus === "in_progress").length;
 			const total = this.todos.length;
-			lines.push(truncateToWidth(`  ${th.fg("muted", `${done}/${total} completed`)}`, width));
+
+			let summary = `  ${th.fg("muted", `${done}/${total} completed`)}`;
+			if (inProgress > 0) summary += th.fg("muted", ` · ${th.fg("warning", `${inProgress} in progress`)}`);
+			lines.push(truncateToWidth(summary, width));
 			lines.push("");
 
 			for (const todo of this.todos) {
-				const check = todo.done ? th.fg("success", "✓") : th.fg("dim", "○");
+				// Three-state indicator: ▶ in_progress, ✓ completed, ○ pending
+				const check =
+					todo.ccStatus === "in_progress"
+						? th.fg("warning", "▶")
+						: todo.done
+							? th.fg("success", "✓")
+							: th.fg("dim", "○");
+
 				const id = th.fg("accent", `#${todo.id}`);
+				const ccIdLabel = todo.ccId ? th.fg("dim", ` [${todo.ccId}]`) : "";
+
 				// Show priority badge for CC-originated todos
 				const priorityBadge = todo.priority
-					? th.fg(todo.priority === "high" ? "error" : todo.priority === "medium" ? "warning" : "dim", `[${todo.priority}] `)
+					? th.fg(
+						todo.priority === "high" ? "error" : todo.priority === "medium" ? "warning" : "dim",
+						`[${todo.priority}] `,
+					)
 					: "";
-				const text = todo.done ? th.fg("dim", todo.text) : th.fg("text", todo.text);
-				lines.push(truncateToWidth(`  ${check} ${id} ${priorityBadge}${text}`, width));
+
+				const textColour =
+					todo.ccStatus === "in_progress"
+						? "text"
+						: todo.done
+							? "dim"
+							: "text";
+				const text = th.fg(textColour, todo.text);
+
+				// Show activeForm when in_progress and different from subject
+				const activeSuffix =
+					todo.ccStatus === "in_progress" && todo.activeForm && todo.activeForm !== todo.text
+						? th.fg("dim", ` — ${todo.activeForm}`)
+						: "";
+
+				lines.push(truncateToWidth(`  ${check} ${id}${ccIdLabel} ${priorityBadge}${text}${activeSuffix}`, width));
 			}
 		}
 
@@ -140,6 +241,34 @@ class TodoListComponent {
 	}
 }
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+/** Resolve a todo by its string task ID (ccId) */
+function findByTaskId(todos: Todo[], taskId: string): Todo | undefined {
+	return todos.find((t) => t.ccId === taskId);
+}
+
+/** Map a Todo to the Task* list/get wire format */
+function toTaskObject(t: Todo): {
+	id: string;
+	subject: string;
+	description: string;
+	status: string;
+	activeForm?: string;
+	metadata: Record<string, unknown>;
+} {
+	return {
+		id: t.ccId ?? String(t.id),
+		subject: t.text,
+		description: t.description ?? t.text,
+		status: t.ccStatus ?? (t.done ? "completed" : "pending"),
+		...(t.activeForm !== undefined ? { activeForm: t.activeForm } : {}),
+		metadata: t.metadata ?? {},
+	};
+}
+
+// ─── Extension ────────────────────────────────────────────────────────────────
+
 export default function (pi: ExtensionAPI) {
 	// In-memory state (reconstructed from session on load)
 	let todos: Todo[] = [];
@@ -147,7 +276,7 @@ export default function (pi: ExtensionAPI) {
 
 	/**
 	 * Reconstruct state from session entries.
-	 * Scans tool results for `todo`, `TodoWrite`, and `TodoRead` and applies them in order.
+	 * Scans tool results for all known task tools and applies snapshots in order.
 	 * The last mutating tool result wins.
 	 */
 	const reconstructState = (ctx: ExtensionContext) => {
@@ -171,15 +300,27 @@ export default function (pi: ExtensionAPI) {
 					todos = details.todos;
 					nextId = details.nextId;
 				}
+			} else if (
+				msg.toolName === "TaskCreate" ||
+				msg.toolName === "TaskUpdate" ||
+				msg.toolName === "TaskList"  ||
+				msg.toolName === "TaskGet"   ||
+				msg.toolName === "TaskStop"
+			) {
+				const details = msg.details as TaskShimDetails | undefined;
+				if (details) {
+					todos = details.todos;
+					nextId = details.nextId;
+				}
 			}
 		}
 	};
 
 	// Reconstruct state on session events
-	pi.on("session_start", async (_event, ctx) => reconstructState(ctx));
+	pi.on("session_start",  async (_event, ctx) => reconstructState(ctx));
 	pi.on("session_switch", async (_event, ctx) => reconstructState(ctx));
-	pi.on("session_fork", async (_event, ctx) => reconstructState(ctx));
-	pi.on("session_tree", async (_event, ctx) => reconstructState(ctx));
+	pi.on("session_fork",   async (_event, ctx) => reconstructState(ctx));
+	pi.on("session_tree",   async (_event, ctx) => reconstructState(ctx));
 
 	// ─── pi-native todo tool ──────────────────────────────────────────────────
 
@@ -230,12 +371,7 @@ export default function (pi: ExtensionAPI) {
 					if (!todo) {
 						return {
 							content: [{ type: "text", text: `Todo #${params.id} not found` }],
-							details: {
-								action: "toggle",
-								todos: [...todos],
-								nextId,
-								error: `#${params.id} not found`,
-							} as TodoDetails,
+							details: { action: "toggle", todos: [...todos], nextId, error: `#${params.id} not found` } as TodoDetails,
 						};
 					}
 					todo.done = !todo.done;
@@ -262,12 +398,7 @@ export default function (pi: ExtensionAPI) {
 				default:
 					return {
 						content: [{ type: "text", text: `Unknown action: ${params.action}` }],
-						details: {
-							action: "list",
-							todos: [...todos],
-							nextId,
-							error: `unknown action: ${params.action}`,
-						} as TodoDetails,
+						details: { action: "list", todos: [...todos], nextId, error: `unknown action: ${params.action}` } as TodoDetails,
 					};
 			}
 		},
@@ -411,9 +542,7 @@ export default function (pi: ExtensionAPI) {
 				content: [
 					{
 						type: "text",
-						text: ccTodos.length
-							? JSON.stringify(ccTodos, null, 2)
-							: "[]",
+						text: ccTodos.length ? JSON.stringify(ccTodos, null, 2) : "[]",
 					},
 				],
 				// Store snapshot so reconstruction knows the state at this point
@@ -447,19 +576,337 @@ export default function (pi: ExtensionAPI) {
 		},
 	});
 
-	// ─── /todos command ───────────────────────────────────────────────────────
+	// ─── Claude Code shim: TaskCreate ────────────────────────────────────────
 
-	pi.registerCommand("todos", {
-		description: "Show all todos on the current branch",
-		handler: async (_args, ctx) => {
-			if (!ctx.hasUI) {
-				ctx.ui.notify("/todos requires interactive mode", "error");
-				return;
+	pi.registerTool({
+		name: "TaskCreate",
+		label: "TaskCreate",
+		description:
+			"Creates a new task in the task list. Mirrors Claude Code's TaskCreate tool. " +
+			"Returns { taskId } which callers store for subsequent TaskUpdate calls.",
+		parameters: TaskCreateParams,
+
+		async execute(_toolCallId, params, _signal, _onUpdate, _ctx) {
+			const newTodo: Todo = {
+				id: nextId++,
+				text: params.subject,
+				done: false,
+				ccStatus: "pending",
+				description: params.description,
+				activeForm: params.activeForm,
+				metadata: params.metadata as Record<string, unknown> | undefined,
+			};
+			// Auto-generate stable string ID: "task-{n}"
+			newTodo.ccId = `task-${newTodo.id}`;
+			todos.push(newTodo);
+
+			const taskId = newTodo.ccId;
+			return {
+				content: [{ type: "text", text: JSON.stringify({ taskId }) }],
+				details: { tool: "TaskCreate", todos: [...todos], nextId, taskId } as TaskShimDetails,
+			};
+		},
+
+		renderCall(args, theme, _context) {
+			return new Text(
+				theme.fg("toolTitle", theme.bold("TaskCreate ")) +
+					theme.fg("dim", "⊕ ") +
+					theme.fg("muted", `"${args.subject}"`),
+				0,
+				0,
+			);
+		},
+
+		renderResult(result, _state, theme, _context) {
+			const details = result.details as TaskShimDetails | undefined;
+			if (!details?.taskId) {
+				const text = result.content[0];
+				return new Text(text?.type === "text" ? text.text : "", 0, 0);
+			}
+			// Find the task we just created to show its subject
+			const task = findByTaskId(details.todos, details.taskId);
+			return new Text(
+				theme.fg("success", "✓ ") +
+					theme.fg("accent", `[${details.taskId}]`) +
+					" " +
+					theme.fg("muted", task ? `"${task.text}"` : details.taskId),
+				0,
+				0,
+			);
+		},
+	});
+
+	// ─── Claude Code shim: TaskUpdate ────────────────────────────────────────
+
+	pi.registerTool({
+		name: "TaskUpdate",
+		label: "TaskUpdate",
+		description:
+			"Updates task status, subject, or description. Mirrors Claude Code's TaskUpdate tool. " +
+			"Status values: pending | in_progress | completed.",
+		parameters: TaskUpdateParams,
+
+		async execute(_toolCallId, params, _signal, _onUpdate, _ctx) {
+			const todo = findByTaskId(todos, params.taskId);
+			if (!todo) {
+				return {
+					content: [{ type: "text", text: `Task not found: ${params.taskId}` }],
+					details: { tool: "TaskUpdate", todos: [...todos], nextId } as TaskShimDetails,
+				};
 			}
 
-			await ctx.ui.custom<void>((_tui, theme, _kb, done) => {
-				return new TodoListComponent(todos, theme, () => done());
-			});
+			if (params.status !== undefined) {
+				todo.ccStatus = params.status;
+				todo.done = params.status === "completed";
+			}
+			if (params.subject !== undefined) {
+				todo.text = params.subject;
+			}
+			if (params.description !== undefined) {
+				todo.description = params.description;
+			}
+
+			const statusLabel = params.status ?? "unchanged";
+			return {
+				content: [{ type: "text", text: `Updated ${params.taskId}: status → ${statusLabel}` }],
+				details: { tool: "TaskUpdate", todos: [...todos], nextId } as TaskShimDetails,
+			};
 		},
+
+		renderCall(args, theme, _context) {
+			const statusColour =
+				args.status === "completed"   ? "success" :
+				args.status === "in_progress" ? "warning" :
+				args.status === "pending"     ? "dim"     : "muted";
+			const statusLabel =
+				args.status === "in_progress" ? "▶ in_progress" :
+				args.status === "completed"   ? "✓ completed"   :
+				args.status === "pending"     ? "○ pending"     :
+				"update";
+			return new Text(
+				theme.fg("toolTitle", theme.bold("TaskUpdate ")) +
+					theme.fg(statusColour, statusLabel) +
+					theme.fg("dim", ` → ${args.taskId}`),
+				0,
+				0,
+			);
+		},
+
+		renderResult(result, _state, theme, _context) {
+			const details = result.details as TaskShimDetails | undefined;
+			const text = result.content[0];
+			const msg = text?.type === "text" ? text.text : "";
+
+			// Show error case
+			if (msg.startsWith("Task not found")) {
+				return new Text(theme.fg("error", `✗ ${msg}`), 0, 0);
+			}
+
+			// Find the updated task for richer display
+			if (details) {
+				const taskIdMatch = msg.match(/Updated (task-\d+)/);
+				const taskId = taskIdMatch?.[1];
+				const task = taskId ? findByTaskId(details.todos, taskId) : undefined;
+				if (task) {
+					const check =
+						task.ccStatus === "in_progress" ? theme.fg("warning", "▶") :
+						task.ccStatus === "completed"   ? theme.fg("success", "✓") :
+						theme.fg("dim", "○");
+					return new Text(
+						check +
+							" " +
+							theme.fg("accent", `[${taskId}]`) +
+							" " +
+							theme.fg("muted", `"${task.text}"`),
+						0,
+						0,
+					);
+				}
+			}
+
+			return new Text(theme.fg("muted", msg), 0, 0);
+		},
+	});
+
+	// ─── Claude Code shim: TaskList ──────────────────────────────────────────
+
+	pi.registerTool({
+		name: "TaskList",
+		label: "TaskList",
+		description:
+			"Lists all tasks with their current status. Mirrors Claude Code's TaskList tool. " +
+			"Returns Array<{ id, subject, description, status, metadata }>. " +
+			"Note: items use .id (same value as the taskId from TaskCreate).",
+		parameters: TaskListParams,
+
+		async execute(_toolCallId, _params, _signal, _onUpdate, _ctx) {
+			const taskList = todos.map(toTaskObject);
+			return {
+				content: [{ type: "text", text: JSON.stringify(taskList, null, 2) }],
+				details: { tool: "TaskList", todos: [...todos], nextId } as TaskShimDetails,
+			};
+		},
+
+		renderCall(_args, theme, _context) {
+			return new Text(
+				theme.fg("toolTitle", theme.bold("TaskList")) +
+					theme.fg("dim", " ≡"),
+				0,
+				0,
+			);
+		},
+
+		renderResult(result, _state, theme, _context) {
+			const details = result.details as TaskShimDetails | undefined;
+			if (!details) {
+				const text = result.content[0];
+				return new Text(text?.type === "text" ? text.text : "", 0, 0);
+			}
+			const total      = details.todos.length;
+			const pending    = details.todos.filter((t) => t.ccStatus === "pending"     || (!t.ccStatus && !t.done)).length;
+			const inProgress = details.todos.filter((t) => t.ccStatus === "in_progress").length;
+			const completed  = details.todos.filter((t) => t.ccStatus === "completed"   || t.done).length;
+
+			if (total === 0) {
+				return new Text(theme.fg("dim", "No tasks"), 0, 0);
+			}
+			return new Text(
+				theme.fg("muted", `${total} task(s) — `) +
+					theme.fg("dim",     `${pending} pending`) +
+					theme.fg("muted",   ", ") +
+					theme.fg("warning", `${inProgress} in progress`) +
+					theme.fg("muted",   ", ") +
+					theme.fg("success", `${completed} completed`),
+				0,
+				0,
+			);
+		},
+	});
+
+	// ─── Claude Code shim: TaskGet ───────────────────────────────────────────
+
+	pi.registerTool({
+		name: "TaskGet",
+		label: "TaskGet",
+		description:
+			"Retrieves full details for a specific task by taskId. Mirrors Claude Code's TaskGet tool.",
+		parameters: TaskGetParams,
+
+		async execute(_toolCallId, params, _signal, _onUpdate, _ctx) {
+			const todo = findByTaskId(todos, params.taskId);
+			if (!todo) {
+				return {
+					content: [{ type: "text", text: JSON.stringify({ error: `Task not found: ${params.taskId}` }) }],
+					details: { tool: "TaskGet", todos: [...todos], nextId } as TaskShimDetails,
+				};
+			}
+			return {
+				content: [{ type: "text", text: JSON.stringify(toTaskObject(todo), null, 2) }],
+				details: { tool: "TaskGet", todos: [...todos], nextId } as TaskShimDetails,
+			};
+		},
+
+		renderCall(args, theme, _context) {
+			return new Text(
+				theme.fg("toolTitle", theme.bold("TaskGet ")) +
+					theme.fg("accent", args.taskId),
+				0,
+				0,
+			);
+		},
+
+		renderResult(result, _state, theme, _context) {
+			const text = result.content[0];
+			const msg = text?.type === "text" ? text.text : "";
+			try {
+				const task = JSON.parse(msg);
+				if (task.error) {
+					return new Text(theme.fg("error", `✗ ${task.error}`), 0, 0);
+				}
+				const statusIcon =
+					task.status === "in_progress" ? theme.fg("warning", "▶") :
+					task.status === "completed"   ? theme.fg("success", "✓") :
+					theme.fg("dim", "○");
+				return new Text(
+					statusIcon +
+						" " +
+						theme.fg("accent", `[${task.id}]`) +
+						" " +
+						theme.fg("muted", `"${task.subject}"`) +
+						theme.fg("dim", ` (${task.status})`),
+					0,
+					0,
+				);
+			} catch {
+				return new Text(theme.fg("muted", msg), 0, 0);
+			}
+		},
+	});
+
+	// ─── Claude Code shim: TaskStop ──────────────────────────────────────────
+
+	pi.registerTool({
+		name: "TaskStop",
+		label: "TaskStop",
+		description:
+			"Stops/cancels a running task by ID. Mirrors Claude Code's TaskStop tool. " +
+			"In pi, this marks the task as completed (no background process to kill).",
+		parameters: TaskStopParams,
+
+		async execute(_toolCallId, params, _signal, _onUpdate, _ctx) {
+			const todo = findByTaskId(todos, params.taskId);
+			if (!todo) {
+				return {
+					content: [{ type: "text", text: `Task not found: ${params.taskId}` }],
+					details: { tool: "TaskStop", todos: [...todos], nextId } as TaskShimDetails,
+				};
+			}
+			todo.done = true;
+			todo.ccStatus = "completed";
+			return {
+				content: [{ type: "text", text: `Stopped task ${params.taskId}` }],
+				details: { tool: "TaskStop", todos: [...todos], nextId } as TaskShimDetails,
+			};
+		},
+
+		renderCall(args, theme, _context) {
+			return new Text(
+				theme.fg("toolTitle", theme.bold("TaskStop ")) +
+					theme.fg("accent", args.taskId),
+				0,
+				0,
+			);
+		},
+
+		renderResult(result, _state, theme, _context) {
+			const text = result.content[0];
+			const msg = text?.type === "text" ? text.text : "";
+			if (msg.startsWith("Task not found")) {
+				return new Text(theme.fg("error", `✗ ${msg}`), 0, 0);
+			}
+			return new Text(theme.fg("muted", `■ ${msg}`), 0, 0);
+		},
+	});
+
+	// ─── /todos and /tasks commands ───────────────────────────────────────────
+
+	const showTasksUI = async (ctx: ExtensionContext) => {
+		if (!ctx.hasUI) {
+			ctx.ui.notify("This command requires interactive mode", "error");
+			return;
+		}
+		await ctx.ui.custom<void>((_tui, theme, _kb, done) => {
+			return new TodoListComponent(todos, theme, () => done());
+		});
+	};
+
+	pi.registerCommand("todos", {
+		description: "Show all todos/tasks on the current branch",
+		handler: async (_args, ctx) => showTasksUI(ctx),
+	});
+
+	pi.registerCommand("tasks", {
+		description: "Show all tasks on the current branch (alias for /todos)",
+		handler: async (_args, ctx) => showTasksUI(ctx),
 	});
 }
