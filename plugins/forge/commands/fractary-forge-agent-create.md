@@ -12,6 +12,7 @@ Use **Task** tool with `fractary-forge-agent-creator` agent to create a new agen
 Task(
   subagent_type="fractary-forge-agent-creator",
   description="Create new agent",
-  prompt="Create agent: $ARGUMENTS"
+  prompt="Create agent: $ARGUMENTS", 
+  model="openai/gpt-4o"
 )
 ```
