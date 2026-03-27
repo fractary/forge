@@ -7,7 +7,7 @@
     },
     "metadata": {
       "description": "Agent / Team Building Plugins for Claude Code",
-      "version": "2.0.8",
+      "version": "2.0.9",
       "pluginRoot": "./plugins"
     },
     "plugins": [
@@ -15,7 +15,7 @@
         "name": "fractary-forge",
         "source": "./plugins/forge",
         "description": "Meta-plugin for configuring Forge and creating Claude Code agents, skills, commands, and plugins with automated standards compliance. Includes multi-framework harness conversion.",
-        "version": "2.0.8",
+        "version": "2.0.9",
         "author": {
           "name": "The Fractary",
           "url": "https://github.com/fractary"

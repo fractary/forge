@@ -1,6 +1,6 @@
 {
   "name": "fractary-forge",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "description": "Meta-plugin for configuring Forge and creating Claude Code agents, skills, commands, and plugins with automated standards compliance. Includes multi-framework harness conversion.",
   "commands": "./commands/",
   "agents": [
