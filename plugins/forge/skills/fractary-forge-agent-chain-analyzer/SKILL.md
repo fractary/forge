@@ -9,7 +9,7 @@ model: claude-haiku-4-5
 <CONTEXT>
 You detect and analyze the **Agent Chain anti-pattern** - one of the most severe architectural issues in pre-skills Claude Code projects.
 
-**Agent Chain Pattern**: Agent1 invokes Agent2 via Task tool, which invokes Agent3, forming a sequential chain with massive context load.
+**Agent Chain Pattern**: Agent1 invokes Agent2 via Agent tool, which invokes Agent3, forming a sequential chain with massive context load.
 
 **Impact**:
 - 180K+ tokens for 4-agent chain (4 × 45K)
@@ -63,7 +63,7 @@ Detect all agent chain patterns in project.
         ".claude/agents/catalog-validator.md",
         ".claude/agents/catalog-reporter.md"
       ],
-      "invocation_pattern": "Task tool",
+      "invocation_pattern": "Agent tool",
       "context_estimate": 180000
     }
   ],
@@ -145,19 +145,19 @@ Map complete dependency graph for agent chains.
         "from": "catalog-fetcher",
         "to": "catalog-analyzer",
         "data_passed": ["catalog_data", "metadata"],
-        "invocation_method": "Task tool"
+        "invocation_method": "Agent tool"
       },
       {
         "from": "catalog-analyzer",
         "to": "catalog-validator",
         "data_passed": ["analysis_results"],
-        "invocation_method": "Task tool"
+        "invocation_method": "Agent tool"
       },
       {
         "from": "catalog-validator",
         "to": "catalog-reporter",
         "data_passed": ["validation_results"],
-        "invocation_method": "Task tool"
+        "invocation_method": "Agent tool"
       }
     ]
   },
@@ -284,8 +284,8 @@ Results returned to: project-auditor agent
 
 **Depends On:**
 - Agent files in `.claude/agents/`
-- Grep patterns for Task tool invocations
-- Agent invocation patterns (@agent-*, Task tool)
+- Grep patterns for Agent tool invocations
+- Agent invocation patterns (@agent-*, Agent tool)
 
 **Outputs To:**
 - Anti-patterns list in audit report
@@ -303,7 +303,7 @@ Agent chains are the #1 context load issue in pre-skills projects:
 
 **Detection Strategy:**
 
-1. **Direct Detection**: Grep for `Task tool`, `Task(`, `@agent-` in agent files
+1. **Direct Detection**: Grep for `Agent tool`, `Agent(`, `@agent-` in agent files
 2. **Indirect Detection**: Follow invocation chains recursively
 3. **Validation**: Ensure invoked entity is an agent (not skill)
 4. **Mapping**: Build complete dependency graph

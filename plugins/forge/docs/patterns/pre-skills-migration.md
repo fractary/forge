@@ -19,11 +19,11 @@ Legacy projects built before the Skills abstraction used **agent chains** where 
 ```
 Command: /myproject-process
   ↓
-Agent: step1-agent.md → Task tool → step2-agent.md
+Agent: step1-agent.md → Agent tool → step2-agent.md
   ↓
-Agent: step2-agent.md → Task tool → step3-agent.md
+Agent: step2-agent.md → Agent tool → step3-agent.md
   ↓
-Agent: step3-agent.md → Task tool → step4-agent.md
+Agent: step3-agent.md → Agent tool → step4-agent.md
   ↓
 Results
 ```
@@ -69,7 +69,7 @@ You perform step 1 of the workflow.
 
 <WORKFLOW>
 1. Do step 1 work
-2. Invoke step2-agent via Task tool
+2. Invoke step2-agent via Agent tool
 3. Wait for step2-agent result
 4. Return combined result
 </WORKFLOW>
@@ -77,7 +77,7 @@ You perform step 1 of the workflow.
 
 **Problems:**
 - ❌ Agent doing work directly (no script abstraction)
-- ❌ Chaining via Task tool (context explosion)
+- ❌ Chaining via Agent tool (context explosion)
 - ❌ No state management
 - ❌ No user approval workflow
 
@@ -298,7 +298,7 @@ ls .claude/agents/project/*.md
 ## State Flow
 - No persistent state
 - Each agent re-reads context
-- Data passed via Task tool results
+- Data passed via Agent tool results
 
 ## User Interaction
 - None (fully autonomous)
@@ -544,7 +544,7 @@ EOF
 ```markdown
 # Old: /myproject-process command
 
-Immediately invokes: step1-agent.md via Task tool
+Immediately invokes: step1-agent.md via Agent tool
 
 # New: /myproject-process command
 

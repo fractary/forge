@@ -52,7 +52,7 @@ allowed-tools: <filtered tools list, omit if empty>
 Start from `tools` or `allowed-tools` in source frontmatter.
 
 **Remove from list:**
-- `Task(...)` entries — become prose `/skill:x` references in body instead
+- `Agent(...)` entries — become prose `/skill:x` references in body instead
 - `Bash(fractary-core ...)` or other `Bash(cli ...)` restriction entries — keep CLI call instructions as prose
 - `Skill(...)` entries — become prose `/skill:ns-name` references in body instead
 
@@ -85,11 +85,11 @@ Name normalization rules:
 
 | Find Pattern | Replace With |
 |---|---|
-| `Use the Task tool with agent X` | `Use the /skill:X skill` |
+| `Use the Agent tool with agent X` | `Use the /skill:X skill` |
 | `@skill-ns:name` | `/skill:ns-name` |
 | `@agent-ns:name` | `/skill:ns-name` |
 | `Invoke the X agent` | `Use the /skill:X skill` |
-| `Task(X)` in prose | `/skill:X` |
+| `Agent(X)` in prose | `/skill:X` |
 
 Note: Replace `:` with `-` in skill/agent names when constructing pi references.
 
@@ -113,7 +113,7 @@ Create the `skills/{name}/` directory before writing.
 
 ## Unsupported Features
 
-- **`Task(x)` in `allowed-tools`**: Automatically removed; prose reference injected. However, if the body does not already describe when to invoke the sub-agent, a TODO comment may be needed — flag for review.
+- **`Agent(x)` in `allowed-tools`**: Automatically removed; prose reference injected. However, if the body does not already describe when to invoke the sub-agent, a TODO comment may be needed — flag for review.
 - **MCP-specific tools**: If an agent uses MCP-specific tools, they must be set up separately in the pi project.
 
 ---
@@ -124,7 +124,7 @@ Create the `skills/{name}/` directory before writing.
 - [ ] `description` field present, ≤ 1024 chars
 - [ ] No `model`, `color`, or `memory` fields
 - [ ] `tools` field renamed to `allowed-tools` if present
-- [ ] `Task(x)` and `Skill(x)` entries removed from `allowed-tools`
+- [ ] `Agent(x)` and `Skill(x)` entries removed from `allowed-tools`
 - [ ] `Bash(cli ...)` restriction entries removed from `allowed-tools`
 - [ ] Agent/skill invocation prose updated to `/skill:x` format
 - [ ] Output at `skills/{name}/SKILL.md`

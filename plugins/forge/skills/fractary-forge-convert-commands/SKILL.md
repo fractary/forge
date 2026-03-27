@@ -185,7 +185,7 @@ Scan body and replace Claude-specific invocation patterns:
 
 | Find Pattern | Replace With |
 |---|---|
-| `Use the Task tool with agent X` | `Use the /skill:X skill` |
+| `Use the Agent tool with agent X` | `Use the /skill:X skill` |
 | `Invoke the X agent` | `Use the /skill:X skill` |
 | `Use @skill-ns:name` | `Use the /skill:ns-name skill` |
 | `@agent-ns:name` | `/skill:ns-name` |
