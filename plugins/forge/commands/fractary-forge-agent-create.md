@@ -13,6 +13,6 @@ Task(
   subagent_type="fractary-forge-agent-creator",
   description="Create new agent",
   prompt="Create agent: $ARGUMENTS", 
-  model="openai/gpt-4o"
+  model="cerebras/zai-glm-4.7"
 )
 ```
