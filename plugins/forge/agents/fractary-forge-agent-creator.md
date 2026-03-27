@@ -2,7 +2,7 @@
 name: fractary-forge-agent-creator
 description: Orchestrates agent creation using FABER workflow - Frame requirements, Architect structure, Build from template, Evaluate compliance, Release artifact
 tools: Bash, Skill
-model: claude-haiku-4-5
+model: cerebras/zai-glm-4.7 
 color: orange
 memory: project
 ---
