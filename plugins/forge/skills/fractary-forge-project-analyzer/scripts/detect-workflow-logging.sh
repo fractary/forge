@@ -106,7 +106,7 @@ if [[ -d "$PROJECT_PATH/.claude/agents" ]]; then
     "Emit workflow_start at workflow initialization",
     "Emit artifact_create when outputs created",
     "Emit workflow_complete at workflow end",
-    "Reference fractary-logs:workflow-event-emitter skill"
+    "Reference fractary-logs-workflow-event-emitter skill"
   ]
 }
 DETAIL

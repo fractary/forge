@@ -116,13 +116,13 @@ Enter plugin name (or press Enter to detect from current directory):
 Compute the full command name that will be used:
 
 ```
-Full command name: {plugin_name}:{command_name}
+Full command name: {plugin_name}-{command_name}
 
 This command will be invoked as:
-  /{plugin_name}:{command_name} {argument_hint}
+  /{plugin_name}-{command_name} {argument_hint}
 
 Note: The frontmatter will have NO leading slash:
-  name: {plugin_name}:{command_name}
+  name: {plugin_name}-{command_name}
 
 This follows SPEC-00014 CLI argument standards.
 ```
@@ -137,8 +137,8 @@ Provide example command invocations? (Optional)
 List 2-3 example ways to call this command.
 
 Examples:
-  • "/fractary-faber-app:create-feature user-auth"
-  • "/fractary-faber-app:create-feature payment --type stripe"
+  • "/fractary-faber-app-create-feature user-auth"
+  • "/fractary-faber-app-create-feature payment --type stripe"
 
 Enter examples (one per line, or press Enter to skip):
 ```
@@ -158,7 +158,7 @@ Command Requirements Summary
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Command Name: {command_name}
-Full Name: {plugin_name}:{command_name}
+Full Name: {plugin_name}-{command_name}
 Description: {description}
 Argument Hint: {argument_hint or "No arguments"}
 
@@ -167,10 +167,10 @@ Plugin: {plugin_name}
 Location: plugins/{plugin_name}/commands/{command_name}.md
 
 Usage:
-  /{plugin_name}:{command_name} {argument_hint}
+  /{plugin_name}-{command_name} {argument_hint}
 
 Routes to:
-  @agent-{plugin_name}:{agent_name}
+  @agent-{plugin_name}-{agent_name}
 
 Optional:
   Examples: {examples_count or "None specified"}
@@ -195,11 +195,11 @@ After confirmation, return:
   "artifact_type": "command",
   "requirements": {
     "name": "{command_name}",
-    "full_name": "{plugin_name}:{command_name}",
+    "full_name": "{plugin_name}-{command_name}",
     "description": "{description}",
     "plugin_name": "{plugin_name}",
     "agent_name": "{agent_name}",
-    "agent_reference": "@agent-{plugin_name}:{agent_name}",
+    "agent_reference": "@agent-{plugin_name}-{agent_name}",
     "argument_hint": "{argument_hint}",
     "output_path": "plugins/{plugin_name}/commands/{command_name}.md",
     "examples": [
@@ -235,9 +235,9 @@ Return `{"status": "error", "error": "Agent name is required for command creatio
 - Examples: "create-feature", "deploy", "analyze"
 
 ### Full Command Name
-- Format: `{plugin_name}:{command_name}`
+- Format: `{plugin_name}-{command_name}`
 - NO leading slash in frontmatter
-- Examples: "fractary-faber-app:create-feature", "fractary-repo:branch"
+- Examples: "fractary-faber-app-create-feature", "fractary-repo-branch"
 
 ### Agent Name
 - Lowercase letters, numbers, hyphens only
@@ -287,7 +287,7 @@ Commands MUST follow these patterns:
 ### Frontmatter Standards
 
 - `name:` field has NO leading slash
-- Format: `plugin:command`
+- Format: `plugin-command`
 - `argument-hint:` uses space-separated syntax
 - `description:` is clear and concise
 
@@ -295,6 +295,6 @@ Commands MUST follow these patterns:
 
 - Commands invoke agents using declarative markdown
 - NOT tool calls
-- Format: `Use the @agent-{plugin}:{agent} agent with...`
+- Format: `Use the @agent-{plugin}-{agent} agent with...`
 
 This workflow ensures all necessary information is collected before command generation begins.

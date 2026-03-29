@@ -64,7 +64,7 @@ The "manager" agent type is **DEPRECATED**. Projects should NOT create project-s
 - Use FABER workflow configs (`.fractary/plugins/faber/workflows/`) instead
 
 **What to do instead:**
-1. Create domain-specific **skills** (not managers) using `/fractary-forge:create-skill`
+1. Create domain-specific **skills** (not managers) using `/fractary-forge-create-skill`
 2. Define workflows in FABER config files
 3. Reference your skills in the workflow config
 4. Use `/faber run <id> --workflow {project}-workflow` to execute
@@ -296,7 +296,7 @@ Next steps:
 2. Customize WORKFLOW section for your specific needs
 3. Add usage examples to agent file
 4. Test agent invocation:
-   Use the @agent-{plugin_name}:{agent_name} agent...
+   Use the @agent-{plugin_name}-{agent_name} agent...
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
@@ -414,7 +414,7 @@ Resolution: Template appears incomplete. Please check template file.
 ## Integration
 
 **Invoked By:**
-- create-agent command (fractary-forge:create-agent)
+- create-agent command (fractary-forge-create-agent)
 
 **Invokes:**
 - gather-requirements skill (Phase 1)

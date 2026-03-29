@@ -8,7 +8,7 @@
 # Usage: naming-validator.sh <artifact_name> <artifact_type>
 #
 # Arguments:
-#   artifact_name  - Name to validate (e.g., "data-fetcher", "fractary-faber:run")
+#   artifact_name  - Name to validate (e.g., "data-fetcher", "fractary-faber-run")
 #   artifact_type  - Type: "agent" | "skill" | "command" | "plugin"
 #
 # Exit codes:
@@ -154,49 +154,48 @@ case "$ARTIFACT_TYPE" in
         echo "Checking command naming conventions..."
         echo ""
 
-        # Commands have format: plugin:subcommand
-        if [[ ! "$ARTIFACT_NAME" =~ ^[a-z][a-z0-9-]+:[a-z][a-z0-9-]+$ ]]; then
-            echo -e "${RED}❌${NC} Must follow format: plugin:subcommand (e.g., fractary-faber:run)"
+        # Commands use kebab-case with plugin prefix: fractary-{plugin}-{subcommand}
+        if [[ ! "$ARTIFACT_NAME" =~ ^[a-z][a-z0-9-]+$ ]]; then
+            echo -e "${RED}❌${NC} Must use lowercase letters, numbers, and hyphens only (e.g., fractary-faber-run)"
             ERRORS=$((ERRORS + 1))
         else
-            echo -e "${GREEN}✅${NC} Follows plugin:subcommand format"
+            echo -e "${GREEN}✅${NC} Uses lowercase and hyphens"
         fi
 
-        # Extract plugin and subcommand
-        if [[ "$ARTIFACT_NAME" =~ ^([^:]+):([^:]+)$ ]]; then
-            plugin="${BASH_REMATCH[1]}"
-            subcommand="${BASH_REMATCH[2]}"
-
-            # Rule 1: Plugin should start with fractary-
-            if [[ ! "$plugin" =~ ^fractary- ]]; then
-                echo -e "${YELLOW}⚠${NC} Plugin should start with 'fractary-' prefix"
-                WARNINGS=$((WARNINGS + 1))
-            else
-                echo -e "${GREEN}✅${NC} Plugin has fractary- prefix"
-            fi
-
-            # Rule 2: No consecutive hyphens in either part
-            if [[ "$plugin" =~ -- ]] || [[ "$subcommand" =~ -- ]]; then
-                echo -e "${RED}❌${NC} Contains consecutive hyphens"
-                ERRORS=$((ERRORS + 1))
-            else
-                echo -e "${GREEN}✅${NC} No consecutive hyphens"
-            fi
-
-            # Rule 3: Length checks
-            plugin_len=${#plugin}
-            subcommand_len=${#subcommand}
-            if [ $plugin_len -lt 3 ] || [ $plugin_len -gt 50 ]; then
-                echo -e "${RED}❌${NC} Plugin name length must be 3-50 characters"
-                ERRORS=$((ERRORS + 1))
-            fi
-            if [ $subcommand_len -lt 2 ] || [ $subcommand_len -gt 50 ]; then
-                echo -e "${RED}❌${NC} Subcommand length must be 2-50 characters"
-                ERRORS=$((ERRORS + 1))
-            fi
+        # Rule 1: Should start with fractary-
+        if [[ ! "$ARTIFACT_NAME" =~ ^fractary- ]]; then
+            echo -e "${YELLOW}⚠${NC} Command should start with 'fractary-' prefix"
+            WARNINGS=$((WARNINGS + 1))
+        else
+            echo -e "${GREEN}✅${NC} Has fractary- prefix"
         fi
 
-        # Rule 4: No leading slash (commands in frontmatter don't have /)
+        # Rule 2: No consecutive hyphens
+        if [[ "$ARTIFACT_NAME" =~ -- ]]; then
+            echo -e "${RED}❌${NC} Contains consecutive hyphens"
+            ERRORS=$((ERRORS + 1))
+        else
+            echo -e "${GREEN}✅${NC} No consecutive hyphens"
+        fi
+
+        # Rule 3: Length check (3-80 characters)
+        length=${#ARTIFACT_NAME}
+        if [ $length -lt 3 ] || [ $length -gt 80 ]; then
+            echo -e "${RED}❌${NC} Length must be 3-80 characters (current: $length)"
+            ERRORS=$((ERRORS + 1))
+        else
+            echo -e "${GREEN}✅${NC} Length is valid ($length characters)"
+        fi
+
+        # Rule 4: Must NOT use old colon namespace format
+        if [[ "$ARTIFACT_NAME" =~ : ]]; then
+            echo -e "${RED}❌${NC} Must NOT use colon namespace format (use hyphens instead)"
+            ERRORS=$((ERRORS + 1))
+        else
+            echo -e "${GREEN}✅${NC} No colon namespace (correct hyphen format)"
+        fi
+
+        # Rule 5: No leading slash (commands in frontmatter don't have /)
         if [[ "$ARTIFACT_NAME" =~ ^/ ]]; then
             echo -e "${RED}❌${NC} Command name must NOT have leading slash in frontmatter"
             ERRORS=$((ERRORS + 1))

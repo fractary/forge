@@ -180,29 +180,29 @@ fractary_forge_info_agent         # ❌ Wrong (action first)
 
 ### Claude Plugin Commands
 
-**Pattern**: `fractary-forge-agent:{noun}-{action}` in kebab-case with prefix
+**Pattern**: `fractary-forge-agent-{noun}-{action}` in kebab-case with prefix
 
 ```
 # Agent commands
-fractary-forge-agent:agent-create        # ✅ Correct
-fractary-forge-agent:agent-validate      # ✅ Correct
+fractary-forge-agent-agent-create        # ✅ Correct
+fractary-forge-agent-agent-validate      # ✅ Correct
 
 # Plugin commands
-fractary-forge-agent:plugin-create       # ✅ Correct
-fractary-forge-agent:plugin-validate     # ✅ Correct
+fractary-forge-agent-plugin-create       # ✅ Correct
+fractary-forge-agent-plugin-validate     # ✅ Correct
 
 # Workflow commands
-fractary-forge-agent:workflow-create     # ✅ Correct
+fractary-forge-agent-workflow-create     # ✅ Correct
 
 # Wrong - old prefix or wrong pattern
-fractary-faber-agent:create-agent        # ❌ Wrong (old prefix + action first)
-fractary-forge-agent:create-agent        # ❌ Wrong (action first)
+fractary-faber-agent-create-agent        # ❌ Wrong (old prefix + action first)
+fractary-forge-agent-create-agent        # ❌ Wrong (action first)
 ```
 
 **Rules**:
-- Plugin prefix: `fractary-forge-agent:` (note: was `fractary-faber-agent:` before v1.2.0)
-- After colon: `{noun}-{action}` in kebab-case
-- Example: `fractary-forge-agent:agent-create` = plugin prefix + agent (noun) + create (action)
+- Plugin prefix: `fractary-forge-agent-` (note: was `fractary-faber-agent-` before v1.2.0)
+- After prefix: `{noun}-{action}` in kebab-case
+- Example: `fractary-forge-agent-agent-create` = plugin prefix + agent (noun) + create (action)
 
 ---
 
@@ -292,7 +292,7 @@ tool_execute()          // ✅ Consistent
 | **Python SDK** | {noun}_{action} | `agent_resolve()` | snake_case |
 | **CLI** | {noun}-{action} | `agent-info` | kebab-case |
 | **MCP** | fractary_forge_{noun}_{action} | `fractary_forge_agent_info` | snake_case + prefix |
-| **Claude Plugin** | fractary-forge-agent:{noun}-{action} | `fractary-forge-agent:agent-create` | kebab-case + prefix |
+| **Claude Plugin** | fractary-forge-agent-{noun}-{action} | `fractary-forge-agent-agent-create` | kebab-case + prefix |
 
 ---
 

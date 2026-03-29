@@ -358,7 +358,7 @@ COMMAND_FILE="$PLUGIN_DIR/commands/${COMMAND_NAME}.md"
 
 cat > "$COMMAND_FILE" << 'EOF'
 ---
-name: {plugin_name}:{command_name}
+name: {plugin_name}-{command_name}
 description: TODO: Add command description
 argument-hint: <arguments>
 ---
@@ -527,9 +527,9 @@ Next steps:
 6. Create configuration templates in config/
 
 7. Test plugin artifacts:
-   /fractary-forge:create-agent <name> --plugin {plugin_name}
-   /fractary-forge:create-skill <name> --plugin {plugin_name}
-   /fractary-forge:create-command <name> --invokes <agent> --plugin {plugin_name}
+   /fractary-forge-create-agent <name> --plugin {plugin_name}
+   /fractary-forge-create-skill <name> --plugin {plugin_name}
+   /fractary-forge-create-command <name> --invokes <agent> --plugin {plugin_name}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
@@ -641,7 +641,7 @@ Resolution:
 ## Integration
 
 **Invoked By:**
-- create-plugin command (fractary-forge:create-plugin)
+- create-plugin command (fractary-forge-create-plugin)
 
 **Invokes:**
 - gather-requirements skill (Phase 1)

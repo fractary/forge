@@ -63,7 +63,7 @@ This table shows every operation with CORRECTED {noun}-{action} naming.
 | Get Agent Info | `agentAPI.getAgentInfo()` → `agentAPI.agentInfoGet()` | NONE → `agent_api.agent_info_get()` | `agent-info` → *no change* ✓ | `fractary_forge_agent_info` → *no change* ✓ | NONE → N/A | NONE → N/A |
 | List Agents | `agentAPI.listAgents()` → `agentAPI.agentList()` | NONE → `agent_api.agent_list()` | `agent-list` → *no change* ✓ | `fractary_forge_agent_list` → *no change* ✓ | NONE → N/A | NONE → N/A |
 | Check Has Agent | `agentAPI.hasAgent()` → `agentAPI.agentHas()` | NONE → `agent_api.agent_has()` | NONE → N/A | NONE → N/A | NONE → N/A | NONE → N/A |
-| Create Agent | NONE → N/A | NONE → N/A | `agent-create` → *no change* ✓ | NONE → N/A | `fractary-faber-agent:create-agent` → `fractary-forge-agent:agent-create` | NONE → N/A |
+| Create Agent | NONE → N/A | NONE → N/A | `agent-create` → *no change* ✓ | NONE → N/A | `fractary-faber-agent-create-agent` → `fractary-forge-agent-agent-create` | NONE → N/A |
 | Validate Agent | NONE → N/A | NONE → N/A | `agent-validate` → *no change* ✓ | `fractary_forge_agent_validate` → *no change* ✓ | NONE → N/A | NONE → N/A |
 | Health Check | `agentAPI.healthCheck()` → `agentAPI.agentHealthCheck()` | NONE → `agent_api.agent_health_check()` | NONE → MISSING `agent-health-check` | NONE → N/A | NONE → N/A | NONE → N/A |
 | Refresh Cache | `agentAPI.refreshCache()` → `agentAPI.agentCacheRefresh()` | NONE → `agent_api.agent_cache_refresh()` | NONE → N/A | NONE → N/A | NONE → N/A | NONE → N/A |
@@ -94,7 +94,7 @@ This table shows every operation with CORRECTED {noun}-{action} naming.
 | Get Plugin Info | `resolver.resolvePlugin()` → `resolver.pluginResolve()` or `pluginInfoGet()` | NONE → `resolver.plugin_resolve()` | `info` → `plugin-info` (keep `info` as alias) | `fractary_forge_plugin_info` → *no change* ✓ | NONE → N/A | NONE → N/A |
 | Search Plugins | `resolver.search()` → `resolver.pluginSearch()` | NONE → `resolver.plugin_search()` | `search` → `plugin-search` (keep `search` as alias) | `fractary_forge_plugin_search` → *no change* ✓ | NONE → N/A | NONE → N/A |
 | Update Plugins | `installer.updatePlugin()` → `installer.pluginUpdate()` | NONE → `installer.plugin_update()` | `update` → `plugin-update` (keep `update` as alias) | NONE → N/A | NONE → N/A | NONE → N/A |
-| Create Plugin | NONE → N/A | NONE → N/A | NONE → N/A | NONE → N/A | `fractary-faber-agent:create-plugin` → `fractary-forge-agent:plugin-create` | NONE → N/A |
+| Create Plugin | NONE → N/A | NONE → N/A | NONE → N/A | NONE → N/A | `fractary-faber-agent-create-plugin` → `fractary-forge-agent-plugin-create` | NONE → N/A |
 
 ---
 
@@ -186,13 +186,13 @@ This table shows every operation with CORRECTED {noun}-{action} naming.
 
 | Operation | JS SDK (Current → Planned) | Python SDK (Current → Planned) | CLI (Current → Planned) | MCP (Current → Planned) | Plugin Command (Current → Planned) | Plugin Skill (Current → Planned) |
 |-----------|---------------------------|-------------------------------|------------------------|------------------------|-----------------------------------|--------------------------------|
-| Audit Project | NONE → N/A | NONE → N/A | NONE → N/A | NONE → N/A | `fractary-faber-agent:audit-project` → `fractary-forge-agent:project-audit` | NONE → N/A |
-| Create Agent | NONE → N/A | NONE → N/A | NONE → N/A | NONE → N/A | `fractary-faber-agent:create-agent` → `fractary-forge-agent:agent-create` | NONE → N/A |
-| Create Command | NONE → N/A | NONE → N/A | NONE → N/A | NONE → N/A | `fractary-faber-agent:create-command` → `fractary-forge-agent:command-create` | NONE → N/A |
-| Create Plugin | NONE → N/A | NONE → N/A | NONE → N/A | NONE → N/A | `fractary-faber-agent:create-plugin` → `fractary-forge-agent:plugin-create` | NONE → N/A |
-| Create Skill | NONE → N/A | NONE → N/A | NONE → N/A | NONE → N/A | `fractary-faber-agent:create-skill` → `fractary-forge-agent:skill-create` | NONE → N/A |
-| Create Workflow | NONE → N/A | NONE → N/A | NONE → N/A | NONE → N/A | `create-workflow` → `fractary-forge-agent:workflow-create` | NONE → N/A |
-| Generate Conversion Spec | NONE → N/A | NONE → N/A | NONE → N/A | NONE → N/A | `generate-conversion-spec` → `fractary-forge-agent:conversion-spec-generate` | NONE → N/A |
+| Audit Project | NONE → N/A | NONE → N/A | NONE → N/A | NONE → N/A | `fractary-faber-agent-audit-project` → `fractary-forge-agent-project-audit` | NONE → N/A |
+| Create Agent | NONE → N/A | NONE → N/A | NONE → N/A | NONE → N/A | `fractary-faber-agent-create-agent` → `fractary-forge-agent-agent-create` | NONE → N/A |
+| Create Command | NONE → N/A | NONE → N/A | NONE → N/A | NONE → N/A | `fractary-faber-agent-create-command` → `fractary-forge-agent-command-create` | NONE → N/A |
+| Create Plugin | NONE → N/A | NONE → N/A | NONE → N/A | NONE → N/A | `fractary-faber-agent-create-plugin` → `fractary-forge-agent-plugin-create` | NONE → N/A |
+| Create Skill | NONE → N/A | NONE → N/A | NONE → N/A | NONE → N/A | `fractary-faber-agent-create-skill` → `fractary-forge-agent-skill-create` | NONE → N/A |
+| Create Workflow | NONE → N/A | NONE → N/A | NONE → N/A | NONE → N/A | `create-workflow` → `fractary-forge-agent-workflow-create` | NONE → N/A |
+| Generate Conversion Spec | NONE → N/A | NONE → N/A | NONE → N/A | NONE → N/A | `generate-conversion-spec` → `fractary-forge-agent-conversion-spec-generate` | NONE → N/A |
 
 ---
 
@@ -200,20 +200,20 @@ This table shows every operation with CORRECTED {noun}-{action} naming.
 
 | Operation | JS SDK | Python SDK | CLI | MCP | Plugin Command | Plugin Skill (Current → Planned) |
 |-----------|--------|------------|-----|-----|----------------|--------------------------------|
-| Analyze Agent Chain | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent:agent-chain-analyzer` → `@skill-fractary-forge-agent:agent-chain-analyzer` ✓ |
-| Validate Architecture | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent:architecture-validator` → `@skill-fractary-forge-agent:architecture-validator` ✓ |
-| Optimize Context | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent:context-optimizer` → `@skill-fractary-forge-agent:context-optimizer` ✓ |
-| Generate Conversion Spec | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent:conversion-spec-generator` → `@skill-fractary-forge-agent:spec-conversion-generate` |
-| Analyze Gaps | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent:gap-analyzer` → `@skill-fractary-forge-agent:gap-analyzer` ✓ |
-| Gather Requirements | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent:gather-requirements` → `@skill-fractary-forge-agent:requirements-gather` |
-| Generate from Template | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent:generate-from-template` → `@skill-fractary-forge-agent:template-generate` |
-| Detect Hybrid Agent | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent:hybrid-agent-detector` → `@skill-fractary-forge-agent:agent-hybrid-detect` |
-| Analyze Project | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent:project-analyzer` → `@skill-fractary-forge-agent:project-analyzer` ✓ |
-| Extract Script | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent:script-extractor` → `@skill-fractary-forge-agent:script-extractor` ✓ |
-| Generate Spec | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent:spec-generator` → `@skill-fractary-forge-agent:spec-generator` ✓ |
-| Validate Artifact | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent:validate-artifact` → `@skill-fractary-forge-agent:artifact-validate` |
-| Design Workflow | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent:workflow-designer` → `@skill-fractary-forge-agent:workflow-designer` ✓ |
-| Validate Workflow | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent:workflow-validator` → `@skill-fractary-forge-agent:workflow-validator` ✓ |
+| Analyze Agent Chain | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent-agent-chain-analyzer` → `@skill-fractary-forge-agent-agent-chain-analyzer` ✓ |
+| Validate Architecture | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent-architecture-validator` → `@skill-fractary-forge-agent-architecture-validator` ✓ |
+| Optimize Context | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent-context-optimizer` → `@skill-fractary-forge-agent-context-optimizer` ✓ |
+| Generate Conversion Spec | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent-conversion-spec-generator` → `@skill-fractary-forge-agent-spec-conversion-generate` |
+| Analyze Gaps | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent-gap-analyzer` → `@skill-fractary-forge-agent-gap-analyzer` ✓ |
+| Gather Requirements | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent-gather-requirements` → `@skill-fractary-forge-agent-requirements-gather` |
+| Generate from Template | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent-generate-from-template` → `@skill-fractary-forge-agent-template-generate` |
+| Detect Hybrid Agent | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent-hybrid-agent-detector` → `@skill-fractary-forge-agent-agent-hybrid-detect` |
+| Analyze Project | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent-project-analyzer` → `@skill-fractary-forge-agent-project-analyzer` ✓ |
+| Extract Script | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent-script-extractor` → `@skill-fractary-forge-agent-script-extractor` ✓ |
+| Generate Spec | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent-spec-generator` → `@skill-fractary-forge-agent-spec-generator` ✓ |
+| Validate Artifact | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent-validate-artifact` → `@skill-fractary-forge-agent-artifact-validate` |
+| Design Workflow | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent-workflow-designer` → `@skill-fractary-forge-agent-workflow-designer` ✓ |
+| Validate Workflow | N/A | N/A | N/A | N/A | N/A | `@skill-fractary-faber-agent-workflow-validator` → `@skill-fractary-forge-agent-workflow-validator` ✓ |
 
 ---
 
@@ -221,13 +221,13 @@ This table shows every operation with CORRECTED {noun}-{action} naming.
 
 | Operation | JS SDK | Python SDK | CLI | MCP | Plugin Command | Plugin Agent (Current → Planned) |
 |-----------|--------|------------|-----|-----|----------------|--------------------------------|
-| Agent Creator | N/A | N/A | N/A | N/A | N/A | `@agent-fractary-faber-agent:agent-creator` → `@agent-fractary-forge-agent:agent-creator` ✓ |
-| Command Creator | N/A | N/A | N/A | N/A | N/A | `@agent-fractary-faber-agent:command-creator` → `@agent-fractary-forge-agent:command-creator` ✓ |
-| Conversion Spec Generator | N/A | N/A | N/A | N/A | N/A | `@agent-fractary-faber-agent:conversion-spec-generator` → `@agent-fractary-forge-agent:spec-conversion-generator` |
-| Plugin Creator | N/A | N/A | N/A | N/A | N/A | `@agent-fractary-faber-agent:plugin-creator` → `@agent-fractary-forge-agent:plugin-creator` ✓ |
-| Project Auditor | N/A | N/A | N/A | N/A | N/A | `@agent-fractary-faber-agent:project-auditor` → `@agent-fractary-forge-agent:project-auditor` ✓ |
-| Skill Creator | N/A | N/A | N/A | N/A | N/A | `@agent-fractary-faber-agent:skill-creator` → `@agent-fractary-forge-agent:skill-creator` ✓ |
-| Workflow Creator | N/A | N/A | N/A | N/A | N/A | `@agent-fractary-faber-agent:workflow-creator` → `@agent-fractary-forge-agent:workflow-creator` ✓ |
+| Agent Creator | N/A | N/A | N/A | N/A | N/A | `@agent-fractary-faber-agent-agent-creator` → `@agent-fractary-forge-agent-agent-creator` ✓ |
+| Command Creator | N/A | N/A | N/A | N/A | N/A | `@agent-fractary-faber-agent-command-creator` → `@agent-fractary-forge-agent-command-creator` ✓ |
+| Conversion Spec Generator | N/A | N/A | N/A | N/A | N/A | `@agent-fractary-faber-agent-conversion-spec-generator` → `@agent-fractary-forge-agent-spec-conversion-generator` |
+| Plugin Creator | N/A | N/A | N/A | N/A | N/A | `@agent-fractary-faber-agent-plugin-creator` → `@agent-fractary-forge-agent-plugin-creator` ✓ |
+| Project Auditor | N/A | N/A | N/A | N/A | N/A | `@agent-fractary-faber-agent-project-auditor` → `@agent-fractary-forge-agent-project-auditor` ✓ |
+| Skill Creator | N/A | N/A | N/A | N/A | N/A | `@agent-fractary-faber-agent-skill-creator` → `@agent-fractary-forge-agent-skill-creator` ✓ |
+| Workflow Creator | N/A | N/A | N/A | N/A | N/A | `@agent-fractary-faber-agent-workflow-creator` → `@agent-fractary-forge-agent-workflow-creator` ✓ |
 
 ---
 
@@ -239,9 +239,9 @@ This table shows every operation with CORRECTED {noun}-{action} naming.
 | **Python SDK Methods** | {noun}_{action} | snake_case | No prefix | `agent_resolve()`, `tool_execute()`, `cache_refresh()` |
 | **CLI Commands** | {noun}-{action} | kebab-case | Binary: `fractary-forge` | `agent-create`, `tool-list`, `cache-clear` |
 | **MCP Tools** | fractary_forge_{noun}_{action} | snake_case | `fractary_forge_` | `fractary_forge_agent_list`, `fractary_forge_tool_info` |
-| **Plugin Commands** | fractary-forge-agent:{noun}-{action} | kebab-case | `fractary-forge-agent:` | `fractary-forge-agent:agent-create` |
-| **Plugin Skills** | @skill-fractary-forge-agent:{noun}-{action} | kebab-case | `@skill-fractary-forge-agent:` | `@skill-fractary-forge-agent:project-analyzer` |
-| **Plugin Agents** | @agent-fractary-forge-agent:{noun}-{action} | kebab-case | `@agent-fractary-forge-agent:` | `@agent-fractary-forge-agent:agent-creator` |
+| **Plugin Commands** | fractary-forge-agent-{noun}-{action} | kebab-case | `fractary-forge-agent-` | `fractary-forge-agent-agent-create` |
+| **Plugin Skills** | @skill-fractary-forge-agent-{noun}-{action} | kebab-case | `@skill-fractary-forge-agent-` | `@skill-fractary-forge-agent-project-analyzer` |
+| **Plugin Agents** | @agent-fractary-forge-agent-{noun}-{action} | kebab-case | `@agent-fractary-forge-agent-` | `@agent-fractary-forge-agent-agent-creator` |
 
 ---
 

@@ -88,10 +88,10 @@ Scan body and replace Claude-specific invocation patterns:
 
 | Find Pattern | Replace With |
 |---|---|
-| `Use the Agent tool with agent X` | `Use the /skill:X skill` |
-| `Invoke the X agent` | `Use the /skill:X skill` |
-| `Use @skill-ns:name` | `Use the /skill:ns-name skill` |
-| `@agent-ns:name` | `/skill:ns-name` |
+| `Use the Agent tool with agent X` | `Use the /skill-X skill` |
+| `Invoke the X agent` | `Use the /skill-X skill` |
+| `Use @skill-ns-name` | `Use the /skill-ns-name skill` |
+| `@agent-ns-name` | `/skill-ns-name` |
 
 Use fuzzy matching — if the pattern is clearly a reference to another agent/skill, convert it.
 

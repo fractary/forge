@@ -131,7 +131,7 @@ Run through these questions:
 Use the workflow-validator:
 
 ```bash
-/fractary-forge:audit
+/fractary-forge-audit
 
 # Output will show:
 # ❌ Manager-as-Skill Inversion Detected:
@@ -440,7 +440,7 @@ purpose: Expand patterns and route to manager
 
 Calculate batch parameters.
 
-Route to @agent-my-plugin:workflow-orchestrator  ✓ Routing to agent
+Route to @agent-my-plugin-workflow-orchestrator  ✓ Routing to agent
 
 Returns batch parameters:
 ```json
@@ -578,7 +578,7 @@ You are a Manager Agent orchestrating deployment workflows.
 <WORKFLOW>
 
 ## Phase 1: PREPARE
-Use @skill-my-plugin:preparer
+Use @skill-my-plugin-preparer
 
 Store state:
 ```json
@@ -591,7 +591,7 @@ Store state:
 ```
 
 ## Phase 2: VALIDATE
-Use @skill-my-plugin:validator with preparation results
+Use @skill-my-plugin-validator with preparation results
 
 Store state:
 ```json
@@ -630,12 +630,12 @@ Store decision in state.
 If cancelled → ABORT
 
 ## Phase 5: DEPLOY
-Use @skill-my-plugin:deployer
+Use @skill-my-plugin-deployer
 
 Store deployment state.
 
 ## Phase 6: VERIFY
-Use @skill-my-plugin:verifier
+Use @skill-my-plugin-verifier
 
 ## Phase 7: REPORT
 Generate final report using state from all phases.
@@ -655,7 +655,7 @@ Generate final report using state from all phases.
 
 ### Pre-Migration
 
-- [ ] Run `/fractary-forge:audit` to detect inversions
+- [ ] Run `/fractary-forge-audit` to detect inversions
 - [ ] Identify all Manager-as-Skill instances
 - [ ] Document current workflow and dependencies
 - [ ] Identify user interaction points
@@ -748,7 +748,7 @@ Route to @skill-my-manager  ❌ Still treating as skill
 
 **Correct:**
 ```markdown
-Route to @agent-my-plugin:my-manager  ✓ Routing to agent
+Route to @agent-my-plugin-my-manager  ✓ Routing to agent
 ```
 
 ---
@@ -796,7 +796,7 @@ grep -r "^tools:" plugins/*/agents/*.md | grep -v "Bash, Skill, Read, Write, Glo
 
 After fixing Manager-as-Skill inversions:
 
-1. Run `/fractary-forge:audit` to verify no inversions remain
+1. Run `/fractary-forge-audit` to verify no inversions remain
 2. Test all converted managers end-to-end
 3. Update documentation with new agent locations
 4. Review [Agent Chain Migration](agent-chain-to-skills.md) for related patterns

@@ -133,8 +133,8 @@ Output phase complete:
 
 2. **Compute full command name:**
    ```
-   FULL_COMMAND_NAME="{plugin_name}:{command_name}"
-   # Example: "fractary-faber-app:create-feature"
+   FULL_COMMAND_NAME="{plugin_name}-{command_name}"
+   # Example: "fractary-faber-app-create-feature"
    # NOTE: NO leading slash in frontmatter
    ```
 
@@ -152,12 +152,12 @@ Output phase complete:
    Build JSON with all template variable values:
    ```json
    {
-     "COMMAND_NAME": "{plugin_name}:{command_name}",
+     "COMMAND_NAME": "{plugin_name}-{command_name}",
      "COMMAND_DISPLAY_NAME": "{display_name}",
      "COMMAND_DESCRIPTION": "{description}",
      "ARGUMENT_HINT": "{argument_hint}",
      "AGENT_NAME": "{agent_name}",
-     "AGENT_REFERENCE": "@agent-{plugin_name}:{agent_name}",
+     "AGENT_REFERENCE": "@agent-{plugin_name}-{agent_name}",
      "PARSING_LOGIC": "...",
      "REQUEST_STRUCTURE": "...",
      "REQUEST_EXAMPLE": "...",
@@ -219,7 +219,7 @@ Output phase complete:
    ```
 
    **Critical Checks:**
-   - Command name follows pattern: `plugin:command` (NO leading slash)
+   - Command name follows pattern: `plugin-command` (NO leading slash)
    - Description present
    - Argument-hint present and follows space-separated syntax
    - YAML valid
@@ -238,7 +238,7 @@ Output phase complete:
 
 **Success Criteria:**
 - Frontmatter name has NO leading slash
-- Command name follows `plugin:command` pattern
+- Command name follows `plugin-command` pattern
 - Argument syntax is space-separated (not equals)
 - All required XML sections present
 - Agent invocation is declarative (markdown, not tool calls)
@@ -292,7 +292,7 @@ Usage:
 /{full_command_name} {argument_hint}
 
 This command routes to:
-@agent-{plugin_name}:{agent_name}
+@agent-{plugin_name}-{agent_name}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
@@ -304,7 +304,7 @@ Command creation is complete when:
 1. ✅ All 5 FABER phases executed successfully
 2. ✅ Command file generated from template
 3. ✅ Frontmatter name has NO leading slash
-4. ✅ Command name follows `plugin:command` pattern
+4. ✅ Command name follows `plugin-command` pattern
 5. ✅ Argument syntax is space-separated (SPEC-00014)
 6. ✅ Agent invocation is declarative (markdown)
 7. ✅ Frontmatter validation passed
@@ -321,7 +321,7 @@ Return to command:
 {
   "status": "success",
   "command_name": "{command_name}",
-  "full_command_name": "{plugin_name}:{command_name}",
+  "full_command_name": "{plugin_name}-{command_name}",
   "agent_name": "{agent_name}",
   "plugin_name": "{plugin_name}",
   "output_path": "plugins/{plugin_name}/commands/{command_name}.md",
@@ -385,8 +385,8 @@ Return to command:
 ❌ Evaluate phase failed
 
 Frontmatter Validation:
-  ❌ Command name has leading slash: /fractary-faber-app:create-feature
-     Should be: fractary-faber-app:create-feature
+  ❌ Command name has leading slash: /fractary-faber-app-create-feature
+     Should be: fractary-faber-app-create-feature
   ✅ Description present
   ✅ Argument-hint present
 
@@ -396,7 +396,7 @@ XML Markup Validation:
 
 Resolution:
 1. Remove leading slash from command name in template
-2. Command name should be: plugin:command (no leading slash)
+2. Command name should be: plugin-command (no leading slash)
 3. Re-generate command
 ```
 
@@ -412,7 +412,7 @@ Resolution:
 ## Integration
 
 **Invoked By:**
-- create-command command (fractary-forge:create-command)
+- create-command command (fractary-forge-create-command)
 
 **Invokes:**
 - gather-requirements skill (Phase 1)
@@ -427,7 +427,7 @@ Resolution:
 ## Best Practices
 
 1. **Commands are routers only** - Never put work logic in commands
-2. **No leading slash in frontmatter** - name: plugin:command (not /plugin:command)
+2. **No leading slash in frontmatter** - name: plugin-command (not /plugin-command)
 3. **Space-separated arguments** - Follow SPEC-00014 standards
 4. **Declarative agent invocation** - Use markdown, not tool calls
 5. **Validate before saving** - Never save non-compliant artifacts

@@ -12,7 +12,7 @@ This guide shows how to create new workflows using the FABER Agent workflow crea
 
 1. **Run the command:**
    ```bash
-   /fractary-forge:create-workflow my-workflow --pattern multi-phase --interactive
+   /fractary-forge-create-workflow my-workflow --pattern multi-phase --interactive
    ```
 
 2. **Answer questions:**
@@ -50,7 +50,7 @@ Phase 7: REPORT            - Provide summary
 
 **Example command:**
 ```bash
-/fractary-forge:create-workflow data-processor \
+/fractary-forge-create-workflow data-processor \
   --pattern multi-phase \
   --description "Process and validate data files" \
   --domain data
@@ -97,7 +97,7 @@ Iteration Loop (max N iterations):
 
 **Example command:**
 ```bash
-/fractary-forge:create-workflow code-builder \
+/fractary-forge-create-workflow code-builder \
   --pattern builder-debugger \
   --description "Build code with automatic error fixing" \
   --domain code \
@@ -141,7 +141,7 @@ Iteration Loop (max N iterations):
 
 **Example command:**
 ```bash
-/fractary-forge:create-workflow custom-flow \
+/fractary-forge-create-workflow custom-flow \
   --pattern simple \
   --description "Custom workflow" \
   --phases "fetch,transform,load,verify"
@@ -160,7 +160,7 @@ Iteration Loop (max N iterations):
 ### Basic Usage
 
 ```bash
-/fractary-forge:create-workflow <workflow-name> [options]
+/fractary-forge-create-workflow <workflow-name> [options]
 ```
 
 ### Required Arguments
@@ -212,7 +212,7 @@ Enable batch operations with Director skill:
 
 **Example:**
 ```bash
-/fractary-forge:create-workflow file-processor --batch
+/fractary-forge-create-workflow file-processor --batch
 ```
 
 **Generates:**
@@ -226,7 +226,7 @@ Interactive mode with guided questions:
 
 **Example:**
 ```bash
-/fractary-forge:create-workflow my-workflow --interactive
+/fractary-forge-create-workflow my-workflow --interactive
 ```
 
 **Questions asked:**
@@ -242,7 +242,7 @@ Max iterations for builder-debugger pattern:
 
 **Example:**
 ```bash
-/fractary-forge:create-workflow code-fixer \
+/fractary-forge-create-workflow code-fixer \
   --pattern builder-debugger \
   --max-iterations 10
 ```
@@ -259,7 +259,7 @@ Max iterations for builder-debugger pattern:
 
 **Command:**
 ```bash
-/fractary-forge:create-workflow csv-processor \
+/fractary-forge-create-workflow csv-processor \
   --pattern multi-phase \
   --description "Process and validate CSV files" \
   --domain data \
@@ -317,7 +317,7 @@ commands/csv-processor.md              # Command router
 
 **Command:**
 ```bash
-/fractary-forge:create-workflow ts-builder \
+/fractary-forge-create-workflow ts-builder \
   --pattern builder-debugger \
   --description "Build TypeScript with automatic error fixes" \
   --domain code \
@@ -381,7 +381,7 @@ Iteration 1:
 
 **Command:**
 ```bash
-/fractary-forge:create-workflow api-migrator \
+/fractary-forge-create-workflow api-migrator \
   --pattern multi-phase \
   --description "Migrate data from API v1 to v2" \
   --domain api \
@@ -429,7 +429,7 @@ Generated files are templates - customize for your needs:
 
 ## Phase 1: GATHER
 
-Use @skill-my-plugin:data-fetcher:
+Use @skill-my-plugin-data-fetcher:
 
 ```json
 {
@@ -526,7 +526,7 @@ Parse arguments:
 - `--batch`: Enable batch processing
 - `--parallel <n>`: Parallelism level
 
-Route to @agent-my-plugin:my-workflow-manager with:
+Route to @agent-my-plugin-my-workflow-manager with:
 ```json
 {
   "source": "{{SOURCE}}",
@@ -546,7 +546,7 @@ Route to @agent-my-plugin:my-workflow-manager with:
 After generation, validate the workflow:
 
 ```bash
-/fractary-forge:validate my-workflow
+/fractary-forge-validate my-workflow
 ```
 
 **Checks:**

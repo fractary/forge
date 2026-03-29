@@ -273,7 +273,7 @@ Create at least these workflows:
         {
           "name": "{step-name}",
           "description": "{Step description}",
-          "prompt": "/faber-{asset}:{command} --context '{CONTEXT}'"
+          "prompt": "/faber-{asset}-{command} --context '{CONTEXT}'"
         }
       ]
     }

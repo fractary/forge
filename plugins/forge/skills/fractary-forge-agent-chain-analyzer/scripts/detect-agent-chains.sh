@@ -40,17 +40,14 @@ for agent_name in "${ALL_AGENTS[@]}"; do
   agent_file="${AGENT_FILES[$agent_name]}"
   invoked_agents=()
 
-  # Pattern 1: @agent-{plugin}:{agent-name}
-  while IFS= read -r line; do
-    # Extract agent name from @agent- pattern
-    if [[ "$line" =~ @agent-[a-zA-Z0-9_-]+:([a-zA-Z0-9_-]+) ]]; then
-      invoked_agent="${BASH_REMATCH[1]}"
-      # Verify it's an actual agent in the project
-      if [[ " ${ALL_AGENTS[*]} " =~ " ${invoked_agent} " ]]; then
-        invoked_agents+=("$invoked_agent")
-      fi
+  # Pattern 1: @agent-{full-agent-name}
+  # Extract the full name after @agent- and match against known agent basenames
+  while IFS= read -r ref_name; do
+    # Check if the extracted name matches a known agent exactly
+    if [[ " ${ALL_AGENTS[*]} " =~ " ${ref_name} " ]]; then
+      invoked_agents+=("$ref_name")
     fi
-  done < <(grep -i "@agent-" "$agent_file" 2>/dev/null || true)
+  done < <(grep -oP '@agent-\K[a-zA-Z0-9_-]+' "$agent_file" 2>/dev/null || true)
 
   # Pattern 2: Task tool invocation with agent reference
   while IFS= read -r line; do

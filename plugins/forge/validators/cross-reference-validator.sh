@@ -65,25 +65,30 @@ echo ""
 check_agent_exists() {
     local agent_ref="$1"
 
-    # Extract plugin and agent name from @agent-plugin:name format
-    if [[ "$agent_ref" =~ @agent-([^:]+):([^[:space:]]+) ]]; then
-        local plugin="${BASH_REMATCH[1]}"
-        local agent="${BASH_REMATCH[2]}"
+    # Extract full agent name from @agent-{full-name} format
+    if [[ "$agent_ref" =~ @agent-([a-z0-9][a-z0-9-]+) ]]; then
+        local full_name="${BASH_REMATCH[1]}"
 
-        # Check if agent file exists
-        local agent_file="plugins/${plugin}/agents/${agent}.md"
+        # Search all plugin directories for matching agent file
+        local found=false
+        for agent_file in plugins/*/agents/"${full_name}.md"; do
+            if [ -f "$agent_file" ]; then
+                echo -e "  ${GREEN}✅${NC} Agent: $agent_ref → $agent_file"
+                found=true
+                break
+            fi
+        done
 
-        if [ -f "$agent_file" ]; then
-            echo -e "  ${GREEN}✅${NC} Agent: $agent_ref"
+        if [ "$found" = true ]; then
             return 0
         else
             echo -e "  ${RED}❌${NC} Agent not found: $agent_ref"
-            echo "      Expected: $agent_file"
+            echo "      Searched: plugins/*/agents/${full_name}.md"
             return 1
         fi
     else
         echo -e "  ${YELLOW}⚠${NC} Invalid agent reference format: $agent_ref"
-        echo "      Expected: @agent-plugin:name"
+        echo "      Expected: @agent-{name}"
         return 2
     fi
 }
@@ -92,33 +97,47 @@ check_agent_exists() {
 check_skill_exists() {
     local skill_ref="$1"
 
-    # Extract plugin and skill name from @skill-plugin:name format
-    if [[ "$skill_ref" =~ @skill-([^:]+):([^[:space:]]+) ]]; then
-        local plugin="${BASH_REMATCH[1]}"
-        local skill="${BASH_REMATCH[2]}"
+    # Extract full skill name from @skill-{full-name} format
+    if [[ "$skill_ref" =~ @skill-([a-z0-9][a-z0-9-]+) ]]; then
+        local full_name="${BASH_REMATCH[1]}"
 
-        # Check if skill file exists (either SKILL.md or skill-name.md)
-        local skill_file1="plugins/${plugin}/skills/${skill}/SKILL.md"
-        local skill_file2="plugins/${plugin}/skills/${skill}.md"
+        # Search all plugin directories for matching skill (directory or file)
+        local found=false
+        for skill_dir in plugins/*/skills/"${full_name}"/SKILL.md; do
+            if [ -f "$skill_dir" ]; then
+                echo -e "  ${GREEN}✅${NC} Skill: $skill_ref → $skill_dir"
+                found=true
+                break
+            fi
+        done
 
-        if [ -f "$skill_file1" ] || [ -f "$skill_file2" ]; then
-            echo -e "  ${GREEN}✅${NC} Skill: $skill_ref"
+        if [ "$found" = false ]; then
+            for skill_file in plugins/*/skills/"${full_name}.md"; do
+                if [ -f "$skill_file" ]; then
+                    echo -e "  ${GREEN}✅${NC} Skill: $skill_ref → $skill_file"
+                    found=true
+                    break
+                fi
+            done
+        fi
+
+        if [ "$found" = true ]; then
             return 0
         else
             echo -e "  ${RED}❌${NC} Skill not found: $skill_ref"
-            echo "      Expected: $skill_file1 or $skill_file2"
+            echo "      Searched: plugins/*/skills/${full_name}/SKILL.md and plugins/*/skills/${full_name}.md"
             return 1
         fi
     else
         echo -e "  ${YELLOW}⚠${NC} Invalid skill reference format: $skill_ref"
-        echo "      Expected: @skill-plugin:name"
+        echo "      Expected: @skill-{name}"
         return 2
     fi
 }
 
 # Extract agent references
 echo "Checking agent references..."
-AGENT_REFS=$(grep -oP '@agent-[a-z0-9-]+:[a-z0-9-]+' "$FILE_PATH" 2>/dev/null || true)
+AGENT_REFS=$(grep -oP '@agent-[a-z0-9]+-[a-z0-9-]+' "$FILE_PATH" 2>/dev/null || true)
 
 if [ -z "$AGENT_REFS" ]; then
     echo "  No agent references found"
@@ -139,7 +158,7 @@ echo ""
 
 # Extract skill references
 echo "Checking skill references..."
-SKILL_REFS=$(grep -oP '@skill-[a-z0-9-]+:[a-z0-9-]+' "$FILE_PATH" 2>/dev/null || true)
+SKILL_REFS=$(grep -oP '@skill-[a-z0-9]+-[a-z0-9-]+' "$FILE_PATH" 2>/dev/null || true)
 
 if [ -z "$SKILL_REFS" ]; then
     echo "  No skill references found"

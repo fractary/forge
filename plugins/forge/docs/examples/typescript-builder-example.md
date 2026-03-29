@@ -11,7 +11,7 @@ This example demonstrates creating an iterative TypeScript build workflow using 
 ### Step 1: Run Creation Command
 
 ```bash
-/fractary-forge:create-workflow ts-builder \
+/fractary-forge-create-workflow ts-builder \
   --pattern builder-debugger \
   --description "Build TypeScript with automatic error fixing" \
   --domain code \
@@ -128,7 +128,7 @@ For iteration N (N = 1 to {{MAX_ITERATIONS}}):
 
 ### Phase 1: INSPECT (Observer Role)
 
-Use @skill-fractary-forge:ts-inspector to observe state:
+Use @skill-fractary-forge-ts-inspector to observe state:
 
 ```json
 {
@@ -179,7 +179,7 @@ Inspector returns factual observations:
 
 ### Phase 2: ANALYZE (Analyzer Role)
 
-Use @skill-fractary-forge:ts-debugger to analyze:
+Use @skill-fractary-forge-ts-debugger to analyze:
 
 ```json
 {
@@ -333,7 +333,7 @@ If user aborts → Proceed to Phase 7 (REPORT) with failure
 
 ### Phase 5: BUILD (Execute Fixes)
 
-Use @skill-fractary-forge:ts-builder to apply fixes:
+Use @skill-fractary-forge-ts-builder to apply fixes:
 
 ```json
 {
@@ -402,7 +402,7 @@ Update issue log:
 
 ### Phase 6: VERIFY (Re-inspect)
 
-Use @skill-fractary-forge:ts-inspector again:
+Use @skill-fractary-forge-ts-inspector again:
 
 ```json
 {
