@@ -6,7 +6,7 @@
     "name": "The Fractary",
     "url": "https://github.com/fractary"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "requires": {{REQUIRES}},
   "commands": {{COMMAND_PLACEHOLDERS}},
   "agents": {{AGENT_PLACEHOLDERS}},

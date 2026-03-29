@@ -181,4 +181,4 @@ Current version: **1.0.0**
 
 - **Node.js**: >=18.0.0
 - **Module System**: CommonJS (ESM support coming in v1.1.0)
-- **License**: MIT
+- **License**: Apache-2.0

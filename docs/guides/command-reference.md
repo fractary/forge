@@ -425,7 +425,7 @@ fractary-forge info @fractary/faber-plugin --json
 
 Description: FABER workflow plugin for agent development
 Author: Fractary Team
-License: MIT
+License: Apache-2.0
 
 Components:
   Agents: 5

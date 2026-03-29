@@ -20,7 +20,7 @@
     "url": "git+https://github.com/fractary/forge.git",
     "directory": "cli"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "author": "Fractary",
   "bin": {
     "fractary-forge": "bin/fractary-forge.js"

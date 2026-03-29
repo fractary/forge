@@ -51,7 +51,7 @@
     "url": "git+https://github.com/fractary/forge.git",
     "directory": "mcp/server"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "author": "Fractary",
   "dependencies": {
     "@fractary/forge": "file:../../sdk/js",
