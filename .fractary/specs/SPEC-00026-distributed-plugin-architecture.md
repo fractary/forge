@@ -391,18 +391,18 @@ class ClaudeCodeAdapter implements FormatAdapter {
 [workflow.build]
 steps = [
   # Claude Code agent with Claude model
-  { agent = "@claude:work-manager", model = "claude-sonnet-4" },
+  { agent = "@claude-work-manager", model = "claude-sonnet-4" },
 
   # LangChain agent with GPT-4 (future)
-  { agent = "@langchain:code-generator", model = "gpt-4" },
+  { agent = "@langchain-code-generator", model = "gpt-4" },
 
   # Back to Claude Code agent with different model
-  { agent = "@claude:repo-manager", model = "gpt-4o" }
+  { agent = "@claude-repo-manager", model = "gpt-4o" }
 ]
 ```
 
 **Automatic detection and adaptation:**
-1. User references agent: `@claude:work-manager`
+1. User references agent: `@claude-work-manager`
 2. Faber loads `plugins/work/agents/work-manager.md`
 3. `ClaudeCodeAdapter.detect()` returns true
 4. `ClaudeCodeAdapter.load()` parses the agent
@@ -438,7 +438,7 @@ Automatic format adaptation in Faber is **best-effort** and subject to framework
 - If you want full features of a framework, manually create separate version
 - Forge provides starter templates to jump-start conversion
 - Two separate artifacts, maintained independently
-- Example: Have both `@claude:work-manager` and `@langchain:work-manager` as separate plugins
+- Example: Have both `@claude-work-manager` and `@langchain-work-manager` as separate plugins
 
 **Faber's approach:**
 - Transparent adaptation for orchestration (user doesn't see it)
@@ -572,16 +572,16 @@ Fractary's key differentiation is **universal orchestration** - not creating yet
 [workflow.build]
 steps = [
   # Your Claude Code agent (proven, works well)
-  { agent = "@claude:work-manager", model = "claude-sonnet-4" },
+  { agent = "@claude-work-manager", model = "claude-sonnet-4" },
 
   # Teammate's LangChain agent (specialized for testing)
-  { agent = "@langchain:pytest-runner", model = "gpt-4" },
+  { agent = "@langchain-pytest-runner", model = "gpt-4" },
 
   # Community CrewAI agent from GitHub (great at docs)
-  { agent = "@crewai:doc-writer", model = "llama-3.1" },
+  { agent = "@crewai-doc-writer", model = "llama-3.1" },
 
   # Back to your Claude Code agent (but with different model for cost)
-  { agent = "@claude:repo-manager", model = "gpt-4o-mini" }
+  { agent = "@claude-repo-manager", model = "gpt-4o-mini" }
 ]
 ```
 
@@ -663,11 +663,11 @@ All Fractary packages, tools, commands, and binaries use a **consistent `fractar
 | **MCP tool name** | `fractary_{domain}_{action}` | `fractary_work_issue_fetch` | `_` (underscore) |
 | **CLI command** | `fractary-{domain} {action}` | `fractary-core work issue-fetch` | ` ` (space) |
 | **Plugin name** | `fractary-{domain}` | `fractary-work` | `-` (hyphen) |
-| **Plugin command** | `/fractary-{domain}:{action}` | `/fractary-work:issue-fetch` | `:` (colon) |
-| **Agent reference** | `@agent-fractary-{domain}:{name}` | `@agent-fractary-work:manager` | `:` (colon) |
+| **Plugin command** | `/fractary-{domain}-{action}` | `/fractary-work-issue-fetch` | `-` (hyphen) |
+| **Agent reference** | `@agent-fractary-{domain}-{name}` | `@agent-fractary-work-manager` | `-` (hyphen) |
 
 **Why different separators?**
-- Each interface has established conventions (MCP uses `_`, CLI uses spaces, plugins use `:`)
+- Each interface has established conventions (MCP uses `_`, CLI uses spaces, plugins use `-`)
 - The **stem is always `fractary-{domain}`** providing consistency
 - Predictable transformation between interfaces
 
@@ -694,10 +694,10 @@ fractary_work_issue_fetch(issue_number="123")
 fractary-core work issue-fetch 123
 
 # Plugin command
-/fractary-work:issue-fetch 123
+/fractary-work-issue-fetch 123
 
 # Agent reference (in plugin)
-@agent-fractary-work:manager
+@agent-fractary-work-manager
 ```
 
 **Benefits:**
@@ -819,7 +819,7 @@ mcp/
 |---------|------------|-------------------|-----|
 | **Atomic operations** | ✅ Primary | ✅ Via MCP or CLI | ✅ Fallback |
 | **Multi-step workflows** | ❌ | ✅ Agents | ❌ |
-| **Natural language commands** | ❌ | ✅ `/fractary-work:start 123` | ❌ |
+| **Natural language commands** | ❌ | ✅ `/fractary-work-start 123` | ❌ |
 | **Event hooks** | ❌ | ✅ Auto-execution | ❌ |
 | **Universal compatibility** | ✅ Any MCP client | ❌ Claude Code only | ✅ Any shell |
 | **Performance** | ✅ Fast (direct calls) | ✅ Fast (via MCP) | ❌ Slow (subprocess) |

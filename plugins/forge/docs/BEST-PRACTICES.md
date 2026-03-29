@@ -288,15 +288,15 @@ Define project-specific workflows as JSON configuration files.
     "build": {
       "enabled": true,
       "steps": [
-        {"id": "validate", "skill": "{project}:{project}-validator"},
-        {"id": "process", "skill": "{project}:{project}-processor"},
-        {"id": "report", "skill": "{project}:{project}-reporter"}
+        {"id": "validate", "skill": "{project}-{project}-validator"},
+        {"id": "process", "skill": "{project}-{project}-processor"},
+        {"id": "report", "skill": "{project}-{project}-reporter"}
       ]
     },
     "evaluate": {
       "enabled": true,
       "steps": [
-        {"id": "test", "skill": "{project}:{project}-tester"}
+        {"id": "test", "skill": "{project}-{project}-tester"}
       ]
     },
     "release": {
@@ -323,7 +323,7 @@ Define multiple workflows for different operations:
     "build": {
       "enabled": true,
       "steps": [
-        {"id": "validate", "skill": "{project}:{project}-validator"}
+        {"id": "validate", "skill": "{project}-{project}-validator"}
       ]
     }
   }
@@ -390,7 +390,7 @@ Update technical documentation to reflect changes:
 - API docs if endpoints changed
 - README if usage changed
 
-Invoke: fractary-docs:docs-manager with changes
+Invoke: fractary-docs-docs-manager with changes
 
 ## Phase 3: Verify
 Confirm implementation and docs are complete.
@@ -477,11 +477,11 @@ All projects SHOULD integrate with these plugins:
 ```markdown
 <AVAILABLE_INTEGRATIONS>
 ## Fractary Plugin Skills (Required Integrations)
-- fractary-docs:docs-manager    # Documentation updates
-- fractary-spec:spec-generator  # Specification creation
-- fractary-logs:log-manager     # Logging operations
-- fractary-file:file-manager    # Cloud storage
-- faber-cloud:infra-manager     # Infrastructure (if applicable)
+- fractary-docs-docs-manager    # Documentation updates
+- fractary-spec-spec-generator  # Specification creation
+- fractary-logs-log-manager     # Logging operations
+- fractary-file-file-manager    # Cloud storage
+- faber-cloud-infra-manager     # Infrastructure (if applicable)
 </AVAILABLE_INTEGRATIONS>
 ```
 
@@ -559,17 +559,17 @@ faber-director (Core)
   └─► faber-manager (Core)
         │
         ├─► Step: validate
-        │   └─► {project}:{project}-validator (Your Skill)
+        │   └─► {project}-{project}-validator (Your Skill)
         │
         ├─► Step: process
-        │   └─► {project}:{project}-processor (Your Skill)
+        │   └─► {project}-{project}-processor (Your Skill)
         │
         ├─► Step: report
-        │   └─► {project}:{project}-reporter (Your Skill)
-        │         └─► fractary-docs:docs-manager (Integration)
+        │   └─► {project}-{project}-reporter (Your Skill)
+        │         └─► fractary-docs-docs-manager (Integration)
         │
         └─► Step: test
-            └─► {project}:{project}-tester (Your Skill)
+            └─► {project}-{project}-tester (Your Skill)
 ```
 
 ---
@@ -604,7 +604,7 @@ If updating an existing project from old patterns:
 
 ### Run Audit
 
-- [ ] Run `/fractary-forge:audit` on your project
+- [ ] Run `/fractary-forge-audit` on your project
 - [ ] Fix any detected anti-patterns
 - [ ] Verify compliance with new standards
 

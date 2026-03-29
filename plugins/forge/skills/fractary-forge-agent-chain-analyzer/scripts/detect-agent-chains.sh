@@ -40,10 +40,10 @@ for agent_name in "${ALL_AGENTS[@]}"; do
   agent_file="${AGENT_FILES[$agent_name]}"
   invoked_agents=()
 
-  # Pattern 1: @agent-{plugin}:{agent-name}
+  # Pattern 1: @agent-{plugin}-{agent-name}
   while IFS= read -r line; do
     # Extract agent name from @agent- pattern
-    if [[ "$line" =~ @agent-[a-zA-Z0-9_-]+:([a-zA-Z0-9_-]+) ]]; then
+    if [[ "$line" =~ @agent-[a-zA-Z0-9_-]+-([a-zA-Z0-9_-]+) ]]; then
       invoked_agent="${BASH_REMATCH[1]}"
       # Verify it's an actual agent in the project
       if [[ " ${ALL_AGENTS[*]} " =~ " ${invoked_agent} " ]]; then

@@ -64,7 +64,7 @@ Generate report
 ## Step 1: Run Audit
 
 ```bash
-/fractary-forge:audit /plugins/my-plugin
+/fractary-forge-audit /plugins/my-plugin
 ```
 
 **Output:**
@@ -105,7 +105,7 @@ Path: /plugins/my-plugin
   /tmp/conversion-specs/manager-inversion-fix-deployment-20250111.json
 
 Next: Review conversion spec with:
-  /fractary-forge:review-conversion <spec-file>
+  /fractary-forge-review-conversion <spec-file>
 ```
 
 ---
@@ -113,7 +113,7 @@ Next: Review conversion spec with:
 ## Step 2: Review Conversion Spec
 
 ```bash
-/fractary-forge:review-conversion /tmp/conversion-specs/manager-inversion-fix-deployment-20250111.json
+/fractary-forge-review-conversion /tmp/conversion-specs/manager-inversion-fix-deployment-20250111.json
 ```
 
 **Output:**
@@ -165,7 +165,7 @@ Severity: Critical
   Step 2: Modify agents/deployment-director.md
     Line 45:
       - Route to @skill-deployment-manager
-      + Route to @agent-my-plugin:deployment-manager
+      + Route to @agent-my-plugin-deployment-manager
 
     Reason: Update routing to use Agent instead of Skill
 
@@ -194,7 +194,7 @@ Severity: Critical
 📖 Migration Guide: docs/migration/manager-inversion-fix.md
 
 Next: Apply conversion with:
-  /fractary-forge:apply-conversion <spec-file>
+  /fractary-forge-apply-conversion <spec-file>
 ```
 
 ---
@@ -202,7 +202,7 @@ Next: Apply conversion with:
 ## Step 3: Apply Conversion
 
 ```bash
-/fractary-forge:apply-conversion /tmp/conversion-specs/manager-inversion-fix-deployment-20250111.json
+/fractary-forge-apply-conversion /tmp/conversion-specs/manager-inversion-fix-deployment-20250111.json
 ```
 
 **Interactive execution:**
@@ -258,7 +258,7 @@ Changes to apply:
 
 Line 45:
   - Route to @skill-deployment-manager
-  + Route to @agent-my-plugin:deployment-manager
+  + Route to @agent-my-plugin-deployment-manager
 
 Context (lines 42-48):
 ───────────────────────────────────────────────
@@ -276,7 +276,7 @@ After change:
 42 | ## expand-to-batch
 43 |
 44 | Calculate batch parameters.
-45 | Route to @agent-my-plugin:deployment-manager
+45 | Route to @agent-my-plugin-deployment-manager
 46 |
 47 | Returns batch parameters for parallel deployment.
 48 | ```json
@@ -314,7 +314,7 @@ Next steps:
   2. Customize workflow phases if needed
   3. Test workflow end-to-end
   4. Run audit again to verify fix:
-     /fractary-forge:audit /plugins/my-plugin
+     /fractary-forge-audit /plugins/my-plugin
 ```
 
 ---
@@ -322,7 +322,7 @@ Next steps:
 ## Step 4: Verify Fix
 
 ```bash
-/fractary-forge:audit /plugins/my-plugin
+/fractary-forge-audit /plugins/my-plugin
 ```
 
 **Output:**
@@ -390,7 +390,7 @@ You are a Manager Agent orchestrating deployment workflows.
 <WORKFLOW>
 
 ## Phase 1: PREPARE
-Use @skill-my-plugin:infra-preparer
+Use @skill-my-plugin-infra-preparer
 
 Store state:
 ```json
@@ -403,7 +403,7 @@ Store state:
 ```
 
 ## Phase 2: VALIDATE
-Use @skill-my-plugin:infra-validator
+Use @skill-my-plugin-infra-validator
 
 ## Phase 3: PRESENT
 Present validation results to user:
@@ -426,10 +426,10 @@ Use AskUserQuestion:             # ✓ Now works! Has AskUserQuestion tool
 ```
 
 ## Phase 5: DEPLOY
-Use @skill-my-plugin:infra-deployer
+Use @skill-my-plugin-infra-deployer
 
 ## Phase 6: VERIFY
-Use @skill-my-plugin:deployment-verifier
+Use @skill-my-plugin-deployment-verifier
 
 ## Phase 7: REPORT
 Generate final report
@@ -450,7 +450,7 @@ Generate final report
 ### Test 1: User Approval Flow
 
 ```bash
-/my-plugin:deploy infra-config.yaml
+/my-plugin-deploy infra-config.yaml
 ```
 
 **Expected flow:**
@@ -486,7 +486,7 @@ Phase 7: Report
 ### Test 2: User Cancellation
 
 ```bash
-/my-plugin:deploy risky-config.yaml
+/my-plugin-deploy risky-config.yaml
 ```
 
 **Expected flow:**
@@ -546,7 +546,7 @@ git checkout agents/deployment-director.md
 Or use spec rollback:
 
 ```bash
-/fractary-forge:rollback-conversion /tmp/conversion-specs/manager-inversion-fix-deployment-20250111.json
+/fractary-forge-rollback-conversion /tmp/conversion-specs/manager-inversion-fix-deployment-20250111.json
 ```
 
 ---

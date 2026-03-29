@@ -65,8 +65,8 @@ echo ""
 check_agent_exists() {
     local agent_ref="$1"
 
-    # Extract plugin and agent name from @agent-plugin:name format
-    if [[ "$agent_ref" =~ @agent-([^:]+):([^[:space:]]+) ]]; then
+    # Extract plugin and agent name from @agent-plugin-name format
+    if [[ "$agent_ref" =~ @agent-([^-]+)-([^[:space:]]+) ]]; then
         local plugin="${BASH_REMATCH[1]}"
         local agent="${BASH_REMATCH[2]}"
 
@@ -83,7 +83,7 @@ check_agent_exists() {
         fi
     else
         echo -e "  ${YELLOW}⚠${NC} Invalid agent reference format: $agent_ref"
-        echo "      Expected: @agent-plugin:name"
+        echo "      Expected: @agent-plugin-name"
         return 2
     fi
 }
@@ -92,8 +92,8 @@ check_agent_exists() {
 check_skill_exists() {
     local skill_ref="$1"
 
-    # Extract plugin and skill name from @skill-plugin:name format
-    if [[ "$skill_ref" =~ @skill-([^:]+):([^[:space:]]+) ]]; then
+    # Extract plugin and skill name from @skill-plugin-name format
+    if [[ "$skill_ref" =~ @skill-([^-]+)-([^[:space:]]+) ]]; then
         local plugin="${BASH_REMATCH[1]}"
         local skill="${BASH_REMATCH[2]}"
 
@@ -111,14 +111,14 @@ check_skill_exists() {
         fi
     else
         echo -e "  ${YELLOW}⚠${NC} Invalid skill reference format: $skill_ref"
-        echo "      Expected: @skill-plugin:name"
+        echo "      Expected: @skill-plugin-name"
         return 2
     fi
 }
 
 # Extract agent references
 echo "Checking agent references..."
-AGENT_REFS=$(grep -oP '@agent-[a-z0-9-]+:[a-z0-9-]+' "$FILE_PATH" 2>/dev/null || true)
+AGENT_REFS=$(grep -oP '@agent-[a-z0-9]+-[a-z0-9-]+' "$FILE_PATH" 2>/dev/null || true)
 
 if [ -z "$AGENT_REFS" ]; then
     echo "  No agent references found"
@@ -139,7 +139,7 @@ echo ""
 
 # Extract skill references
 echo "Checking skill references..."
-SKILL_REFS=$(grep -oP '@skill-[a-z0-9-]+:[a-z0-9-]+' "$FILE_PATH" 2>/dev/null || true)
+SKILL_REFS=$(grep -oP '@skill-[a-z0-9]+-[a-z0-9-]+' "$FILE_PATH" 2>/dev/null || true)
 
 if [ -z "$SKILL_REFS" ]; then
     echo "  No skill references found"

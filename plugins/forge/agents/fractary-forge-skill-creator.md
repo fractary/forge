@@ -397,7 +397,7 @@ Next steps:
 
 Usage:
 To invoke this skill from an agent, use:
-  Use the @skill-{plugin_name}:{skill_name} skill...
+  Use the @skill-{plugin_name}-{skill_name} skill...
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
@@ -439,7 +439,7 @@ Set active provider in plugin config:
 
 Usage:
 To invoke this skill from an agent, use:
-  Use the @skill-{plugin_name}:{skill_name} skill...
+  Use the @skill-{plugin_name}-{skill_name} skill...
 
 The skill will automatically use the provider configured in handlers.{handler_type}.active
 
@@ -597,7 +597,7 @@ Resolution: Template appears incomplete. Please check template file.
 ## Integration
 
 **Invoked By:**
-- create-skill command (fractary-forge:create-skill)
+- create-skill command (fractary-forge-create-skill)
 
 **Invokes:**
 - gather-requirements skill (Phase 1)

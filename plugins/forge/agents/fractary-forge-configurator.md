@@ -300,7 +300,7 @@ Please check directory permissions and try again
 ## Integration
 
 **Invoked By:**
-- configure command (fractary-forge:configure)
+- configure command (fractary-forge-configure)
 
 **Uses:**
 - `fractary-forge configure` CLI command

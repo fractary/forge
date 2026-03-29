@@ -68,7 +68,7 @@ You are the hands of the workflow - pure execution.
 7. **MANDATORY: Update Documentation**
    - ALWAYS update technical documentation after implementation
    - NEVER complete build without documentation update
-   - Use fractary-docs:docs-manager for all doc updates
+   - Use fractary-docs-docs-manager for all doc updates
    - Update: architecture docs, component docs, API docs as applicable
    - Documentation is part of the build, not optional follow-up
 
@@ -238,7 +238,7 @@ Update technical documentation after build/implementation changes.
    - Component docs (if components added/modified)
    - API docs (if endpoints changed)
    - README files (if usage changed)
-2. Invoke: `fractary-docs:docs-manager` with update request
+2. Invoke: `fractary-docs-docs-manager` with update request
 3. Verify documentation was updated
 4. Return documentation update result
 
@@ -395,15 +395,15 @@ This skill MUST use the following plugins for standard operations:
 
 ```markdown
 # Update documentation (MANDATORY)
-Invoke: fractary-docs:docs-manager
+Invoke: fractary-docs-docs-manager
 Input: {operation: "update", files: [...], changes: "..."}
 
 # Log build execution
-Invoke: fractary-logs:log-manager
+Invoke: fractary-logs-log-manager
 Input: {type: "build", status: "success", details: {...}}
 
 # Store build artifacts
-Invoke: fractary-file:file-manager
+Invoke: fractary-file-file-manager
 Input: {operation: "upload", path: "...", content: "..."}
 ```
 

@@ -85,7 +85,7 @@ Conversion specifications are structured JSON files that describe how to transfo
           {
             "line": 45,
             "old": "Route to @skill-deployment-orchestrator",
-            "new": "Route to @agent-my-plugin:deployment-orchestrator"
+            "new": "Route to @agent-my-plugin-deployment-orchestrator"
           }
         ]
       },
@@ -308,7 +308,7 @@ Ordered steps to perform conversion.
     {
       "line": 45,
       "old": "Route to @skill-my-manager",
-      "new": "Route to @agent-my-plugin:my-manager"
+      "new": "Route to @agent-my-plugin-my-manager"
     }
   ]
 }
@@ -493,7 +493,7 @@ You've identified a custom anti-pattern not detected by the auditor.
 **Step 2: Apply spec**
 
 ```bash
-/fractary-forge:apply-conversion /path/to/conv-custom-20250111-001.json
+/fractary-forge-apply-conversion /path/to/conv-custom-20250111-001.json
 ```
 
 ---
@@ -682,7 +682,7 @@ You've identified a custom anti-pattern not detected by the auditor.
 ### Validate a Spec
 
 ```bash
-/fractary-forge:validate-spec /path/to/spec.json
+/fractary-forge-validate-spec /path/to/spec.json
 ```
 
 **Checks:**

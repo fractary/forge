@@ -259,7 +259,7 @@ const resolver = new DefinitionResolver({
   }
 });
 
-const agent = await resolver.resolveAgent('@fractary/faber-plugin:faber-manager');
+const agent = await resolver.resolveAgent('@fractary/faber-plugin-faber-manager');
 ```
 
 **Features**:

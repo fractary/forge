@@ -143,9 +143,9 @@ allowed-tools: <filtered tools list, omit if empty>
 Start from `tools` or `allowed-tools` in source frontmatter.
 
 **Remove from list:**
-- `Agent(...)` entries — become prose `/skill:x` references in body instead
+- `Agent(...)` entries — become prose `/skill-x` references in body instead
 - `Bash(fractary-core ...)` or other `Bash(cli ...)` restriction entries — keep CLI call instructions as prose
-- `Skill(...)` entries — become prose `/skill:ns-name` references in body instead
+- `Skill(...)` entries — become prose `/skill-ns-name` references in body instead
 
 **Keep:**
 - Plain tool names: `Read`, `Write`, `Bash`, `Glob`, `Grep`, `WebFetch`, `WebSearch`, `AskUserQuestion`
@@ -165,7 +165,7 @@ Pi name field:       name: file-upload
 Name normalization rules:
 - Lowercase all characters
 - Replace `_` with `-`
-- Strip namespace prefix (`ns:name` → `name`) if result is ≤ 64 chars
+- Strip namespace prefix (`ns-name` → `name`) if result is ≤ 64 chars
 - Strip namespace prefix if full name would exceed 64 chars
 
 ---
@@ -176,11 +176,11 @@ Name normalization rules:
 
 | Find Pattern | Replace With |
 |---|---|
-| `Use the Agent tool with agent X` | `Use the /skill:X skill` |
-| `@skill-ns:name` | `/skill:ns-name` |
-| `@agent-ns:name` | `/skill:ns-name` |
-| `Invoke the X agent` | `Use the /skill:X skill` |
-| `Agent(X)` in prose | `/skill:X` |
+| `Use the Agent tool with agent X` | `Use the /skill-X skill` |
+| `@skill-ns-name` | `/skill-ns-name` |
+| `@agent-ns-name` | `/skill-ns-name` |
+| `Invoke the X agent` | `Use the /skill-X skill` |
+| `Agent(X)` in prose | `/skill-X` |
 
 Note: Replace `:` with `-` in skill/agent names when constructing pi references.
 
@@ -217,7 +217,7 @@ Create the `skills/{name}/` directory before writing.
 - [ ] `tools` field renamed to `allowed-tools` if present
 - [ ] `Agent(x)` and `Skill(x)` entries removed from `allowed-tools`
 - [ ] `Bash(cli ...)` restriction entries removed from `allowed-tools`
-- [ ] Agent/skill invocation prose updated to `/skill:x` format
+- [ ] Agent/skill invocation prose updated to `/skill-x` format
 - [ ] Output at `skills/{name}/SKILL.md`
 
 </BUILT_IN_MAPPINGS>

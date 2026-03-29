@@ -106,7 +106,7 @@ This defines all rules for converting a Claude Code command file (`commands/*.md
 - **Location**: `commands/*.md`
 - **Required frontmatter fields**: `name`, `description`
 - **Optional frontmatter fields**: `model`, `allowed-tools`, `argument-hint`, `color`, `memory`
-- **Name convention**: `{namespace}:{command}` (e.g., `fractary-file:upload`)
+- **Name convention**: `{namespace}-{command}` (e.g., `fractary-file-upload`)
 - **Body**: Markdown prose describing what the command does
 
 ---
@@ -124,7 +124,7 @@ This defines all rules for converting a Claude Code command file (`commands/*.md
 
 | Source Field | Disposition | Notes |
 |---|---|---|
-| `name` | **Transform → filename** | Replace `:` with `-`, append `.md` → `{ns}-{cmd}.md` |
+| `name` | **Transform → filename** | Append `.md` → `{name}.md` |
 | `description` | **Keep** | Trim to 1024 chars if needed; truncate at 1021 + `...` |
 | `model` | **Drop** | Pi does not support per-prompt model config |
 | `allowed-tools` | **Drop** | Pi prompts do not restrict tools |
@@ -143,11 +143,11 @@ description: <original description, max 1024 chars>
 
 ## Naming Convention Transforms
 
-**Colon → Hyphen rule:**
-Replace all `:` with `-` in the `name` field to derive the pi prompt filename.
+**Naming rule:**
+Command names already use hyphens. Append `.md` to the `name` field to derive the pi prompt filename.
 
 ```
-Claude name:      fractary-file:upload
+Claude name:      fractary-file-upload
 Pi filename:      fractary-file-upload.md
 Pi invocation:    /fractary-file-upload
 ```
@@ -185,10 +185,10 @@ Scan body and replace Claude-specific invocation patterns:
 
 | Find Pattern | Replace With |
 |---|---|
-| `Use the Agent tool with agent X` | `Use the /skill:X skill` |
-| `Invoke the X agent` | `Use the /skill:X skill` |
-| `Use @skill-ns:name` | `Use the /skill:ns-name skill` |
-| `@agent-ns:name` | `/skill:ns-name` |
+| `Use the Agent tool with agent X` | `Use the /skill-X skill` |
+| `Invoke the X agent` | `Use the /skill-X skill` |
+| `Use @skill-ns-name` | `Use the /skill-ns-name skill` |
+| `@agent-ns-name` | `/skill-ns-name` |
 
 Use fuzzy matching — if the pattern is clearly a reference to another agent/skill, convert it.
 

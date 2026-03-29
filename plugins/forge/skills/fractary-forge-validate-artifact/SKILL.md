@@ -133,7 +133,7 @@ fi
 
 The frontmatter validator checks:
 - Required fields present (name, description)
-- Name follows conventions (no leading slash for commands, plugin:command pattern)
+- Name follows conventions (no leading slash for commands, plugin-command pattern)
 - YAML syntax valid
 - Description within limits
 
@@ -167,7 +167,7 @@ fi
 
 The naming validator checks:
 - Artifact follows naming conventions (kebab-case, length, patterns)
-- Commands follow plugin:command format
+- Commands follow plugin-command format
 - Plugins have fractary- prefix
 - No consecutive hyphens or invalid characters
 
@@ -197,8 +197,8 @@ fi
 ```
 
 The cross-reference validator checks:
-- Agent references (@agent-plugin:name) exist
-- Skill references (@skill-plugin:name) exist
+- Agent references (@agent-plugin-name) exist
+- Skill references (@skill-plugin-name) exist
 - Reference format is correct
 
 ## Step 6: Aggregate Results
@@ -430,8 +430,8 @@ Resolution:
 ❌ Frontmatter Validation Failed
 
 Errors:
-  • Command name has leading slash: /fractary-faber:create-agent
-    Should be: fractary-faber:create-agent
+  • Command name has leading slash: /fractary-faber-create-agent
+    Should be: fractary-faber-create-agent
   • Missing required field: description
 
 Resolution:

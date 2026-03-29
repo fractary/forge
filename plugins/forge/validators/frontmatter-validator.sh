@@ -42,13 +42,17 @@ if echo "$FRONTMATTER" | grep -q "^name:"; then
 
     # Validate name format based on artifact type
     if [ "$ARTIFACT_TYPE" = "command" ]; then
-        # Command names should be plugin:command format, no leading slash
+        # Command names should be kebab-case with plugin prefix, no leading slash
         if [[ "$NAME_VALUE" =~ ^/ ]]; then
             echo "  ❌ Error: Command name should not start with '/' (found: $NAME_VALUE)" >&2
             echo "     Use: ${NAME_VALUE#/}" >&2
             ((ERRORS++))
-        elif [[ ! "$NAME_VALUE" =~ ^[a-z0-9-]+:[a-z0-9-]+$ ]]; then
-            echo "  ⚠️  Warning: Command name should follow 'plugin:command' pattern" >&2
+        elif [[ "$NAME_VALUE" =~ : ]]; then
+            echo "  ❌ Error: Command name must not use colon namespace (use hyphens instead)" >&2
+            echo "     Found: $NAME_VALUE" >&2
+            ((ERRORS++))
+        elif [[ ! "$NAME_VALUE" =~ ^[a-z0-9-]+$ ]]; then
+            echo "  ⚠️  Warning: Command name should be lowercase with hyphens (e.g., fractary-forge-audit)" >&2
             echo "     Found: $NAME_VALUE" >&2
             ((WARNINGS++))
         fi

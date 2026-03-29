@@ -202,7 +202,7 @@ rules:
           - "Emit workflow_start at workflow initialization"
           - "Emit artifact_create when important outputs created"
           - "Emit workflow_complete at workflow end"
-          - "Reference fractary-logs:workflow-event-emitter skill for emission"
+          - "Reference fractary-logs-workflow-event-emitter skill for emission"
         minimum_events:
           - "workflow_start - At workflow initialization"
           - "artifact_create - When important outputs created"
@@ -260,7 +260,7 @@ rules:
         steps:
           - "Add MANDATORY documentation update rule to CRITICAL_RULES"
           - "Add update-documentation operation"
-          - "Invoke fractary-docs:docs-manager after implementation"
+          - "Invoke fractary-docs-docs-manager after implementation"
 
     - id: SKL-004
       name: "Skill has proper structure"
