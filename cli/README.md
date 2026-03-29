@@ -5,7 +5,7 @@
 Create, manage, and publish AI agent definitions from the command line.
 
 [![npm version](https://img.shields.io/npm/v/@fractary/forge-cli)](https://www.npmjs.com/package/@fractary/forge-cli)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ---
 
@@ -509,7 +509,7 @@ rm -rf ~/.fractary/cache
 
 ## 📄 License
 
-MIT © [Fractary](https://fractary.com)
+Apache-2.0 © [Fractary](https://fractary.com)
 
 ## 🔗 Links
 

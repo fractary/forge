@@ -5,7 +5,7 @@
 `@fractary/forge` is a comprehensive TypeScript SDK for managing, resolving, and distributing AI agents, tools, workflows, and templates. It provides both a **Definition System** for lockfile-based dependency management and a **Registry System** for manifest-based plugin installation across local, global, and remote registries.
 
 [![npm version](https://img.shields.io/npm/v/@fractary/forge)](https://www.npmjs.com/package/@fractary/forge)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
 
 ---
@@ -996,7 +996,7 @@ forge/
 
 ## 📄 License
 
-MIT © Fractary
+Apache-2.0 © Fractary
 
 ---
 

@@ -486,7 +486,7 @@ Dependencies:
 
 Stockyard:
   Author: fractary
-  License: MIT
+  License: Apache-2.0
   Downloads: 1,234
   Rating: 4.5/5
   Tags: test, example

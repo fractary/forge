@@ -22,7 +22,7 @@
         },
         "homepage": "https://github.com/fractary/forge/tree/main/plugins/forge",
         "repository": "https://github.com/fractary/forge/tree/main/plugins/forge",
-        "license": "MIT",
+        "license": "Apache-2.0",
         "keywords": [
           "meta",
           "tooling",
